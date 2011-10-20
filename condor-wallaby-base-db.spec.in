@@ -1,15 +1,23 @@
-%define rel 2
+%if (0%{?fedora} == 0 && 0%{?rhel} <= 5)
+%global building_for_el5 1
+%else
+%global building_for_el5 0
+%endif
 
 Summary: Base condor database for wallaby
 Name: condor-wallaby-base-db
-Version: BASE_DB_VERSION
-Release: %{rel}%{?dist}
+Version: <%= pkg_version %>
+Release: <%= pkg_rel %>%{?dist}
 Group: Applications/System
 License: ASL 2.0
-URL: http://git.fedorahosted.org/git/grid/wallaby.git
-Source0: %{name}-%{version}-%{rel}.tar.gz
+URL: http://git.fedorahosted.org/git/grid/wallaby-condor-db.git
+Source0: https://fedorahosted.org/releases/g/r/grid/%{name}-%{version}.tar.gz
+<%= printable_patch_list %>
+%if %{building_for_el5}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+%endif
 Requires: wallaby-utils >= 0.10.7
+BuildRequires: ruby
 BuildArch: noarch
 
 %description
@@ -18,8 +26,11 @@ options for a condor pool
 
 %prep
 %setup -q
+<% list_patches.each_with_index do |p, i| %>
+<%= "%patch#{i} -p1" %><% end %>
 
 %build
+rake
 
 %install
 rm -rf %{buildroot}
@@ -29,11 +40,15 @@ mkdir -p %{buildroot}/%{_localstatedir}/lib/wallaby/patches
 cp condor-base-db.snapshot %{buildroot}/%{_localstatedir}/lib/condor-wallaby-base-db
 cp -r patches %{buildroot}/%{_localstatedir}/lib/wallaby
 
+%if %{building_for_el5}
 %clean
 rm -rf %{buildroot}
+%endif
 
 %files
+%if %{building_for_el5}
 %defattr(-, root, root, -)
+%endif
 %doc LICENSE
 %{_localstatedir}/lib/condor-wallaby-base-db/condor-base-db.snapshot
 %{_localstatedir}/lib/wallaby/patches/db-1.5.wpatch

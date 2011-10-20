@@ -43,9 +43,7 @@ class DiffGenerator
     tags = repo.tags()
     db_tags = []
     tags.each do |t|
-      if t.name =~ /^DB-RELEASE-/
-        db_tags.push(t)
-      end
+      db_tags.push(t)
     end
     db_tags.sort! {|x, y| Mrg::Grid::PatchConfigs::DBVersion.new(x.name) <=> Mrg::Grid::PatchConfigs::DBVersion.new(y.name) }
 
@@ -67,7 +65,7 @@ class DiffGenerator
           # Older form
           content = tree/'condor-base-db.snapshot'
         end
-        t.name =~ /DB-RELEASE-([\d\.]+)/
+        t.name =~ /v([\d\.]+)/
         ver = $1
         old = new
         new = Mrg::Grid::PatchConfigs::Database.new(content.data, ver)

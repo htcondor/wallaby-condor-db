@@ -30,7 +30,7 @@ features:
 
   name: BaseDBVersion
   params: 
-    BaseDBVersion: "vBASE_DB_VERSION"
+    BaseDBVersion: "v<%= db_version %>"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: 
   - Scheduler
