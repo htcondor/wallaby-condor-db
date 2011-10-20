@@ -1,0 +1,52 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.12"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.11"
+    QueryServer: 
+      depends: []
+
+    Axis2Home: 
+      params: 
+        WSFCPP_HOME: /usr
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    WSFCPP_HOME: 
+      default: /usr
+  subsystems: {}
+
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.12
+      - {}
+
+    QueryServer: 
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - JobQueueLocation
+      - {}
+
+    Axis2Home: 
+      modifyParams: 
+      - REPLACE
+      - WSFCPP_HOME: /var/lib/condor/aviary/axis2.xml
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    WSFCPP_HOME: 
+      setDefault: /var/lib/condor/aviary/axis2.xml
+  subsystems: {}
+

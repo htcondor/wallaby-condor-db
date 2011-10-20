@@ -1,0 +1,324 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.10"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.9"
+  groups: {}
+
+  nodes: {}
+
+  params: {}
+
+  subsystems: 
+    job_server: 
+      params: 
+      - HISTORY
+      - HISTORY_INTERVAL
+      - JOB_SERVER
+      - JOB_SERVER_ADDRESS_FILE
+      - JOB_SERVER_DEBUG
+      - JOB_SERVER_LOG
+      - MAX_JOB_SERVER_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    AviaryScheduler: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+        SCHEDD.HTTP_PORT: "9090"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Axis2Home
+      - {}
+
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.10
+      - {}
+
+    QueryServer: 
+      modifyParams: 
+      - REPLACE
+      - QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
+        DAEMON_LIST: ">= QUERY_SERVER"
+        QUERY_SERVER.HTTP_PORT: "9091"
+        QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
+        QUERY_SERVER: $(SBIN)/aviary_query_server
+        QUERY_SERVER_ARGS: -f
+        QUERY_SERVER.HISTORY_INTERVAL: "120"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Axis2Home
+      - {}
+
+    Axis2Home: 
+      modifyParams: 
+      - REPLACE
+      - WSFCPP_HOME: /usr
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    QUERY_SERVER.QUERY_SERVER_LOG: 
+      setDefault: $(LOG)/QueryServerLog
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Aviary Query Server log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QUERY_SERVER.HTTP_PORT: 
+      setDefault: "9091"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The port the QueryServer listens on
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    QUERY_SERVER.QUERY_SERVER_DEBUG: 
+      setDefault: D_ALWAYS
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The debugging output the Aviary Query Server will produce in its log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    WSFCPP_HOME: 
+      setDefault: /usr
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The root of the axis2 deployment
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    SCHEDD.HTTP_PORT: 
+      setDefault: "9090"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Port the Aviary Schedd plugin listens on
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QUERY_SERVER: 
+      setDefault: $(SBIN)/aviary_query_server
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Aviary Query Server binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    QUERY_SERVER_ARGS: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Args to append to the Aviary Query Server on daemon startup
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    QUERY_SERVER.HISTORY_INTERVAL: 
+      setDefault: "120"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of seconds between polls of the HISTORY file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QUERY_SERVER.SCHEDD_NAME: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The name of the Scehduler that the Aviary Query Server is working with
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+  subsystems: 
+    job_server: 
+      modifyParams: 
+      - REPLACE
+      - - HISTORY
+        - HISTORY_INTERVAL
+        - JOB_SERVER
+        - JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER_DEBUG
+        - JOB_SERVER_LOG
+        - MAX_JOB_SERVER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - SPOOL
+      - {}
+
+    query_server: 
+      modifyParams: 
+      - REPLACE
+      - - HISTORY
+        - QUERY_SERVER
+        - QUERY_SERVER.HISTORY_INTERVAL
+        - QUERY_SERVER.HTTP_PORT
+        - QUERY_SERVER.QUERY_SERVER_DEBUG
+        - QUERY_SERVER.QUERY_SERVER_LOG
+        - QUERY_SERVER.SCHEDD_NAME
+        - QUERY_SERVER_ARGS
+        - SPOOL
+      - {}
+

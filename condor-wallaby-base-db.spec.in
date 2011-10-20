@@ -40,6 +40,12 @@ mkdir -p %{buildroot}/%{_localstatedir}/lib/wallaby/patches
 cp condor-base-db.snapshot %{buildroot}/%{_localstatedir}/lib/condor-wallaby-base-db
 cp -r patches %{buildroot}/%{_localstatedir}/lib/wallaby
 
+# Unwanted db patch files.
+rm -f %{buildroot}/%{_localstatedir}/lib/wallaby/patches/db-1.1.wpatch
+rm -f %{buildroot}/%{_localstatedir}/lib/wallaby/patches/db-1.2.wpatch
+rm -f %{buildroot}/%{_localstatedir}/lib/wallaby/patches/db-1.3.wpatch
+rm -f %{buildroot}/%{_localstatedir}/lib/wallaby/patches/db-1.4.wpatch
+
 %if %{building_for_el5}
 %clean
 rm -rf %{buildroot}

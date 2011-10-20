@@ -4,11 +4,6 @@ require 'grit'
 
 PKG_RELEASE=ENV['PKG_RELEASE'] || 1
 
-def make_patches
-#  numbered_files = ENV['SIMPLE_GIT_PATCH_NAMES'] ? "--numbered-files" : ""
-#  sh "git format-patch #{numbered_files} -o SOURCES v#{pkg_version}"
-end
-
 def list_patches
   Dir["SOURCES/*.patch"].sort.map {|f| f.gsub("SOURCES/", "")}
 end
@@ -68,7 +63,7 @@ end
 
 def commit_version
   new_version = pkg_version
-  message = "bumping version from #{@old_version} to #{new_version}"
+  message = "bumping DB_VERSION from #{@old_version} to #{new_version}"
   sh "git commit -m '#{message}' #{db_version_file}"
   sh "git tag v#{new_version}"
   sh "git push origin master v#{new_version}" 
@@ -77,16 +72,16 @@ end
 desc "bump the minor version number"
 task :bump_minor do
   @old_version = db_version
-  ver = @old_version.split(",")
-  sh "sed -i 's/#{ver[0]}.#{ver[1]}/#{ver[0]}.#{ver[1]+1}/' #{db_version_file}"
+  ver = @old_version.split(".")
+  sh "sed -i 's/#{ver[0]}.#{ver[1]}/#{ver[0]}.#{ver[1].to_i.next}/' #{db_version_file}"
   commit_version
 end
 
 desc "bump the major version number"
 task :bump_major do
   @old_version = db_version
-  ver = @old_version.split(",")
-  sh "sed -i 's/#{ver[0]}.#{ver[1]}/#{ver[0]+1}.0/' #{db_version_file}"
+  ver = @old_version.split(".")
+  sh "sed -i 's/#{ver[0]}.#{ver[1]}/#{ver[0].to_i.next}.0/' #{db_version_file}"
   commit_version
 end
 
@@ -105,7 +100,7 @@ task :upload_pristine => [:pristine] do
 end
 
 desc "generate a pristine tarball for the tag corresponding to the current version"
-task :pristine => [:db_patches] do
+task :pristine do
   sh "git archive --format=tar v#{pkg_version} --prefix=#{package_prefix}/ | gzip -9nv > #{pristine_name}"
 end
 
@@ -117,14 +112,12 @@ task :rpms => [:make_rpmdirs, :pristine, :spec_patches, :gen_spec] do
 end
 
 task :spec_patches do
-#  make_patches
   numbered_files = ENV['SIMPLE_GIT_PATCH_NAMES'] ? "--numbered-files" : ""
   sh "git format-patch #{numbered_files} -o SOURCES v#{pkg_version}"
 end
 
 desc "Generate the specfile"
 task :gen_spec do
-#  make_patches
   File.open(pkg_spec, "w") do |f|
     f.write(ERB.new(File.read("#{pkg_spec}.in")).result(binding))
   end
@@ -137,16 +130,6 @@ task :gen_db_file do
   end
 end
 
-desc "Generate the database patches"
-task :db_patches do
-  sh 'env RUBYOPT=-Ilib bin/create-db-diffs.rb'
-  ["1.1", "1.2", "1.3", "1.4"].each do |f|
-    FileUtils.rm("#{db_patch_dir}/db-#{f}.wpatch")
-  end
-#  FileUtils.cp_r db_patch_dir, pkg_dir
-#  FileUtils.cp [db_file, 'LICENSE'], pkg_dir
-end
-
 desc "Make dirs for building RPM"
 task :make_rpmdirs => :clean do
   FileUtils.mkdir pkg_dir
@@ -155,9 +138,7 @@ end
 
 desc "Cleanup after an RPM build"
 task :clean do
-#  require 'fileutils'
-  FileUtils.rm_r [pkg_dir, rpm_dirs, pkg_spec, pristine_name], :force => true
-  FileUtils.rm_r [db_file, db_patch_dir], :force => true
+  FileUtils.rm_r [pkg_dir, rpm_dirs, pkg_spec, pristine_name, db_file], :force => true
 end
 
 task :default => :gen_db_file

@@ -1,0 +1,804 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.1"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    ExecuteNodeTriggerData: 
+      included_features: 
+      - 
+    DynamicProvisioning: 
+      conflicts: []
+
+      included_features: 
+      - 
+      params: 
+        SLOT_TYPE_1_PARTITIONABLE: "TRUE"
+        SLOT_TYPE_1: cpus=100%,disk=100%,swap=100%
+        NUM_SLOTS: "1"
+        NUM_SLOTS_TYPE_1: "1"
+      depends: []
+
+    DedicatedScheduler: 
+      included_features: 
+      - 
+    Negotiator: 
+      depends: 
+      - 
+    LowLatency: 
+      included_features: 
+      - 
+    HAScheduler: 
+      included_features: 
+      - 
+    ConcurrencyLimits: 
+      included_features: 
+      - 
+    Credd: 
+      depends: 
+      - 
+    ExecuteNode: 
+      params: 
+        STARTER_LOG: $(LOG)/StarterLog
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        ALLOW_READ_STARTD: ""
+        MAXJOBRETIREMENTTIME: "0"
+        DAEMON_LIST: ">= STARTD"
+        STARTER_LIST: STARTER, STARTER_LOCAL
+        STARTER_DEBUG: D_NODATE
+        ALLOW_READ_DAEMON: ""
+        CONSOLE_DEVICES: mouse, console
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        MAX_STARTD_LOG: "1000000"
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTD_DEBUG: ""
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        STARTER: $(SBIN)/condor_starter
+        STARTD: $(SBIN)/condor_startd
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        STARTER_LOCAL: $(SBIN)/condor_starter
+        STARTD_LOG: $(LOG)/StartLog
+        MAX_STARTER_LOG: "1000000"
+        ALLOW_WRITE_STARTD: ""
+        ALLOW_WRITE_DAEMON: ""
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD_ATTRS: "\"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        STARTD.PLUGINS: $(LIB)/MgmtStartdPlugin-plugin.so
+      depends: 
+      - 
+    CentralManager: 
+      included_features: 
+      - 
+      - 
+      params: 
+        ALLOW_WRITE: ""
+        ALLOW_READ: ""
+      depends: []
+
+    SchedulerDedicatedPreemption: 
+      included_features: 
+      - 
+    Master: 
+      params: 
+        SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        QMF_BROKER_HOST: ""
+        DAEMON_LIST: ">= MASTER"
+        SEC_DEFAULT_INTEGRITY: REQUIRED
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        SEC_DEFAULT_AUTHENTICATION_METHODS: CLAIMTOBE
+        ALLOW_ADMINISTRATOR: $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+        CONDOR_DEVELOPERS: NONE
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_HOST: $(FULL_HOSTNAME)
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        MASTER.PLUGINS: $(LIB)/plugins/MgmtMasterPlugin-plugin.so
+        COLLECTOR_NAME: $(FULL_HOSTNAME)
+        QMF_BROKER_PORT: "5672"
+        SEC_DEFAULT_ENCRYPTION: REQUIRED
+    Collector: 
+      params: 
+        COLLECTOR.PLUGINS: $(LIB)/plugins/MgmtCollectorPlugin-plugin.so
+        FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        COLLECTOR_DEBUG: ""
+        MAX_COLLECTOR_LOG: "1000000"
+        DAEMON_LIST: ">= COLLECTOR"
+        QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+        COLLECTOR: $(SBIN)/condor_collector
+        ALLOW_READ_COLLECTOR: $(ALLOW_READ), $(FLOCK_FROM)
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+        ALLOW_WRITE_COLLECTOR: $(ALLOW_WRITE), $(FLOCK_FROM)
+      depends: 
+      - 
+    VMUniverse: 
+      included_features: 
+      - 
+      params: 
+        VM_MEMORY: ""
+        VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+        VM_TYPE: ""
+        VM_GAHP_LOG: $(LOG)/VMGahpLog
+        VM_NETWORKING: ""
+        MAX_VM_GAHP_LOG: "1000000"
+        VM_SCRIPT: $(SBIN)/condor_vm_xen.sh
+    Scheduler: 
+      params: 
+        SHADOW_LOG: $(LOG)/ShadowLog
+        SHADOW_DEBUG: ""
+        SHADOW: $(SBIN)/condor_shadow
+        SHADOW_LIST: SHADOW
+        SCHEDD.PLUGINS: $(LIB)/plugins/MgmtScheddPlugin-plugin.so
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SCHEDD_DEBUG: D_PID
+        MAX_SHADOW_LOG: "1000000"
+        SCHEDD: $(SBIN)/condor_schedd
+        QUEUE_SUPER_USERS: root, condor
+        ALLOW_WRITE: ""
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
+        DAEMON_LIST: ">= SCHEDD"
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+        START_LOCAL_UNIVERSE: "True"
+        MAX_SCHEDD_LOG: "1000000"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        SCHEDD_LOG: $(LOG)/SchedLog
+        START_SCHEDULER_UNIVERSE: "True"
+      depends: 
+      - 
+    DedicatedResource: 
+      included_features: 
+      - 
+    ExecuteNodeDedicatedPreemption: 
+      included_features: 
+      - 
+    HACentralManager: 
+      included_features: 
+      - 
+    JobRouter: 
+      depends: 
+      - 
+      - 
+    TriggerService: 
+      depends: 
+      - 
+    EC2: 
+      included_features: 
+      - 
+    EC2Enhanced: 
+      included_features: 
+      - 
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    ALLOW_READ_STARTD: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with read access to the Startd
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    RANK_FACTOR: 
+      default: "1000000"
+    ALLOW_NEGOTIATOR: 
+      default: $(FULL_HOSTNAME)
+    FLOCK_COLLECTOR_HOSTS: 
+      default: $(FLOCK_TO)
+    ALLOW_READ_DAEMON: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with read access to daemons
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    DEDICATEDSCHEDULER: 
+      default: DedicatedScheduler@$(FULL_HOSTNAME)
+    DAEMON_LIST: 
+      default: MASTER
+    FETCHWORKDELAY: 
+      requires_restart: false
+    SCHEDD_HOST: 
+      default: $(FULL_HOSTNAME)
+    ALLOW_ADMINISTRATOR: 
+      default: $(FULL_HOSTNAME)
+    ALLOW_READ_COLLECTOR: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with read access to the Collector
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    ALLOW_WRITE_STARTD: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with write access to the Startd
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    ALLOW_WRITE_DAEMON: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with write access to daemons
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    CONDOR_HOST: 
+      default: $(FULL_HOSTNAME)
+    COLLECTOR_HOST: 
+      default: $(CONDOR_HOST)
+    FLOCK_NEGOTIATOR_HOSTS: 
+      default: $(FLOCK_TO)
+    ALLOW_WRITE_COLLECTOR: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: A list of machines with write access to the Collector
+      requires_restart: false
+      depends: []
+
+      must_change: true
+  subsystems: 
+    collector: 
+      params: 
+      - COLLECTOR_LOG
+      - COLLECTOR_DEBUG
+      - ALLOW_WRITE_COLLECTOR
+      - QMF_IGNORE_UPDATE_STARTD_AD
+      - COLLECTOR
+      - FLOCK_COLLECTOR_HOSTS
+      - MAX_COLLECTOR_LOG
+      - COLLECTOR_HOST
+      - ALLOW_READ_COLLECTOR
+      - COLLECTOR.PLUGINS
+    startd: 
+      params: 
+      - RUNBENCHMARKS
+      - KILL
+      - STARTER_LOG
+      - STARTD_JOB_EXPRS
+      - STARTD
+      - START
+      - MAX_STARTD_LOG
+      - MAXJOBRETIREMENTTIME
+      - TRIGGER_DATA_GETDATA_PERIOD
+      - STARTER_LIST
+      - STARTER_DEBUG
+      - MAX_STARTER_LOG
+      - CONSOLE_DEVICES
+      - STARTER
+      - STARTD_DEBUG
+      - STARTD_ADDRESS_FILE
+      - PREEMPT
+      - ALLOW_WRITE_DAEMON
+      - TRIGGER_DATA_GETDATA_EXECUTABLE
+      - STARTER_LOCAL
+      - STARTD_CRON_AUTOPUBLISH
+      - PERIODIC_CHECKPOINT
+      - ALLOW_READ_DAEMON
+      - WANT_SUSPEND
+      - TRIGGER_DATA_JOBLIST
+      - TRIGGER_DATA_GETDATA_RECONFIG
+      - SUSPEND
+      - ALLOW_WRITE_STARTD
+      - STARTD_LOG
+      - CONTINUE
+      - BENCHMARKTIMER
+      - WANT_VACATE
+      - TRIGGER_DATA_GETDATA_PREFIX
+      - STARTD_CRON_NAME
+      - STARTD_ATTRS
+      - ALLOW_READ_STARTD
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    ExecuteNodeTriggerData: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    DedicatedScheduler: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Scheduler
+      - {}
+
+    Negotiator: 
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+    LowLatency: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    HAScheduler: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Scheduler
+      - {}
+
+    ConcurrencyLimits: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Negotiator
+      - {}
+
+    Credd: 
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+    CommonUIDDomain: 
+      modifyParams: 
+      - REPLACE
+      - UID_DOMAIN: ""
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    ExecuteNode: 
+      modifyParams: 
+      - REPLACE
+      - STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        STARTER_LOG: $(LOG)/StarterLog
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        MAXJOBRETIREMENTTIME: "0"
+        STARTER_LIST: STARTER, STARTER_LOCAL
+        CONSOLE_DEVICES: mouse, console
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        STARTER_DEBUG: D_NODATE
+        DAEMON_LIST: ">= STARTD"
+        MAX_STARTD_LOG: "1000000"
+        STARTD_DEBUG: ""
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTER: $(SBIN)/condor_starter
+        STARTD: $(SBIN)/condor_startd
+        STARTER_LOCAL: $(SBIN)/condor_starter
+        MAX_STARTER_LOG: "1000000"
+        STARTD_LOG: $(LOG)/StartLog
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        STARTD_ATTRS: "\"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD.PLUGINS: $(LIB)/plugins/MgmtStartdPlugin-plugin.so
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - NodeAccess
+      - {}
+
+    DynamicSlots: 
+      modifyParams: 
+      - REPLACE
+      - SLOT_TYPE_1_PARTITIONABLE: "TRUE"
+        SLOT_TYPE_1: cpus=100%,disk=100%,swap=100%
+        NUM_SLOTS: "1"
+        NUM_SLOTS_TYPE_1: "1"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    CentralManager: 
+      modifyParams: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - NodeAccess
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+        - Negotiator
+      - {}
+
+    SchedulerDedicatedPreemption: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - DedicatedScheduler
+      - {}
+
+    Master: 
+      modifyParams: 
+      - REPLACE
+      - SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        DAEMON_LIST: ">= MASTER"
+        QMF_BROKER_HOST: ""
+        SEC_DEFAULT_INTEGRITY: REQUIRED
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        SEC_DEFAULT_AUTHENTICATION_METHODS: CLAIMTOBE
+        CONDOR_DEVELOPERS: NONE
+        ALLOW_ADMINISTRATOR: $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_HOST: ""
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        COLLECTOR_NAME: $(CONDOR_HOST)
+        MASTER.PLUGINS: $(LIB)/plugins/MgmtMasterPlugin-plugin.so
+        QMF_BROKER_PORT: "5672"
+        SEC_DEFAULT_ENCRYPTION: REQUIRED
+      - {}
+
+    Collector: 
+      modifyParams: 
+      - REPLACE
+      - COLLECTOR.PLUGINS: $(LIB)/plugins/MgmtCollectorPlugin-plugin.so
+        FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        COLLECTOR_DEBUG: ""
+        DAEMON_LIST: ">= COLLECTOR"
+        MAX_COLLECTOR_LOG: "1000000"
+        COLLECTOR: $(SBIN)/condor_collector
+        QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - NodeAccess
+      - {}
+
+    SharedFileSystem: 
+      modifyParams: 
+      - REPLACE
+      - FILESYSTEM_DOMAIN: ""
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    VMUniverse: 
+      modifyParams: 
+      - REPLACE
+      - VM_MEMORY: $(DETECTED_MEMORY)
+        VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+        LIBVIRT_XML_SCRIPT: ""
+        VM_TYPE: ""
+        VM_GAHP_LOG: $(LOG)/VMGahpLog
+        VM_NETWORKING: ""
+        MAX_VM_GAHP_LOG: "1000000"
+        VM_SCRIPT: $(SBIN)/condor_vm_xen.sh
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    Scheduler: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.PLUGINS: $(LIB)/plugins/MgmtScheddPlugin-plugin.so
+        SHADOW_DEBUG: ""
+        SHADOW_LIST: SHADOW
+        SHADOW_LOG: $(LOG)/ShadowLog
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SHADOW: $(SBIN)/condor_shadow
+        SCHEDD_DEBUG: D_PID
+        MAX_SHADOW_LOG: "1000000"
+        QUEUE_SUPER_USERS: root, condor
+        SCHEDD: $(SBIN)/condor_schedd
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+        DAEMON_LIST: ">= SCHEDD"
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
+        START_LOCAL_UNIVERSE: "True"
+        MAX_SCHEDD_LOG: "1000000"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        SCHEDD_LOG: $(LOG)/SchedLog
+        START_SCHEDULER_UNIVERSE: "True"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - NodeAccess
+      - {}
+
+    DedicatedResource: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    ExecuteNodeDedicatedPreemption: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - DedicatedResource
+      - {}
+
+    HACentralManager: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - CentralManager
+      - {}
+
+    JobRouter: 
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - Scheduler
+      - {}
+
+    TriggerService: 
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+    EC2: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    NodeAccess: 
+      modifyParams: 
+      - REPLACE
+      - ALLOW_WRITE: ""
+        ALLOW_READ: ""
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    EC2Enhanced: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - JobRouter
+      - {}
+
+  groups: 
+    +++DEFAULT: 
+      modifyParams: 
+      - REPLACE
+      - {}
+
+      - {}
+
+      modifyFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+  nodes: {}
+
+  params: 
+    UID_DOMAIN: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A string that is used to decide under which user to run jobs. If the $(UID_DOMAIN) on the submitting machine is different then the $(UID_DOMAIN) on the machine that runs a job, then condor runs the job as the user nobody
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    RANK_FACTOR: 
+      setDefault: ""
+    ALLOW_NEGOTIATOR: 
+      setDefault: ""
+    FLOCK_COLLECTOR_HOSTS: 
+      setDefault: ""
+    DEDICATEDSCHEDULER: 
+      setDefault: ""
+    DAEMON_LIST: 
+      setDefault: ""
+    FETCHWORKDELAY: 
+      setRequiresRestart: true
+    FILESYSTEM_DOMAIN: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A string that is used to decide if two machines (a submitting machine and an execute machine) share a file system
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    SCHEDD_HOST: 
+      setDefault: ""
+    LIBVIRT_XML_SCRIPT: 
+      setDefault: $(LIBEXEC)/libvirt_simple_script.awk
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A script that produces XML output used to start a libvirt VM
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ALLOW_ADMINISTRATOR: 
+      setDefault: ""
+    CONDOR_HOST: 
+      setDefault: ""
+    COLLECTOR_HOST: 
+      setDefault: ""
+    FLOCK_NEGOTIATOR_HOSTS: 
+      setDefault: ""
+  subsystems: 
+    collector: 
+      modifyParams: 
+      - REPLACE
+      - - COLLECTOR_LOG
+        - COLLECTOR_DEBUG
+        - ALLOW_WRITE
+        - QMF_IGNORE_UPDATE_STARTD_AD
+        - COLLECTOR
+        - FLOCK_COLLECTOR_HOSTS
+        - MAX_COLLECTOR_LOG
+        - COLLECTOR_HOST
+        - ALLOW_READ
+        - COLLECTOR.PLUGINS
+      - {}
+
+    startd: 
+      modifyParams: 
+      - REPLACE
+      - - RUNBENCHMARKS
+        - KILL
+        - STARTER_LOG
+        - STARTD_JOB_EXPRS
+        - STARTD
+        - START
+        - MAX_STARTD_LOG
+        - MAXJOBRETIREMENTTIME
+        - TRIGGER_DATA_GETDATA_PERIOD
+        - STARTER_LIST
+        - STARTER_DEBUG
+        - MAX_STARTER_LOG
+        - CONSOLE_DEVICES
+        - STARTER
+        - STARTD_DEBUG
+        - STARTD_ADDRESS_FILE
+        - PREEMPT
+        - ALLOW_WRITE
+        - TRIGGER_DATA_GETDATA_EXECUTABLE
+        - STARTER_LOCAL
+        - STARTD_CRON_AUTOPUBLISH
+        - PERIODIC_CHECKPOINT
+        - ALLOW_READ
+        - WANT_SUSPEND
+        - TRIGGER_DATA_JOBLIST
+        - TRIGGER_DATA_GETDATA_RECONFIG
+        - SUSPEND
+        - STARTD_LOG
+        - CONTINUE
+        - BENCHMARKTIMER
+        - WANT_VACATE
+        - TRIGGER_DATA_GETDATA_PREFIX
+        - STARTD_CRON_NAME
+        - STARTD_ATTRS
+      - {}
+

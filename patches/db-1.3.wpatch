@@ -1,0 +1,430 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.3"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    JobHooks: 
+      params: 
+        JOB_HOOKS_PORT: "10000"
+        JOB_HOOKS_IP: 127.0.0.1
+    LowLatency: 
+      params: 
+        JOB_HOOKS_PORT: $(LL_DAEMON_PORT)
+        LL_BROKER_QUEUE: ""
+        LOW_LATENCY_JOB_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_exit.py
+        LOW_LATENCY_HOOK_REPLY_FETCH: $(LIBEXEC)/hooks/hook_reply_fetch.py
+        DAEMON_LIST: ">= LL_DAEMON"
+        LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
+        FETCHWORKDELAY: 10 * (Activity == "Idle")
+        STARTER_UPDATE_INTERVAL: "30"
+        STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
+        LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
+        LL_DAEMON_LEASE_TIME: "35"
+        LL_DAEMON_IP: 127.0.0.1
+        LL_DAEMON: $(SBIN)/carod
+        LL_BROKER_IP: ""
+        LL_DAEMON_QUEUED_CONNECTIONS: "5"
+        LL_DAEMON_PORT: "10000"
+        LL_DAEMON_LEASE_CHECK_INTERVAL: "30"
+        LL_BROKER_PORT: "5672"
+        LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
+    Credd: 
+      conflicts: []
+
+      included_features: []
+
+      params: 
+        CRED_STORE_DIR: $(LOCAL_DIR)/cred_dir
+        CREDD_PORT: "9620"
+        CREDD_DEBUG: D_FULLDEBUG
+        MAX_CREDD_LOG: "4000000"
+        DAEMON_LIST: ">= CREDD"
+        CREDD: $(SBIN)/condor_credd
+        CREDD_HOST: $(CONDOR_HOST):$(CREDD_PORT)
+        CREDD_LOG: $(LOG)/CredLog
+        CREDD_ADDRESS_FILE: $(LOG)/.credd_address
+        CREDD_ARGS: -p $(CREDD_PORT) -f
+      depends: 
+      - Master
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    LIBEXEC: 
+      kind: String
+      conflicts: []
+
+      default: $(RELEASE_DIR)/libexec/condor
+      visibility_level: 0
+      description: The directory that contains support commands for Condor
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    EC2E_HOOK_JOB_CLEANUP: 
+      depends: 
+      - LIBEXEC
+    CREDD_DEBUG: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: The debugging output the Credd will produce in its log file
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    CREDD_PORT: 
+      kind: Integer
+      conflicts: []
+
+      default: "9620"
+      visibility_level: 0
+      description: The port the Credd will listen on for connections
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    CRED_STORE_DIR: 
+      kind: String
+      conflicts: []
+
+      default: $(LOCAL_DIR)/cred_dir
+      visibility_level: 0
+      description: The location where credential information will be stored
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    MAX_CREDD_LOG: 
+      kind: Integer
+      conflicts: []
+
+      default: "1000000"
+      visibility_level: 0
+      description: The maximum size of the Credd's log file
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    JOB_ROUTER: 
+      depends: 
+      - LIBEXEC
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      depends: 
+      - LIBEXEC
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      depends: 
+      - LIBEXEC
+    CREDD: 
+      kind: String
+      conflicts: []
+
+      default: $(SBIN)/condor_credd
+      visibility_level: 0
+      description: The location of the Credd binary
+      requires_restart: true
+      depends: []
+
+      must_change: false
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      depends: 
+      - LIBEXEC
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      depends: 
+      - LIBEXEC
+    LIBVIRT_XML_SCRIPT: 
+      depends: 
+      - LIBEXEC
+    EC2E_HOOK_JOB_EXIT: 
+      depends: 
+      - LIBEXEC
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      depends: 
+      - LIBEXEC
+    CREDD_HOST: 
+      kind: String
+      conflicts: []
+
+      default: ""
+      visibility_level: 0
+      description: The machine running the Credd daemon
+      requires_restart: false
+      depends: []
+
+      must_change: true
+    CREDD_LOG: 
+      kind: String
+      conflicts: []
+
+      default: $(LOG)/CredLog
+      visibility_level: 0
+      description: The location of the Credd's log file
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    CREDD_ADDRESS_FILE: 
+      kind: String
+      conflicts: []
+
+      default: $(LOG)/.credd_address
+      visibility_level: 0
+      description: The file where the Credd will store its address information
+      requires_restart: true
+      depends: []
+
+      must_change: false
+    CREDD_ARGS: 
+      kind: String
+      conflicts: []
+
+      default: -p $(CREDD_PORT) -f
+      visibility_level: 0
+      description: The arguments to pass to the Credd daemon
+      requires_restart: false
+      depends: 
+      - CREDD_PORT
+      must_change: false
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      depends: 
+      - LIBEXEC
+    EC2E_HOOK_TRANSLATE_JOB: 
+      depends: 
+      - LIBEXEC
+  subsystems: 
+    credd: 
+      params: 
+      - CREDD
+      - CREDD_ADDRESS_FILE
+      - CREDD_ARGS
+      - CREDD_DEBUG
+      - CREDD_HOST
+      - CREDD_LOG
+      - CREDD_PORT
+      - CRED_STORE_DIR
+      - MAX_CREDD_LOG
+    ll_daemon: 
+      params: 
+      - LL_BROKER_IP
+      - LL_BROKER_PORT
+      - LL_BROKER_QUEUE
+      - LL_DAEMON
+      - LL_DAEMON_IP
+      - LL_DAEMON_LEASE_CHECK_INTERVAL
+      - LL_DAEMON_LEASE_TIME
+      - LL_DAEMON_PORT
+      - LL_DAEMON_QUEUED_CONNECTIONS
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    JobHooks: 
+      modifyParams: 
+      - REPLACE
+      - JOB_HOOKS_PORT: "10000"
+        MAX_JOB_HOOKS_LOG: "10000000"
+        JOB_HOOKS_IP: 127.0.0.1
+        JOB_HOOKS_LOG: $(LOG)/JobHooksLog
+      - {}
+
+    LowLatency: 
+      modifyParams: 
+      - REPLACE
+      - JOB_HOOKS_PORT: $(LL_DAEMON_PORT)
+        LL_BROKER_QUEUE: 0
+        LOW_LATENCY_JOB_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_exit.py
+        DAEMON_LIST: ">= LL_DAEMON"
+        LOW_LATENCY_HOOK_REPLY_FETCH: $(LIBEXEC)/hooks/hook_reply_fetch.py
+        STARTER_UPDATE_INTERVAL: "30"
+        LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
+        FETCHWORKDELAY: 10 * (Activity == "Idle")
+        LL_DAEMON: $(SBIN)/carod
+        STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
+        LL_DAEMON_LEASE_TIME: "35"
+        LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
+        LL_DAEMON_IP: 127.0.0.1
+        MAX_LL_DAEMON_LOG: "1000000"
+        LL_BROKER_IP: 0
+        LL_DAEMON_QUEUED_CONNECTIONS: "5"
+        LL_DAEMON_LEASE_CHECK_INTERVAL: "30"
+        LL_DAEMON_PORT: "10000"
+        LL_DAEMON_LOG: $(LOG)/CaroLog
+        LL_BROKER_PORT: "5672"
+        LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    EC2E_HOOK_JOB_CLEANUP: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    JOB_ROUTER: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    MAX_JOB_HOOKS_LOG: 
+      setDefault: "1000000"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum size of the Job Hooks log files
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LIBVIRT_XML_SCRIPT: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    EC2E_HOOK_JOB_EXIT: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    MAX_LL_DAEMON_LOG: 
+      setDefault: "1000000"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum size of the Low-Latency daemon log
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_HOOKS_LOG: 
+      setDefault: $(LOG)/JobHooksLog
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Job Hooks log files
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LL_DAEMON_LOG: 
+      setDefault: $(LOG)/CaroLog
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Low-Latency daemon log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    EC2E_HOOK_TRANSLATE_JOB: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+  subsystems: 
+    ll_daemon: 
+      modifyParams: 
+      - REPLACE
+      - - LL_BROKER_IP
+        - LL_BROKER_PORT
+        - LL_BROKER_QUEUE
+        - LL_DAEMON
+        - LL_DAEMON_IP
+        - LL_DAEMON_LEASE_CHECK_INTERVAL
+        - LL_DAEMON_LEASE_TIME
+        - LL_DAEMON_LOG
+        - LL_DAEMON_PORT
+        - LL_DAEMON_QUEUED_CONNECTIONS
+        - MAX_LL_DAEMON_LOG
+      - {}
+

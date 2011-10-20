@@ -1,0 +1,118 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.6"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.5"
+    HACentralManager: 
+      params: 
+        MASTER_NEGOTIATOR_CONTROLLER: HAD
+        HAD: $(SBIN)/condor_had
+        MASTER_HAD_BACKOFF_CONSTANT: "360"
+        MAX_TRANSFERER_LIFETIME: "300"
+        MAX_HAD_LOG: "640000"
+        HAD_USE_REPLICATION: "true"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(COLLECTOR_HOST)
+        HAD_USE_PRIMARY: "true"
+        REPLICATION_PORT: "41450"
+        MAX_REPLICATION_LOG: "640000"
+        HAD_CONNECTION_TIMEOUT: "2"
+        ALLOW_NEGOTIATOR_SCHEDD: $(FLOCK_NEGOTIATOR_HOSTS), $(COLLECTOR_HOST)
+        DAEMON_LIST: ">= HAD REPLICATION"
+        REPLICATION: $(SBIN)/condor_replication
+        REPLICATION_ARGS: -p $(REPLICATION_PORT)
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
+        REPLICATION_LIST: 0
+        REPLICATION_INTERVAL: "300"
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        CONDOR_HOST: ""
+        HAD_LOG: $(LOG)/HADLog
+        HAD_ARGS: -p $(HAD_PORT)
+        REPLICATION_LOG: $(LOG)/ReplicationLog
+        STATE_FILE: $(SPOOL)/Accountantnew.log
+        HAD_UPDATE_INTERVAL: "300"
+        HAD_LIST: 0
+        TRANSFERER_LOG: $(LOG)/TransfererLog
+        HAD_PORT: "51450"
+    TriggerService: 
+      params: 
+        MAX_TRIGGERD_LOG: "1000000"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: 0
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+  groups: {}
+
+  nodes: {}
+
+  params: {}
+
+  subsystems: {}
+
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.6
+      - {}
+
+    HACentralManager: 
+      modifyParams: 
+      - REPLACE
+      - HAD: $(SBIN)/condor_had
+        MASTER_NEGOTIATOR_CONTROLLER: HAD
+        MAX_TRANSFERER_LIFETIME: "300"
+        MASTER_HAD_BACKOFF_CONSTANT: "360"
+        MAX_HAD_LOG: "640000"
+        REPLICATION_PORT: "41450"
+        HAD_USE_PRIMARY: "true"
+        HAD_CONNECTION_TIMEOUT: "2"
+        HAD_USE_REPLICATION: "true"
+        MAX_REPLICATION_LOG: "640000"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(COLLECTOR_HOST)
+        DAEMON_LIST: ">= HAD REPLICATION"
+        REPLICATION: $(SBIN)/condor_replication
+        ALLOW_NEGOTIATOR_SCHEDD: $(FLOCK_NEGOTIATOR_HOSTS), $(COLLECTOR_HOST)
+        REPLICATION_ARGS: -p $(REPLICATION_PORT)
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
+        REPLICATION_LIST: 0
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        REPLICATION_INTERVAL: "300"
+        CONDOR_HOST: 0
+        HAD_LOG: $(LOG)/HADLog
+        STATE_FILE: $(SPOOL)/Accountantnew.log
+        HAD_ARGS: -p $(HAD_PORT)
+        REPLICATION_LOG: $(LOG)/ReplicationLog
+        TRANSFERER_LOG: $(LOG)/TransfererLog
+        HAD_LIST: 0
+        HAD_UPDATE_INTERVAL: "300"
+        HAD_PORT: "51450"
+      - {}
+
+    TriggerService: 
+      modifyParams: 
+      - REPLACE
+      - MAX_TRIGGERD_LOG: "1000000"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        DC_DAEMON_LIST: ">= TRIGGERD"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: 0
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: {}
+
+  subsystems: {}
+

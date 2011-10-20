@@ -1,0 +1,1872 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.2"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    DedicatedScheduler: 
+      params: 
+        DEDICATED_SCHEDULER_USE_FIFO: "TRUE"
+    LowLatency: 
+      params: 
+        JOB_HOOKS_PORT: $(LL_DAEMON_PORT)
+        LOW_LATENCY_JOB_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_exit.py
+        DAEMON_LIST: ">= LL_DAEMON"
+        LOW_LATENCY_HOOK_REPLY_FETCH: $(LIBEXEC)/hooks/hook_reply_fetch.py
+        STARTER_UPDATE_INTERVAL: "30"
+        JOB_HOOKS_IP: 127.0.0.1
+        LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
+        FETCHWORKDELAY: 10 * (Activity == "Idle")
+        LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
+        LL_DAEMON_LEASE_TIME: "35"
+        STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
+        LL_DAEMON_IP: 127.0.0.1
+        LL_DAEMON_QUEUED_CONNECTIONS: "5"
+        LL_DAEMON_PORT: "10000"
+        LL_DAEMON_LEASE_CHECK_INTERVAL: "30"
+        LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
+      depends: []
+
+    Negotiator: 
+      params: 
+        NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
+        MAX_NEGOTIATOR_LOG: "1000000"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST)
+        PREEMPTION_REQUIREMENTS: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
+        NEGOTIATOR: $(SBIN)/condor_negotiator
+        DAEMON_LIST: ">= NEGOTIATOR"
+        NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
+        NEGOTIATOR_INTERVAL: "20"
+        MAX_NEGOTIATOR_MATCH_LOG: "1000000"
+        FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+        NEGOTIATOR.PLUGINS: $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so
+        PREEMPTION_RANK: (RemoteUserPrio * 1000000) - TARGET.ImageSize
+        NEGOTIATOR_DEBUG: D_MATCH
+        NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
+      depends: 
+      - Master
+    HAScheduler: 
+      conflicts: []
+
+      included_features: 
+      - Scheduler
+      params: 
+        HA_LOCK_HOLD_TIME: "300"
+        HA_LOCK_URL: ""
+        VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), SCHEDD.lock
+        SPOOL: ""
+        MASTER_HA_LIST: $(MASTER_HA_LIST), SCHEDD
+        HA_POLL_PERIOD: "60"
+        SCHEDD_NAME: ""
+        SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
+    ExecuteNode: 
+      params: 
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        STARTER_LOG: $(LOG)/StarterLog
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        MAXJOBRETIREMENTTIME: "0"
+        STARTER_LIST: STARTER, STARTER_LOCAL
+        CONSOLE_DEVICES: mouse, console
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        STARTER_DEBUG: D_NODATE
+        DAEMON_LIST: ">= STARTD"
+        MAX_STARTD_LOG: "1000000"
+        STARTD_DEBUG: ""
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTER: $(SBIN)/condor_starter
+        STARTD: $(SBIN)/condor_startd
+        STARTER_LOCAL: $(SBIN)/condor_starter
+        MAX_STARTER_LOG: "1000000"
+        STARTD_LOG: $(LOG)/StartLog
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        STARTD_ATTRS: "\"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD.PLUGINS: $(LIB)/plugins/MgmtStartdPlugin-plugin.so
+      depends: 
+      - Master
+      - NodeAccess
+    CentralManager: 
+      params: []
+
+    Collector: 
+      params: 
+        COLLECTOR.PLUGINS: $(LIB)/plugins/MgmtCollectorPlugin-plugin.so
+        FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        COLLECTOR_DEBUG: ""
+        DAEMON_LIST: ">= COLLECTOR"
+        MAX_COLLECTOR_LOG: "1000000"
+        COLLECTOR: $(SBIN)/condor_collector
+        QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+    Master: 
+      params: 
+        SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        DAEMON_LIST: ">= MASTER"
+        QMF_BROKER_HOST: ""
+        SEC_DEFAULT_INTEGRITY: REQUIRED
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        SEC_DEFAULT_AUTHENTICATION_METHODS: CLAIMTOBE
+        CONDOR_DEVELOPERS: NONE
+        ALLOW_ADMINISTRATOR: $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_HOST: ""
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        COLLECTOR_NAME: $(CONDOR_HOST)
+        MASTER.PLUGINS: $(LIB)/plugins/MgmtMasterPlugin-plugin.so
+        QMF_BROKER_PORT: "5672"
+        SEC_DEFAULT_ENCRYPTION: REQUIRED
+      depends: []
+
+    DedicatedResource: 
+      params: 
+        KILL: "False"
+        RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
+        RANK_FACTOR: "1000000"
+        DEDICATEDSCHEDULER: DedicatedScheduler@$(FULL_HOSTNAME)
+        PREEMPT: SCHEDULER =!= $(DEDICATEDSCHEDULER) && ($(PREEMPT))
+        SUSPEND: SCHEDULER =!= $(DEDICATEDSCHEDULER)) || ($(SUSPEND))
+        START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
+        WANT_SUSPEND: "False"
+        CONTINUE: "True"
+        STARTD_ATTRS: $(STARTD_ATTRS), DEDICATEDSCHEDULER
+        WANT_VACATE: "False"
+    Scheduler: 
+      conflicts: []
+
+      included_features: []
+
+      params: 
+        SCHEDD.PLUGINS: $(LIB)/plugins/MgmtScheddPlugin-plugin.so
+        SHADOW_DEBUG: ""
+        SHADOW_LIST: SHADOW
+        SHADOW_LOG: $(LOG)/ShadowLog
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SHADOW: $(SBIN)/condor_shadow
+        SCHEDD_DEBUG: D_PID
+        MAX_SHADOW_LOG: "1000000"
+        QUEUE_SUPER_USERS: root, condor
+        SCHEDD: $(SBIN)/condor_schedd
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+        DAEMON_LIST: ">= SCHEDD"
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
+        START_LOCAL_UNIVERSE: "True"
+        MAX_SCHEDD_LOG: "1000000"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        SCHEDD_LOG: $(LOG)/SchedLog
+        START_SCHEDULER_UNIVERSE: "True"
+      depends: 
+      - Master
+      - NodeAccess
+    JobRouter: 
+      params: 
+        JOB_ROUTER: $(LIBEXEC)/condor_job_router
+        MAX_JOB_ROUTER_LOG: "1000000"
+        JOB_ROUTER_DEBUG: ""
+        DAEMON_LIST: ">= JOB_ROUTER"
+        SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        MAX_HISTORY_ROTATIONS: "20"
+        MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        JOB_ROUTER_LOG: $(LOG)/JobRouterLog
+        JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: FS
+        JOB_ROUTER_POLLING_PERIOD: "10"
+      depends: 
+      - Master
+      - Scheduler
+    TriggerService: 
+      params: 
+        MAX_TRIGGERD_LOG: "1000000"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        QMF_BROKER_HOST: ""
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        DATA: $(SPOOL)
+        QMF_BROKER_PORT: "5672"
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+      depends: 
+      - Master
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    SCHEDD.PLUGINS: 
+      requires_restart: false
+    COLLECTOR.PLUGINS: 
+      requires_restart: false
+    EC2E_HOOK_JOB_CLEANUP: 
+      requires_restart: false
+      depends: []
+
+    JOB_ROUTER_HOOK_KEYWORD: 
+      requires_restart: false
+    JOB_ROUTER: 
+      depends: []
+
+    QMF_BROKER_HOST: 
+      requires_restart: false
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      requires_restart: false
+      depends: []
+
+    TRIGGERD: 
+      requires_restart: false
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      requires_restart: false
+      depends: []
+
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      requires_restart: false
+      depends: []
+
+    LIBVIRT_XML_SCRIPT: 
+      depends: []
+
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      requires_restart: false
+      depends: []
+
+    STARTD: 
+      requires_restart: false
+    VM_BRIDGE_SCRIPT: 
+      kind: String
+      conflicts: []
+
+      default: /etc/xen/scripts/network-bridge start bridge=xenbr0
+      visibility_level: 0
+      description: The command to run to setup a bridging network interface for VM universe jobs
+      requires_restart: false
+      depends: []
+
+      must_change: false
+    SCHEDD_ADDRESS_FILE: 
+      requires_restart: false
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      requires_restart: false
+      depends: []
+
+    EC2E_HOOK_JOB_EXIT: 
+      requires_restart: false
+      depends: []
+
+    STARTD_JOB_HOOK_KEYWORD: 
+      requires_restart: false
+    STARTD_ADDRESS_FILE: 
+      kind: STring
+      requires_restart: false
+    NEGOTIATOR.PLUGINS: 
+      requires_restart: false
+    STATE_FILE: 
+      depends: []
+
+    DATA: 
+      default: ""
+      depends: []
+
+    MASTER.PLUGINS: 
+      requires_restart: false
+    QMF_BROKER_PORT: 
+      requires_restart: false
+    AMAZON_GAHP: 
+      requires_restart: false
+    STARTD.PLUGINS: 
+      requires_restart: false
+    CREDD_ADDRESS_FILE: 
+      requires_restart: false
+    EC2E_HOOK_TRANSLATE_JOB: 
+      requires_restart: false
+      depends: []
+
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      requires_restart: false
+      depends: []
+
+  subsystems: 
+    credd: 
+      params: 
+      - MAX_CREDD_LOG
+      - CRED_STORE_DIR
+      - CREDD_PORT
+      - CREDD_DEBUG
+      - CREDD
+      - CREDD_HOST
+      - CREDD_LOG
+      - CREDD_ADDRESS_FILE
+      - CREDD_ARGS
+    had: 
+      params: 
+      - HAD_USE_REPLICATION
+      - HAD_USE_PRIMARY
+      - HAD
+      - HAD_CONNECTION_TIMEOUT
+      - HAD_LOG
+      - HAD_ARGS
+      - HAD_UPDATE_INTERVAL
+      - HAD_LIST
+      - MAX_HAD_LOG
+      - HAD_PORT
+    negotiator: 
+      params: 
+      - PREEMPTION_RANK
+      - ALLOW_NEGOTIATOR
+      - NEGOTIATOR_DEBUG
+      - NEGOTIATOR_PRE_JOB_RANK
+      - NEGOTIATOR
+      - MAX_NEGOTIATOR_LOG
+      - PREEMPTION_REQUIREMENTS
+      - NEGOTIATOR_LOG
+      - MAX_NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR_INTERVAL
+      - FLOCK_NEGOTIATOR_HOSTS
+      - NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR.PLUGINS
+    collector: 
+      params: 
+      - COLLECTOR_LOG
+      - COLLECTOR_DEBUG
+      - ALLOW_WRITE
+      - QMF_IGNORE_UPDATE_STARTD_AD
+      - COLLECTOR
+      - FLOCK_COLLECTOR_HOSTS
+      - MAX_COLLECTOR_LOG
+      - COLLECTOR_HOST
+      - ALLOW_READ
+      - COLLECTOR.PLUGINS
+    job_router: 
+      params: 
+      - MAX_JOB_ROUTER_LOG
+      - JOB_ROUTER_HOOK_KEYWORD
+      - EC2E_HOOK_TRANSLATE_JOB
+      - JOB_ROUTER_DEBUG
+      - MAX_HISTORY_ROTATIONS
+      - JOB_ROUTER
+      - JOB_ROUTER_LOG
+      - JOB_ROUTER_DEFAULTS
+      - EC2E_HOOK_UPDATE_JOB_INFO
+      - EC2E_HOOK_JOB_EXIT
+      - EC2E_ATTRS_TO_COPY
+      - JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+      - EC2E_HOOK_JOB_CLEANUP
+      - JOB_ROUTER_POLLING_PERIOD
+      - JOB_ROUTER_ENTRIES
+    replication: 
+      params: 
+      - MAX_REPLICATION_LOG
+      - HAD_USE_REPLICATION
+      - REPLICATION_PORT
+      - REPLICATION_ARGS
+      - REPLICATION
+      - REPLICATION_LOG
+      - REPLICATION_LIST
+      - REPLICATION_INTERVAL
+    triggerd: 
+      params: 
+      - QMF_BROKER_PORT
+      - QMF_BROKER_HOST
+      - TRIGGERD.QMF_STOREFILE
+      - TRIGGERD_QUERY_COLLECTOR
+      - TRIGGERD_DEFAULT_EVAL_PERIOD
+      - TRIGGERD.QMF_UPDATE_INTERVAL
+      - DATA
+    master: 
+      params: 
+      - QMF_BROKER_PORT
+      - COLLECTOR_NAME
+      - SEC_DEFAULT_NEGOTIATION
+      - QMF_BROKER_HOST
+      - DAEMON_LIST
+      - SEC_DEFAULT_CRYPTO_METHODS
+      - SEC_DEFAULT_AUTHENTICATION
+      - SEC_DEFAULT_INTEGRITY
+      - SEC_DEFAULT_AUTHENTICATION_METHODS
+      - ALLOW_ADMINISTRATOR
+      - CONDOR_HOST
+      - CONDOR_DEVELOPERS_COLLECTOR
+      - CONDOR_DEVELOPERS
+      - SEC_DEFAULT_ENCRYPTION
+      - MASTER.PLUGINS
+    schedd: 
+      params: 
+      - SHADOW_SIZE_ESTIMATE
+      - SHADOW_LIST
+      - SHADOW
+      - SCHEDD_LOG
+      - MAX_SHADOW_LOG
+      - SCHEDD_DEBUG
+      - SCHEDD.PLUGINS
+      - SCHEDD
+      - ALLOW_WRITE
+      - SHADOW_LOCK
+      - START_LOCAL_UNIVERSE
+      - SCHEDD_DAEMON_AD_FILE
+      - QUEUE_SUPER_USERS
+      - ALLOW_NEGOTIATOR_SCHEDD
+      - MAX_SCHEDD_LOG
+      - SCHEDD_ADDRESS_FILE
+      - SHADOW_LOG
+      - SHADOW_DEBUG
+      - START_SCHEDULER_UNIVERSE
+    startd: 
+      params: 
+      - RUNBENCHMARKS
+      - KILL
+      - STARTER_LOG
+      - STARTD_JOB_EXPRS
+      - STARTD
+      - START
+      - MAX_STARTD_LOG
+      - MAXJOBRETIREMENTTIME
+      - TRIGGER_DATA_GETDATA_PERIOD
+      - STARTER_LIST
+      - STARTER_DEBUG
+      - MAX_STARTER_LOG
+      - CONSOLE_DEVICES
+      - STARTER
+      - STARTD_DEBUG
+      - STARTD_ADDRESS_FILE
+      - PREEMPT
+      - ALLOW_WRITE
+      - TRIGGER_DATA_GETDATA_EXECUTABLE
+      - STARTER_LOCAL
+      - STARTD_CRON_AUTOPUBLISH
+      - PERIODIC_CHECKPOINT
+      - ALLOW_READ
+      - WANT_SUSPEND
+      - TRIGGER_DATA_JOBLIST
+      - TRIGGER_DATA_GETDATA_RECONFIG
+      - SUSPEND
+      - STARTD_LOG
+      - CONTINUE
+      - BENCHMARKTIMER
+      - WANT_VACATE
+      - TRIGGER_DATA_GETDATA_PREFIX
+      - STARTD_CRON_NAME
+      - STARTD_ATTRS
+    transferer: 
+      params: 
+      - TRANSFERER_LOG
+      - MAX_TRANSFERER_LIFETIME
+    carod: 
+      params: 
+      - LL_DAEMON_PORT
+      - LL_DAEMON_LEASE_CHECK_INTERVAL
+      - LL_DAEMON_LEASE_TIME
+      - LL_DAEMON_IP
+      - LL_DAEMON
+      - LL_BROKER_QUEUE
+      - LL_BROKER_IP
+      - LL_BROKER_PORT
+      - LL_DAEMON_QUEUED_CONNECTIONS
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    DedicatedScheduler: 
+      modifyParams: 
+      - REPLACE
+      - UNUSED_CLAIM_TIMEOUT: 0
+        DEDICATED_SCHEDULER_USE_FIFO: "TRUE"
+      - {}
+
+    JobHooks: 
+      modifyParams: 
+      - REPLACE
+      - JOB_HOOKS_PORT: "10000"
+        JOB_HOOKS_IP: 127.0.0.1
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    LowLatency: 
+      modifyParams: 
+      - REPLACE
+      - JOB_HOOKS_PORT: $(LL_DAEMON_PORT)
+        LL_BROKER_QUEUE: ""
+        LOW_LATENCY_JOB_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_exit.py
+        LOW_LATENCY_HOOK_REPLY_FETCH: $(LIBEXEC)/hooks/hook_reply_fetch.py
+        DAEMON_LIST: ">= LL_DAEMON"
+        LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
+        FETCHWORKDELAY: 10 * (Activity == "Idle")
+        STARTER_UPDATE_INTERVAL: "30"
+        STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
+        LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
+        LL_DAEMON_LEASE_TIME: "35"
+        LL_DAEMON_IP: 127.0.0.1
+        LL_DAEMON: $(SBIN)/carod
+        LL_BROKER_IP: ""
+        LL_DAEMON_QUEUED_CONNECTIONS: "5"
+        LL_DAEMON_PORT: "10000"
+        LL_DAEMON_LEASE_CHECK_INTERVAL: "30"
+        LL_BROKER_PORT: "5672"
+        LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - JobHooks
+      - {}
+
+    Negotiator: 
+      modifyParams: 
+      - REPLACE
+      - NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
+        MAX_NEGOTIATOR_LOG: "1000000"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST)
+        PREEMPTION_REQUIREMENTS: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
+        NEGOTIATOR: $(SBIN)/condor_negotiator
+        DAEMON_LIST: ">= NEGOTIATOR"
+        NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
+        NEGOTIATOR_INTERVAL: "20"
+        MAX_NEGOTIATOR_MATCH_LOG: "1000000"
+        NEGOTIATOR_ADDRESS_FILE: $(LOG)/.negotiator_address
+        FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+        PREEMPTION_RANK: (RemoteUserPrio * 1000000) - TARGET.ImageSize
+        NEGOTIATOR_DEBUG: D_MATCH
+        NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - NodeAccess
+      - {}
+
+    ConsoleExecuteNode: 
+      modifyParams: 
+      - REPLACE
+      - STARTD.PLUGINS: $(LIB)/plugins/MgmtStartdPlugin-plugin.so
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - ExecuteNode
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    HAScheduler: 
+      modifyParams: 
+      - REPLACE
+      - HA_LOCK_HOLD_TIME: "300"
+        HA_LOCK_URL: ""
+        VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), SCHEDD.lock
+        MASTER_HA_LIST: $(MASTER_HA_LIST), SCHEDD
+        HA_POLL_PERIOD: "60"
+        SCHEDD_NAME: ""
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - - Scheduler
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - JobQueueLocation
+        - BaseScheduler
+      - {}
+
+    JobServer: 
+      modifyParams: 
+      - REPLACE
+      - JOB_SERVER_LOG: $(LOG)/JobServerLog
+        DC_DAEMON_LIST: ">= JOB_SERVER"
+        DAEMON_LIST: ">= JOB_SERVER"
+        JOB_SERVER: $(SBIN)/condor_job_server
+        JOB_SERVER_DEBUG: ""
+        JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
+        MAX_JOB_SERVER_LOG: "1000000"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - QMF
+        - JobQueueLocation
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    ConsoleNegotiator: 
+      modifyParams: 
+      - REPLACE
+      - NEGOTIATOR.PLUGINS: $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - Negotiator
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    ExecuteNode: 
+      modifyParams: 
+      - REPLACE
+      - STARTER_LOG: $(LOG)/StarterLog
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        MAXJOBRETIREMENTTIME: "0"
+        STARTER_LIST: STARTER, STARTER_LOCAL
+        STARTER_DEBUG: D_NODATE
+        DAEMON_LIST: ">= STARTD"
+        CONSOLE_DEVICES: mouse, console
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTD: $(SBIN)/condor_startd
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        MAX_STARTD_LOG: "1000000"
+        STARTER: $(SBIN)/condor_starter
+        STARTD_DEBUG: ""
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        STARTD_LOG: $(LOG)/StartLog
+        MAX_STARTER_LOG: "1000000"
+        STARTER_LOCAL: $(SBIN)/condor_starter
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD_ATTRS: "\"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+    CentralManager: 
+      modifyParams: 
+      - REPLACE
+      - {}
+
+      - {}
+
+    Collector: 
+      modifyParams: 
+      - REPLACE
+      - FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        DAEMON_LIST: ">= COLLECTOR"
+        MAX_COLLECTOR_LOG: "1000000"
+        COLLECTOR_DEBUG: ""
+        COLLECTOR: $(SBIN)/condor_collector
+        COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_NAME: Wallaby Configured Pool
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+      - {}
+
+    ConsoleCollector: 
+      modifyParams: 
+      - REPLACE
+      - COLLECTOR.PLUGINS: $(LIB)/plugins/MgmtCollectorPlugin-plugin.so
+        QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+      - {}
+
+    Master: 
+      modifyParams: 
+      - REPLACE
+      - SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        MASTER: $(SBIN)/condor_master
+        DAEMON_LIST: ">= MASTER"
+        SEC_DEFAULT_INTEGRITY: REQUIRED
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        SEC_DEFAULT_AUTHENTICATION_METHODS: CLAIMTOBE
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR)
+        CONDOR_DEVELOPERS: NONE
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_HOST: ""
+        MASTER_ADDRESS_FILE: $(LOG)/.master_address
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        COLLECTOR_NAME: ""
+        SEC_DEFAULT_ENCRYPTION: REQUIRED
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - NodeAccess
+      - {}
+
+    ConsoleMaster: 
+      modifyParams: 
+      - REPLACE
+      - MASTER.PLUGINS: $(LIB)/plugins/MgmtMasterPlugin-plugin.so
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - Master
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    ConsoleScheduler: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.PLUGINS: $(LIB)/plugins/MgmtScheddPlugin-plugin.so
+        SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - BaseScheduler
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    DedicatedResource: 
+      modifyParams: 
+      - REPLACE
+      - RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
+        KILL: "False"
+        RANK_FACTOR: "1000000"
+        DEDICATEDSCHEDULER: ""
+        START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
+        PREEMPT: SCHEDULER =!= $(DEDICATEDSCHEDULER) && ($(PREEMPT))
+        SUSPEND: SCHEDULER =!= $(DEDICATEDSCHEDULER)) || ($(SUSPEND))
+        WANT_SUSPEND: "False"
+        CONTINUE: "True"
+        WANT_VACATE: "False"
+        STARTD_ATTRS: $(STARTD_ATTRS), DEDICATEDSCHEDULER
+      - {}
+
+    ConsoleSchedulerForJobServer: 
+      modifyParams: 
+      - REPLACE
+      - QUEUE_ALL_USERS_TRUSTED: "True"
+        QMF_PUBLISH_SUBMISSIONS: "FALSE"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - BaseScheduler
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    Scheduler: 
+      modifyParams: 
+      - REPLACE
+      - SPOOL: $(LOCAL_DIR)/spool
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - - HAScheduler
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - JobQueueLocation
+        - BaseScheduler
+      - {}
+
+    JobRouter: 
+      modifyParams: 
+      - REPLACE
+      - MAX_JOB_ROUTER_LOG: "1000000"
+        JOB_ROUTER_DEBUG: ""
+        JOB_ROUTER: $(LIBEXEC)/condor_job_router
+        DAEMON_LIST: ">= JOB_ROUTER"
+        SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        MAX_HISTORY_ROTATIONS: "20"
+        JOB_ROUTER_LOG: $(LOG)/JobRouterLog
+        JOB_ROUTER_ADDRESS_FILE: $(LOG)/.job_router_address
+        JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: FS
+        JOB_ROUTER_POLLING_PERIOD: "10"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - BaseScheduler
+      - {}
+
+    JobQueueLocation: 
+      modifyParams: 
+      - REPLACE
+      - HISTORY: $(SPOOL)/history
+        SPOOL: ""
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    TriggerService: 
+      modifyParams: 
+      - REPLACE
+      - MAX_TRIGGERD_LOG: "1000000"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: $(SPOOL)
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - QMF
+      - {}
+
+    BaseScheduler: 
+      modifyParams: 
+      - REPLACE
+      - SHADOW_LOG: $(LOG)/ShadowLog
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SHADOW_LIST: SHADOW
+        SHADOW_DEBUG: ""
+        SHADOW: $(SBIN)/condor_shadow
+        SCHEDD_DEBUG: D_PID
+        SCHEDD: $(SBIN)/condor_schedd
+        QUEUE_SUPER_USERS: root, condor
+        MAX_SHADOW_LOG: "1000000"
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+        DAEMON_LIST: ">= SCHEDD"
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
+        START_LOCAL_UNIVERSE: "True"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        MAX_SCHEDD_LOG: "1000000"
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        SCHEDD_LOG: $(LOG)/SchedLog
+        START_SCHEDULER_UNIVERSE: "True"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+        - NodeAccess
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    KeyboardMonitor: 
+      modifyParams: 
+      - REPLACE
+      - KBDD_DEBUG: ""
+        DAEMON_LIST: ">= KBDD"
+        MAX_KBDD_LOG: "1000000"
+        KBDD: $(SBIN)/condor_kbdd
+        KBDD_ADDRESS_FILE: $(LOG)/.kbdd_address
+        KBDD_LOG: $(LOG)/KbdLog
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    QMF: 
+      modifyParams: 
+      - REPLACE
+      - QMF_BROKER_HOST: ""
+        QMF_DELETE_ON_SHUTDOWN: "TRUE"
+        QMF_BROKER_PORT: "5672"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    SCHEDD.PLUGINS: 
+      setRequiresRestart: true
+    COLLECTOR.PLUGINS: 
+      setRequiresRestart: true
+    LIBEXEC: 
+      setDefault: $(RELEASE_DIR)/libexec/condor
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The directory that contains support commands for Condor
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QUEUE_ALL_USERS_TRUSTED: 
+      setDefault: "FALSE"
+      setKind: Boolean
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Determines if all users that access the job queue are trusted
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    EC2E_HOOK_JOB_CLEANUP: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    JOB_ROUTER_HOOK_KEYWORD: 
+      setRequiresRestart: true
+    UNUSED_CLAIM_TIMEOUT: 
+      setDefault: "600"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: How long a Dedicated Scheduler should hold onto claims if it has no jobs to run on them
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    JOB_SERVER_LOG: 
+      setDefault: $(LOG)/JobServerLog
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Job Server log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    KBDD_DEBUG: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The debugging output the KBDD will produce in its log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    JOB_ROUTER: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+    MASTER: 
+      setDefault: $(SBIN)/condor_master
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The master binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    HISTORY: 
+      setDefault: $(SPOOL)/history
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - - SPOOL
+      - {}
+
+      setDescription: The location of the historical jobs file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    MAX_KBDD_LOG: 
+      setDefault: "1000000"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum size of the KBDD log
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    DC_DAEMON_LIST: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The daemons that use the Condor daemoncore library
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    QMF_BROKER_HOST: 
+      setRequiresRestart: true
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    TRIGGERD: 
+      setRequiresRestart: true
+    JOB_SERVER: 
+      setDefault: $(SBIN)/condor_job_server
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Job Server binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    LIBVIRT_XML_SCRIPT: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    STARTD: 
+      setRequiresRestart: true
+    SCHEDD_ADDRESS_FILE: 
+      setRequiresRestart: true
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    JOB_ROUTER_ADDRESS_FILE: 
+      setDefault: $(LOG)/.job_router_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Job Router will store its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER_ADDRESS_FILE: 
+      setDefault: $(LOG)/.job_server_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Job Server will store its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER_DEBUG: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The debugging output the Job Server will produce in its log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QMF_DELETE_ON_SHUTDOWN: 
+      setDefault: "TRUE"
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Delete the QMF resources on shutdown
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    COLLECTOR_ADDRESS_FILE: 
+      setDefault: $(LOG)/.collector_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Collector will store its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    EC2E_HOOK_JOB_EXIT: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    STARTD_JOB_HOOK_KEYWORD: 
+      setRequiresRestart: true
+    KBDD: 
+      setDefault: $(SBIN)/condor_kbdd
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The KBDD binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    QMF_PUBLISH_SUBMISSIONS: 
+      setDefault: "FALSE"
+      setKind: Boolean
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Determines if the Scheduler should publish job submissions over QMF
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    KBDD_ADDRESS_FILE: 
+      setDefault: $(LOG)/.kbdd_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the KBDD will place its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    STARTD_ADDRESS_FILE: 
+      setKind: String
+      setRequiresRestart: true
+    MASTER_ADDRESS_FILE: 
+      setDefault: $(LOG)/.master_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Master will store its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    MAX_JOB_SERVER_LOG: 
+      setDefault: "1000000"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum size of the Job Server log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    HISTORY_INTERVAL: 
+      setDefault: "600"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Determines how often the Job Server will read the historical jobs file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    NEGOTIATOR.PLUGINS: 
+      setRequiresRestart: true
+    TRIGGERD_ADDRESS_FILE: 
+      setDefault: $(LOG)/.triggerd_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Triggerd will store its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    STATE_FILE: 
+      modifyDepends: 
+      - REPLACE
+      - - SPOOL
+      - {}
+
+    NEGOTIATOR_ADDRESS_FILE: 
+      setDefault: $(LOG)/.negotiator_address
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Negotiator will write its address information
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    DATA: 
+      setDefault: $(SPOOL)
+      modifyDepends: 
+      - REPLACE
+      - - SPOOL
+      - {}
+
+    KBDD_LOG: 
+      setDefault: $(LOG)/KbdLog
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the KBDD log file
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    MASTER.PLUGINS: 
+      setRequiresRestart: true
+    QMF_BROKER_PORT: 
+      setRequiresRestart: true
+    AMAZON_GAHP: 
+      setRequiresRestart: true
+    STARTD.PLUGINS: 
+      setRequiresRestart: true
+    CREDD_ADDRESS_FILE: 
+      setRequiresRestart: true
+    EC2E_HOOK_TRANSLATE_JOB: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      modifyDepends: 
+      - REPLACE
+      - - LIBEXEC
+      - {}
+
+      setRequiresRestart: true
+  subsystems: 
+    credd: 
+      modifyParams: 
+      - REPLACE
+      - - CREDD
+        - CREDD_ADDRESS_FILE
+        - CREDD_ARGS
+        - CREDD_DEBUG
+        - CREDD_HOST
+        - CREDD_LOG
+        - CREDD_PORT
+        - CRED_STORE_DIR
+        - MAX_CREDD_LOG
+      - {}
+
+    had: 
+      modifyParams: 
+      - REPLACE
+      - - HAD
+        - HAD_ARGS
+        - HAD_CONNECTION_TIMEOUT
+        - HAD_LIST
+        - HAD_LOG
+        - HAD_PORT
+        - HAD_UPDATE_INTERVAL
+        - HAD_USE_PRIMARY
+        - HAD_USE_REPLICATION
+        - MAX_HAD_LOG
+      - {}
+
+    negotiator: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR
+        - FLOCK_NEGOTIATOR_HOSTS
+        - MAX_NEGOTIATOR_LOG
+        - MAX_NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR
+        - NEGOTIATOR.PLUGINS
+        - NEGOTIATOR_ADDRESS_FILE
+        - NEGOTIATOR_DEBUG
+        - NEGOTIATOR_INTERVAL
+        - NEGOTIATOR_LOG
+        - NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR_PRE_JOB_RANK
+        - PREEMPTION_RANK
+        - PREEMPTION_REQUIREMENTS
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+      - {}
+
+    collector: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - COLLECTOR
+        - COLLECTOR.PLUGINS
+        - COLLECTOR_ADDRESS_FILE
+        - COLLECTOR_DEBUG
+        - COLLECTOR_HOST
+        - COLLECTOR_LOG
+        - FLOCK_COLLECTOR_HOSTS
+        - MAX_COLLECTOR_LOG
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_IGNORE_UPDATE_STARTD_AD
+      - {}
+
+    job_router: 
+      modifyParams: 
+      - REPLACE
+      - - EC2E_ATTRS_TO_COPY
+        - EC2E_HOOK_JOB_CLEANUP
+        - EC2E_HOOK_JOB_EXIT
+        - EC2E_HOOK_TRANSLATE_JOB
+        - EC2E_HOOK_UPDATE_JOB_INFO
+        - JOB_ROUTER
+        - JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - JOB_ROUTER_ADDRESS_FILE
+        - JOB_ROUTER_DEBUG
+        - JOB_ROUTER_DEFAULTS
+        - JOB_ROUTER_ENTRIES
+        - JOB_ROUTER_HOOK_KEYWORD
+        - JOB_ROUTER_LOG
+        - JOB_ROUTER_POLLING_PERIOD
+        - MAX_HISTORY_ROTATIONS
+        - MAX_JOB_ROUTER_LOG
+      - {}
+
+    kbdd: 
+      modifyParams: 
+      - REPLACE
+      - - KBDD
+        - KBDD_ADDRESS_FILE
+        - KBDD_DEBUG
+        - KBDD_LOG
+        - MAX_KBDD_LOG
+      - {}
+
+    replication: 
+      modifyParams: 
+      - REPLACE
+      - - HAD_USE_REPLICATION
+        - MAX_REPLICATION_LOG
+        - REPLICATION
+        - REPLICATION_ARGS
+        - REPLICATION_INTERVAL
+        - REPLICATION_LIST
+        - REPLICATION_LOG
+        - REPLICATION_PORT
+      - {}
+
+    triggerd: 
+      modifyParams: 
+      - REPLACE
+      - - DATA
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - TRIGGERD.QMF_STOREFILE
+        - TRIGGERD.QMF_UPDATE_INTERVAL
+        - TRIGGERD_ADDRESS_FILE
+        - TRIGGERD_DEFAULT_EVAL_PERIOD
+        - TRIGGERD_QUERY_COLLECTOR
+      - {}
+
+    master: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_ADMINISTRATOR
+        - COLLECTOR_NAME
+        - CONDOR_DEVELOPERS
+        - CONDOR_DEVELOPERS_COLLECTOR
+        - CONDOR_HOST
+        - DAEMON_LIST
+        - DC_DAEMON_LIST
+        - MASTER
+        - MASTER.PLUGINS
+        - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - MASTER_ADDRESS_FILE
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - SEC_DEFAULT_AUTHENTICATION
+        - SEC_DEFAULT_AUTHENTICATION_METHODS
+        - SEC_DEFAULT_CRYPTO_METHODS
+        - SEC_DEFAULT_ENCRYPTION
+        - SEC_DEFAULT_INTEGRITY
+        - SEC_DEFAULT_NEGOTIATION
+      - {}
+
+    schedd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR_SCHEDD
+        - ALLOW_WRITE
+        - HISTORY
+        - MAX_SCHEDD_LOG
+        - MAX_SHADOW_LOG
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+        - QUEUE_ALL_USERS_TRUSTED
+        - QUEUE_SUPER_USERS
+        - SCHEDD
+        - SCHEDD.PLUGINS
+        - SCHEDD_ADDRESS_FILE
+        - SCHEDD_DAEMON_AD_FILE
+        - SCHEDD_DEBUG
+        - SCHEDD_LOG
+        - SHADOW
+        - SHADOW_DEBUG
+        - SHADOW_LIST
+        - SHADOW_LOCK
+        - SHADOW_LOG
+        - SHADOW_SIZE_ESTIMATE
+        - START_LOCAL_UNIVERSE
+        - START_SCHEDULER_UNIVERSE
+      - {}
+
+    startd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - BENCHMARKTIMER
+        - CONSOLE_DEVICES
+        - CONTINUE
+        - KILL
+        - MAXJOBRETIREMENTTIME
+        - MAX_STARTD_LOG
+        - MAX_STARTER_LOG
+        - PERIODIC_CHECKPOINT
+        - PREEMPT
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - RUNBENCHMARKS
+        - START
+        - STARTD
+        - STARTD_ADDRESS_FILE
+        - STARTD_ATTRS
+        - STARTD_CRON_AUTOPUBLISH
+        - STARTD_CRON_NAME
+        - STARTD_DEBUG
+        - STARTD_JOB_EXPRS
+        - STARTD_LOG
+        - STARTER
+        - STARTER_DEBUG
+        - STARTER_LIST
+        - STARTER_LOCAL
+        - STARTER_LOG
+        - SUSPEND
+        - TRIGGER_DATA_GETDATA_EXECUTABLE
+        - TRIGGER_DATA_GETDATA_PERIOD
+        - TRIGGER_DATA_GETDATA_PREFIX
+        - TRIGGER_DATA_GETDATA_RECONFIG
+        - TRIGGER_DATA_JOBLIST
+        - WANT_SUSPEND
+        - WANT_VACATE
+      - {}
+
+    ll_daemon: 
+      modifyParams: 
+      - REPLACE
+      - - LL_BROKER_IP
+        - LL_BROKER_PORT
+        - LL_BROKER_QUEUE
+        - LL_DAEMON
+        - LL_DAEMON_IP
+        - LL_DAEMON_LEASE_CHECK_INTERVAL
+        - LL_DAEMON_LEASE_TIME
+        - LL_DAEMON_PORT
+        - LL_DAEMON_QUEUED_CONNECTIONS
+      - {}
+
+    transferer: 
+      modifyParams: 
+      - REPLACE
+      - - MAX_TRANSFERER_LIFETIME
+        - TRANSFERER_LOG
+      - {}
+
+    job_server: 
+      modifyParams: 
+      - REPLACE
+      - - HISTORY
+        - HISTORY_INTERVAL
+        - JOB_SERVER
+        - JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER_DEBUG
+        - JOB_SERVER_LOG
+        - MAX_JOB_SERVER_LOG
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+      - {}
+

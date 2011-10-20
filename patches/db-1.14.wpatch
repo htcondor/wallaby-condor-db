@@ -1,0 +1,162 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.14"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    AviaryScheduler: 
+      depends: []
+
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.13"
+    Master: 
+      params: 
+        SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        MASTER: $(SBIN)/condor_master
+        DAEMON_LIST: ">= MASTER"
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        CONDOR_DEVELOPERS: NONE
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR)
+        SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), CLAIMTOBE
+        MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        CONDOR_HOST: 0
+        MASTER_ADDRESS_FILE: $(LOG)/.master_address
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        COLLECTOR_NAME: ""
+    JobRouter: 
+      params: 
+        JOB_ROUTER: $(LIBEXEC)/condor_job_router
+        MAX_JOB_ROUTER_LOG: "1000000"
+        JOB_ROUTER_DEBUG: ""
+        DAEMON_LIST: ">= JOB_ROUTER"
+        SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS
+        MAX_HISTORY_ROTATIONS: "20"
+        JOB_ROUTER_ADDRESS_FILE: $(LOG)/.job_router_address
+        JOB_ROUTER_LOG: $(LOG)/JobRouterLog
+        JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: FS
+        JOB_ROUTER_POLLING_PERIOD: "10"
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    SEC_DEFAULT_NEGOTIATION: 
+      requires_restart: true
+    SEC_DEFAULT_INTEGRITY: 
+      requires_restart: true
+    SEC_DEFAULT_CRYPTO_METHODS: 
+      requires_restart: true
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      default: ""
+      requires_restart: true
+      must_change: true
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      default: ""
+      requires_restart: true
+      must_change: true
+    SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      requires_restart: true
+    SEC_DEFAULT_AUTHENTICATION: 
+      requires_restart: true
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      default: ""
+      requires_restart: true
+      must_change: true
+    SEC_DEFAULT_ENCRYPTION: 
+      requires_restart: true
+  subsystems: {}
+
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    AviaryScheduler: 
+      modifyDepends: 
+      - REPLACE
+      - - BaseScheduler
+      - {}
+
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.14
+      - {}
+
+    Master: 
+      modifyParams: 
+      - REPLACE
+      - SEC_DEFAULT_NEGOTIATION: OPTIONAL
+        MASTER: $(SBIN)/condor_master
+        DAEMON_LIST: ">= MASTER"
+        SEC_DEFAULT_CRYPTO_METHODS: 3DES
+        CONDOR_DEVELOPERS: NONE
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(CONDOR_HOST)
+        SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS, NTLM, CLAIMTOBE
+        MASTER_ADDRESS_FILE: $(LOG)/.master_address
+        CONDOR_HOST: 0
+        SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+        CONDOR_DEVELOPERS_COLLECTOR: NONE
+        COLLECTOR_NAME: ""
+      - {}
+
+    JobRouter: 
+      modifyParams: 
+      - REPLACE
+      - MAX_JOB_ROUTER_LOG: "1000000"
+        JOB_ROUTER_DEBUG: ""
+        JOB_ROUTER: $(LIBEXEC)/condor_job_router
+        DAEMON_LIST: ">= JOB_ROUTER"
+        MAX_HISTORY_ROTATIONS: "20"
+        JOB_ROUTER_LOG: $(LOG)/JobRouterLog
+        JOB_ROUTER_ADDRESS_FILE: $(LOG)/.job_router_address
+        JOB_ROUTER_POLLING_PERIOD: "10"
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    SEC_DEFAULT_NEGOTIATION: 
+      setRequiresRestart: false
+    SEC_DEFAULT_INTEGRITY: 
+      setRequiresRestart: false
+    SEC_DEFAULT_CRYPTO_METHODS: 
+      setRequiresRestart: false
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDefault: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
+      setMustChange: false
+      setRequiresRestart: false
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDefault: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
+      setMustChange: false
+      setRequiresRestart: false
+    SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setRequiresRestart: false
+    SEC_DEFAULT_AUTHENTICATION: 
+      setRequiresRestart: false
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDefault: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
+      setMustChange: false
+      setRequiresRestart: false
+    UPDATE_INTERVAL: 
+      setDefault: "300"
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of seconds specifying how often the condor_startd should send a ClassAd update to the condor_collector
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    SEC_DEFAULT_ENCRYPTION: 
+      setRequiresRestart: false
+  subsystems: {}
+

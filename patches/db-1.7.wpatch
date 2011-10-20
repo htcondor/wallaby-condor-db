@@ -1,0 +1,603 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.7"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.6"
+    TriggerService: 
+      params: 
+        MAX_TRIGGERD_LOG: "1000000"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        DC_DAEMON_LIST: ">= TRIGGERD"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: 0
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+  groups: {}
+
+  nodes: {}
+
+  params: {}
+
+  subsystems: 
+    triggerd: 
+      params: 
+      - DATA
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - TRIGGERD.QMF_STOREFILE
+      - TRIGGERD.QMF_UPDATE_INTERVAL
+      - TRIGGERD_ADDRESS_FILE
+      - TRIGGERD_DEFAULT_EVAL_PERIOD
+      - TRIGGERD_QUERY_COLLECTOR
+    master: 
+      params: 
+      - ALLOW_ADMINISTRATOR
+      - COLLECTOR_NAME
+      - CONDOR_DEVELOPERS
+      - CONDOR_DEVELOPERS_COLLECTOR
+      - CONDOR_HOST
+      - DAEMON_LIST
+      - DC_DAEMON_LIST
+      - MASTER
+      - MASTER.PLUGINS
+      - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+      - MASTER_ADDRESS_FILE
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - SEC_DEFAULT_AUTHENTICATION
+      - SEC_DEFAULT_AUTHENTICATION_METHODS
+      - SEC_DEFAULT_CRYPTO_METHODS
+      - SEC_DEFAULT_ENCRYPTION
+      - SEC_DEFAULT_INTEGRITY
+      - SEC_DEFAULT_NEGOTIATION
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.7
+      - {}
+
+    PowerManagementCollector: 
+      modifyParams: 
+      - REPLACE
+      - OFFLINE_LOG: $(SPOOL)/OfflineLog
+        OFFLINE_EXPIRE_ADS_AFTER: "28800"
+        VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), $(OFFLINE_LOG)
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+      - {}
+
+    TriggerService: 
+      modifyParams: 
+      - REPLACE
+      - MAX_TRIGGERD_LOG: "1000000"
+        ENABLE_ABSENT_NODES_DETECTION: "True"
+        DC_DAEMON_LIST: ">= TRIGGERD"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        DATA: 0
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+      - {}
+
+    PowerManagementNode: 
+      modifyParams: 
+      - REPLACE
+      - ShouldHibernate: ( (KeyboardIdle > $(StartIdleTime)) && $(CPUIdle) && ($(StateTimer) > $(TimeToWait)) )
+        HIBERNATE_CHECK_INTERVAL: "300"
+        HIBERNATE: ifThenElse( $(ShouldHibernate), "RAM", "NONE" )
+        TimeToWait: (2 * $(HOUR))
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - - Collector
+        - Negotiator
+        - Scheduler
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ExecuteNode
+      - {}
+
+    PowerManagementSubnetManager: 
+      modifyParams: 
+      - REPLACE
+      - ROOSTER_MAX_UNHIBERNATE: "0"
+        ROOSTER: $(LIBEXEC)/condor_rooster
+        DAEMON_LIST: ">= ROOSTER"
+        UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
+        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+        ROOSTER_SUBNET_MASK: 0
+        ROOSTER_UNHIBERNATE: Offline && Unhibernate
+        ROOSTER_INTERVAL: "300"
+        ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i $(ROOSTER_SUBNET_MASK)\""
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - - PowerManagementNode
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    ShouldHibernate: 
+      setDefault: ( (KeyboardIdle > $(StartIdleTime)) && $(CPUIdle) && ($(StateTimer) > $(TimeToWait)) )
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Expression used to determine if the machine should hibernate due to inactivity
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QMF_BROKER_USERNAME: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The username to use when authenticating with a QMF broker
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    WALLABY_FORCE_CONFIG_PULL: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A dummy param used to force a configuration pull
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    OFFLINE_LOG: 
+      setDefault: $(SPOOL)/OfflineLog
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The full path and file name of a file that stores machine ClassAds for every hibernating machine
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    HIBERNATE_CHECK_INTERVAL: 
+      setDefault: "0"
+      setKind: integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of seconds specifying how often the condor_startd checks to see if the machine is ready to enter a low power state
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      setDefault: "28800"
+      setKind: integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of seconds specifying the lifetime of the persistent machine ClassAd representing a hibernating machine
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER: 
+      setDefault: $(LIBEXEC)/condor_rooster
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Rooster binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    ROOSTER_MAX_UNHIBERNATE: 
+      setDefault: "0"
+      setKind: integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum number of machines to wake up per cycle.  A value of 0 means unlimited
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ENABLE_ABSENT_NODES_DETECTION: 
+      setDefault: "TRUE"
+      setKind: boolean
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Determines whether the condor_triggerd will look for absent nodes
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    UNHIBERNATE: 
+      setDefault: MachineLastMatchTime =!= UNDEFINED
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A boolean expression that specifies when an offline machine should be woken up
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    WALLABY_FORCE_RESTART: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A dummy param used to force all daemons to restart
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    ROOSTER_UNHIBERNATE_RANK: 
+      setDefault: Mips*Cpus
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A ClassAd expression specifying which machines should be woken up first in a given cycle. Higher ranked machines are woken first
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER_UNHIBERNATE: 
+      setDefault: Offline && Unhibernate
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A boolean expression that specifies which machines should be woken up
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QMF_BROKER_PASSWORD_FILE: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of a file containing a password to use when authenticating with a QMF broker
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    ROOSTER_INTERVAL: 
+      setDefault: "300"
+      setKind: integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of seconds between checks for offline machines that should be woken up
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER_SUBNET_MASK: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The subnet used by condor_rooster when waking up a machine
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QMF_BROKER_AUTH_MECH: 
+      setDefault: ""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The mechanism to use when authenticating with a QMF broker
+      setVisibilityLevel: 0
+      setMustChange: true
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    ROOSTER_WAKEUP_CMD: 
+      setDefault: "\"$(BIN)/condor_power -d -i -s 255.255.255.255\""
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: A string representing the command line to invoke by condor_rooster in order to wake up a machine
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    HIBERNATE: 
+      setDefault: ifThenElse( $(ShouldHibernate), "RAM", "NONE" )
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: An expression that represents a lower power state. When this state name evaluates to a valid non-NONE state, the machine will be put into the specified low power state
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    TimeToWait: 
+      setDefault: (2 * $(HOUR))
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Expression used to indicate the time since the last job was run
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+  subsystems: 
+    rooster: 
+      modifyParams: 
+      - REPLACE
+      - - ROOSTER
+        - ROOSTER_INTERVAL
+        - ROOSTER_MAX_UNHIBERNATE
+        - ROOSTER_UNHIBERNATE
+        - ROOSTER_UNHIBERNATE_RANK
+        - ROOSTER_WAKEUP_CMD
+      - {}
+
+    triggerd: 
+      modifyParams: 
+      - REPLACE
+      - - DATA
+        - ENABLE_ABSENT_NODES_DETECTION
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - TRIGGERD.QMF_STOREFILE
+        - TRIGGERD.QMF_UPDATE_INTERVAL
+        - TRIGGERD_ADDRESS_FILE
+        - TRIGGERD_DEFAULT_EVAL_PERIOD
+        - TRIGGERD_QUERY_COLLECTOR
+      - {}
+
+    master: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_ADMINISTRATOR
+        - COLLECTOR_NAME
+        - CONDOR_DEVELOPERS
+        - CONDOR_DEVELOPERS_COLLECTOR
+        - CONDOR_HOST
+        - DAEMON_LIST
+        - DC_DAEMON_LIST
+        - MASTER
+        - MASTER.PLUGINS
+        - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - MASTER_ADDRESS_FILE
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PORT
+        - QMF_DELETE_ON_SHUTDOWN
+        - SEC_DEFAULT_AUTHENTICATION
+        - SEC_DEFAULT_AUTHENTICATION_METHODS
+        - SEC_DEFAULT_CRYPTO_METHODS
+        - SEC_DEFAULT_ENCRYPTION
+        - SEC_DEFAULT_INTEGRITY
+        - SEC_DEFAULT_NEGOTIATION
+        - WALLABY_FORCE_CONFIG_PULL
+        - WALLABY_FORCE_RESTART
+      - {}
+

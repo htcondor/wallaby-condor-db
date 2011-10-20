@@ -1,0 +1,574 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.9"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.8"
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    ShouldHibernate: 
+      kind: string
+    QMF_BROKER_USERNAME: 
+      kind: string
+    WALLABY_FORCE_CONFIG_PULL: 
+      kind: string
+    OFFLINE_LOG: 
+      kind: string
+    HIBERNATE_CHECK_INTERVAL: 
+      kind: integer
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      kind: integer
+    ROOSTER: 
+      kind: string
+    ROOSTER_MAX_UNHIBERNATE: 
+      kind: integer
+    ENABLE_ABSENT_NODES_DETECTION: 
+      kind: boolean
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      kind: string
+    UNHIBERNATE: 
+      kind: string
+    WALLABY_FORCE_RESTART: 
+      kind: string
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      kind: string
+    ROOSTER_UNHIBERNATE_RANK: 
+      kind: string
+    ROOSTER_UNHIBERNATE: 
+      kind: string
+    QMF_BROKER_PASSWORD_FILE: 
+      kind: string
+    ROOSTER_INTERVAL: 
+      kind: integer
+    ROOSTER_SUBNET_MASK: 
+      kind: string
+    QMF_BROKER_AUTH_MECH: 
+      kind: string
+    ROOSTER_WAKEUP_CMD: 
+      kind: string
+    HIBERNATE: 
+      kind: string
+    TimeToWait: 
+      kind: string
+  subsystems: 
+    negotiator: 
+      params: 
+      - ALLOW_NEGOTIATOR
+      - FLOCK_NEGOTIATOR_HOSTS
+      - MAX_NEGOTIATOR_LOG
+      - MAX_NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR
+      - NEGOTIATOR.PLUGINS
+      - NEGOTIATOR_ADDRESS_FILE
+      - NEGOTIATOR_DEBUG
+      - NEGOTIATOR_INTERVAL
+      - NEGOTIATOR_LOG
+      - NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR_PRE_JOB_RANK
+      - PREEMPTION_RANK
+      - PREEMPTION_REQUIREMENTS
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+    collector: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - COLLECTOR
+      - COLLECTOR.PLUGINS
+      - COLLECTOR_ADDRESS_FILE
+      - COLLECTOR_DEBUG
+      - COLLECTOR_HOST
+      - COLLECTOR_LOG
+      - FLOCK_COLLECTOR_HOSTS
+      - MAX_COLLECTOR_LOG
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_IGNORE_UPDATE_STARTD_AD
+    triggerd: 
+      params: 
+      - DATA
+      - ENABLE_ABSENT_NODES_DETECTION
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - TRIGGERD.QMF_STOREFILE
+      - TRIGGERD.QMF_UPDATE_INTERVAL
+      - TRIGGERD_ADDRESS_FILE
+      - TRIGGERD_DEFAULT_EVAL_PERIOD
+      - TRIGGERD_QUERY_COLLECTOR
+    master: 
+      params: 
+      - ALLOW_ADMINISTRATOR
+      - COLLECTOR_NAME
+      - CONDOR_DEVELOPERS
+      - CONDOR_DEVELOPERS_COLLECTOR
+      - CONDOR_HOST
+      - DAEMON_LIST
+      - DC_DAEMON_LIST
+      - MASTER
+      - MASTER.PLUGINS
+      - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+      - MASTER_ADDRESS_FILE
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - SEC_DEFAULT_AUTHENTICATION
+      - SEC_DEFAULT_AUTHENTICATION_METHODS
+      - SEC_DEFAULT_CRYPTO_METHODS
+      - SEC_DEFAULT_ENCRYPTION
+      - SEC_DEFAULT_INTEGRITY
+      - SEC_DEFAULT_NEGOTIATION
+      - WALLABY_FORCE_CONFIG_PULL
+      - WALLABY_FORCE_RESTART
+    schedd: 
+      params: 
+      - ALLOW_NEGOTIATOR_SCHEDD
+      - ALLOW_WRITE
+      - HISTORY
+      - MAX_SCHEDD_LOG
+      - MAX_SHADOW_LOG
+      - MAX_STARTER_LOG
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_PUBLISH_SUBMISSIONS
+      - QUEUE_ALL_USERS_TRUSTED
+      - QUEUE_SUPER_USERS
+      - SCHEDD
+      - SCHEDD.PLUGINS
+      - SCHEDD_ADDRESS_FILE
+      - SCHEDD_DAEMON_AD_FILE
+      - SCHEDD_DEBUG
+      - SCHEDD_LOG
+      - SHADOW
+      - SHADOW_DEBUG
+      - SHADOW_LIST
+      - SHADOW_LOCK
+      - SHADOW_LOG
+      - SHADOW_SIZE_ESTIMATE
+      - STARTER_DEBUG
+      - STARTER_LOCAL
+      - STARTER_LOG
+      - START_LOCAL_UNIVERSE
+      - START_SCHEDULER_UNIVERSE
+    startd: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - BENCHMARKTIMER
+      - CONSOLE_DEVICES
+      - CONTINUE
+      - KILL
+      - MAXJOBRETIREMENTTIME
+      - MAX_STARTD_LOG
+      - MAX_STARTER_LOG
+      - PERIODIC_CHECKPOINT
+      - PREEMPT
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+      - RUNBENCHMARKS
+      - START
+      - STARTD
+      - STARTD_ADDRESS_FILE
+      - STARTD_ATTRS
+      - STARTD_CRON_AUTOPUBLISH
+      - STARTD_CRON_NAME
+      - STARTD_DEBUG
+      - STARTD_JOB_EXPRS
+      - STARTD_LOG
+      - STARTER
+      - STARTER_DEBUG
+      - STARTER_LIST
+      - STARTER_LOG
+      - SUSPEND
+      - TRIGGER_DATA_GETDATA_EXECUTABLE
+      - TRIGGER_DATA_GETDATA_PERIOD
+      - TRIGGER_DATA_GETDATA_PREFIX
+      - TRIGGER_DATA_GETDATA_RECONFIG
+      - TRIGGER_DATA_JOBLIST
+      - WANT_SUSPEND
+      - WANT_VACATE
+    job_server: 
+      params: 
+      - HISTORY
+      - HISTORY_INTERVAL
+      - JOB_SERVER
+      - JOB_SERVER_ADDRESS_FILE
+      - JOB_SERVER_DEBUG
+      - JOB_SERVER_LOG
+      - MAX_JOB_SERVER_LOG
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PORT
+      - QMF_DELETE_ON_SHUTDOWN
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.9
+      - {}
+
+    SharedPort: 
+      modifyParams: 
+      - REPLACE
+      - DAEMON_LIST: ">= SHARED_PORT"
+        SHARED_PORT: $(LIBEXEC)/condor_shared_port
+        USE_SHARED_PORT: "True"
+        SHARED_PORT_DEBUG: ""
+        DAEMON_SOCKET_DIR: $(RUN)
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    ShouldHibernate: 
+      setKind: String
+    QMF_BROKER_USERNAME: 
+      setKind: String
+    WALLABY_FORCE_CONFIG_PULL: 
+      setKind: String
+    OFFLINE_LOG: 
+      setKind: String
+    HIBERNATE_CHECK_INTERVAL: 
+      setKind: Integer
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      setKind: Integer
+    ROOSTER: 
+      setKind: String
+    ROOSTER_MAX_UNHIBERNATE: 
+      setKind: Integer
+    ENABLE_ABSENT_NODES_DETECTION: 
+      setKind: Boolean
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      setKind: Integer
+    UNHIBERNATE: 
+      setKind: String
+    SHARED_PORT: 
+      setDefault: $(LIBEXEC)/condor_shared_port
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The Shared Port binary
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    WALLABY_FORCE_RESTART: 
+      setKind: String
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      setKind: Integer
+    USE_SHARED_PORT: 
+      setDefault: "False"
+      setKind: Boolean
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Specifies whether a condor process should rely on the Shared Port for receiving incoming connections
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER_UNHIBERNATE_RANK: 
+      setKind: String
+    SHARED_PORT_DEBUG: 
+      setDefault: ""
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The debugging output that the Shared Port will produce in its log
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER_UNHIBERNATE: 
+      setKind: String
+    QMF_BROKER_PASSWORD_FILE: 
+      setKind: String
+    DAEMON_SOCKET_DIR: 
+      setDefault: $(RUN)
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Specifies the directory where Unix versions of condor daemons will create named sockets so that incoming connections can be forwarded to them by the Shared Port.  Write access to this directory grants permission to receive connections through the Shared Port
+      setVisibilityLevel: 0
+      setMustChange: false
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    ROOSTER_INTERVAL: 
+      setKind: Integer
+    ROOSTER_SUBNET_MASK: 
+      setKind: String
+    QMF_BROKER_AUTH_MECH: 
+      setKind: String
+    ROOSTER_WAKEUP_CMD: 
+      setKind: String
+    HIBERNATE: 
+      setKind: String
+    TimeToWait: 
+      setKind: String
+  subsystems: 
+    negotiator: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR
+        - FLOCK_NEGOTIATOR_HOSTS
+        - MAX_NEGOTIATOR_LOG
+        - MAX_NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR
+        - NEGOTIATOR.PLUGINS
+        - NEGOTIATOR_ADDRESS_FILE
+        - NEGOTIATOR_DEBUG
+        - NEGOTIATOR_INTERVAL
+        - NEGOTIATOR_LOG
+        - NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR_PRE_JOB_RANK
+        - PREEMPTION_RANK
+        - PREEMPTION_REQUIREMENTS
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+      - {}
+
+    collector: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - COLLECTOR
+        - COLLECTOR.PLUGINS
+        - COLLECTOR_ADDRESS_FILE
+        - COLLECTOR_DEBUG
+        - COLLECTOR_HOST
+        - COLLECTOR_LOG
+        - FLOCK_COLLECTOR_HOSTS
+        - MAX_COLLECTOR_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_IGNORE_UPDATE_STARTD_AD
+      - {}
+
+    triggerd: 
+      modifyParams: 
+      - REPLACE
+      - - DATA
+        - ENABLE_ABSENT_NODES_DETECTION
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - TRIGGERD.QMF_STOREFILE
+        - TRIGGERD.QMF_UPDATE_INTERVAL
+        - TRIGGERD_ADDRESS_FILE
+        - TRIGGERD_DEFAULT_EVAL_PERIOD
+        - TRIGGERD_QUERY_COLLECTOR
+      - {}
+
+    master: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_ADMINISTRATOR
+        - COLLECTOR_NAME
+        - CONDOR_DEVELOPERS
+        - CONDOR_DEVELOPERS_COLLECTOR
+        - CONDOR_HOST
+        - DAEMON_LIST
+        - DC_DAEMON_LIST
+        - MASTER
+        - MASTER.PLUGINS
+        - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - MASTER_ADDRESS_FILE
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - SEC_DEFAULT_AUTHENTICATION
+        - SEC_DEFAULT_AUTHENTICATION_METHODS
+        - SEC_DEFAULT_CRYPTO_METHODS
+        - SEC_DEFAULT_ENCRYPTION
+        - SEC_DEFAULT_INTEGRITY
+        - SEC_DEFAULT_NEGOTIATION
+        - WALLABY_FORCE_CONFIG_PULL
+        - WALLABY_FORCE_RESTART
+      - {}
+
+    schedd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR_SCHEDD
+        - ALLOW_WRITE
+        - HISTORY
+        - MAX_SCHEDD_LOG
+        - MAX_SHADOW_LOG
+        - MAX_STARTER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+        - QUEUE_ALL_USERS_TRUSTED
+        - QUEUE_SUPER_USERS
+        - SCHEDD
+        - SCHEDD.PLUGINS
+        - SCHEDD_ADDRESS_FILE
+        - SCHEDD_DAEMON_AD_FILE
+        - SCHEDD_DEBUG
+        - SCHEDD_LOG
+        - SHADOW
+        - SHADOW_DEBUG
+        - SHADOW_LIST
+        - SHADOW_LOCK
+        - SHADOW_LOG
+        - SHADOW_SIZE_ESTIMATE
+        - STARTER_DEBUG
+        - STARTER_LOCAL
+        - STARTER_LOG
+        - START_LOCAL_UNIVERSE
+        - START_SCHEDULER_UNIVERSE
+      - {}
+
+    startd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - BENCHMARKTIMER
+        - CONSOLE_DEVICES
+        - CONTINUE
+        - KILL
+        - MAXJOBRETIREMENTTIME
+        - MAX_STARTD_LOG
+        - MAX_STARTER_LOG
+        - PERIODIC_CHECKPOINT
+        - PREEMPT
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - RUNBENCHMARKS
+        - START
+        - STARTD
+        - STARTD_ADDRESS_FILE
+        - STARTD_ATTRS
+        - STARTD_CRON_AUTOPUBLISH
+        - STARTD_CRON_NAME
+        - STARTD_DEBUG
+        - STARTD_JOB_EXPRS
+        - STARTD_LOG
+        - STARTER
+        - STARTER_DEBUG
+        - STARTER_LIST
+        - STARTER_LOG
+        - SUSPEND
+        - TRIGGER_DATA_GETDATA_EXECUTABLE
+        - TRIGGER_DATA_GETDATA_PERIOD
+        - TRIGGER_DATA_GETDATA_PREFIX
+        - TRIGGER_DATA_GETDATA_RECONFIG
+        - TRIGGER_DATA_JOBLIST
+        - WANT_SUSPEND
+        - WANT_VACATE
+      - {}
+
+    job_server: 
+      modifyParams: 
+      - REPLACE
+      - - HISTORY
+        - HISTORY_INTERVAL
+        - JOB_SERVER
+        - JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER_DEBUG
+        - JOB_SERVER_LOG
+        - MAX_JOB_SERVER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+      - {}
+
+    shared_port: 
+      modifyParams: 
+      - REPLACE
+      - - DAEMON_SOCKET_DIR
+        - SHARED_PORT
+        - SHARED_PORT_DEBUG
+        - USE_SHARED_PORT
+      - {}
+

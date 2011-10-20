@@ -72,9 +72,11 @@ class DiffGenerator
         if count > 0
           patch = new.generate_patch(old)
           filename = "#{patch_dir}/db-#{ver}.wpatch"
-          puts "Generating patch file #{filename}"
-          File.open(filename, "w") do |of|
-            of.write(patch.to_yaml)
+          if !File.exist?(filename)
+            puts "Generating patch file #{filename}"
+            File.open(filename, "w") do |of|
+              of.write(patch.to_yaml)
+            end
           end
         end
         count += 1
