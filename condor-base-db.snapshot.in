@@ -37,7 +37,7 @@ features:
   depends: []
 
   included: 
-  - JobQueueLocation
+  - SharedJobQueueLocation
   - BaseScheduler
   name: BaseHAScheduler
   params: 
@@ -682,6 +682,17 @@ features:
   name: SharedFileSystem
   params: 
     FILESYSTEM_DOMAIN: 0
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
+  depends: []
+
+  included: []
+
+  name: SharedJobQueueLocation
+  params: 
+    SCHEDD.SPOOL: 0
+    SCHEDD.HISTORY: $(SCHEDD.SPOOL)/history
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -2943,6 +2954,18 @@ params:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
+  default_val: $(SCHEDD.SPOOL)/history
+  depends: 
+  - SCHEDD.SPOOL
+  description: The location of the historical jobs file for use by the Scheduler
+  kind: String
+  level: 0
+  must_change: false
+  name: SCHEDD.HISTORY
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
   default_val: "9090"
   depends: []
 
@@ -2987,6 +3010,18 @@ params:
   level: 0
   must_change: false
   name: SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Where certain files used by the condor_schedd are stored, such as the job queue file and the initial executables of any jobs that have been submitted
+  kind: String
+  level: 0
+  must_change: true
+  name: SCHEDD.SPOOL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
