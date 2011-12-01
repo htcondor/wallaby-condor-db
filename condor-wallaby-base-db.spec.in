@@ -71,6 +71,10 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.16.wpatch
 
 %changelog
+* Thu Dec 1 2011 rrati <rrati@redhat> - 1.17-1
+- Added SCHEDD.SPOOL and SCHEDD.HISTORY params
+- Updated BaseHAScheduler to use new SCHEDD.* params
+
 * Mon Oct 10 2011 rrati <rrati@redhat> - 1.16-2
 - Fixed issue with incorect db version metadata in patch files
 
