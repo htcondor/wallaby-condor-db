@@ -30,7 +30,7 @@ features:
 
   name: BaseDBVersion
   params: 
-    BaseDBVersion: "v<%= db_version %>"
+    BaseDBVersion: v<%= db_version %>
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: 
   - Scheduler
@@ -1018,6 +1018,18 @@ params:
   level: 0
   must_change: false
   name: COLLECTOR_ADDRESS_FILE
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: ""
+  depends: 
+  - COLLECTOR
+  description: Arguments to pass to the Collector daemon
+  kind: String
+  level: 0
+  must_change: false
+  name: COLLECTOR_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
@@ -3274,6 +3286,18 @@ params:
   level: 0
   must_change: false
   name: SHARED_PORT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: ""
+  depends: 
+  - SHARED_PORT
+  description: Arguments to pass to the Shared Port daemon
+  kind: String
+  level: 0
+  must_change: false
+  name: SHARED_PORT_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
