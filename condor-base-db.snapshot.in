@@ -207,7 +207,7 @@ features:
     WANT_SUSPEND: "False"
     CONTINUE: "True"
     WANT_VACATE: "False"
-    STARTD_ATTRS: $(STARTD_ATTRS), DEDICATEDSCHEDULER
+    STARTD_ATTRS: ">= DEDICATEDSCHEDULER"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -296,7 +296,7 @@ features:
     CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
     BENCHMARKTIMER: (CurrentTime - LastBenchmark)
     WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
-    STARTD_ATTRS: "\"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+    STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
