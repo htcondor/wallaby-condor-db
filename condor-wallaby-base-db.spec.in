@@ -30,7 +30,12 @@ options for a condor pool
 <%= "%patch#{i} -p1" %><% end %>
 
 %build
+%if %{building_for_el5}
+db_ver=`cat DB_VERSION`
+sed "s/<.*db_version.*>/$db_ver/" condor-base-db.snapshot.in > condor-base-db.snapshot
+%else
 rake
+%endif
 
 %install
 rm -rf %{buildroot}
