@@ -9,7 +9,7 @@ features:
   - Axis2Home
   name: AviaryScheduler
   params: 
-    SCHEDD.PLUGINS: "$(SCHEDD.PLUGINS), $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+    SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
     SCHEDD.HTTP_PORT: "9090"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
@@ -141,7 +141,7 @@ features:
   - Collector
   name: ConsoleCollector
   params: 
-    COLLECTOR.PLUGINS: "$(COLLECTOR.PLUGINS), $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
+    COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
     QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
@@ -153,7 +153,7 @@ features:
 
   name: ConsoleExecuteNode
   params: 
-    STARTD.PLUGINS: "$(STARTD.PLUGINS), $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
+    STARTD.PLUGINS: ">= $(STARTD.PLUGINS), $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -164,7 +164,7 @@ features:
 
   name: ConsoleMaster
   params: 
-    MASTER.PLUGINS: "$(MASTER.PLUGINS), $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
+    MASTER.PLUGINS: ">= $(MASTER.PLUGINS), $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -175,7 +175,7 @@ features:
 
   name: ConsoleNegotiator
   params: 
-    NEGOTIATOR.PLUGINS: "$(NEGOTIATOR.PLUGINS), $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
+    NEGOTIATOR.PLUGINS: ">= $(NEGOTIATOR.PLUGINS), $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -186,7 +186,7 @@ features:
 
   name: ConsoleScheduler
   params: 
-    SCHEDD.PLUGINS: "$(SCHEDD.PLUGINS), $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
+    SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
     SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
