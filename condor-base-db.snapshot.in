@@ -1946,6 +1946,18 @@ params:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
+  default_val: "True"
+  depends: []
+
+  description: Determines if the Master process will use the condor_procd for managing process families
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: MASTER.USE_PROCD
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
   default_val: $(LOG)/.master_address
   depends: []
 
@@ -2782,6 +2794,18 @@ params:
   level: 0
   must_change: false
   name: REPLICATION_PORT
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: "False"
+  depends: []
+
+  description: Whether to restart the condor_procd on error
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: RESTART_PROCD_ON_ERROR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
