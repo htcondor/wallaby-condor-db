@@ -1,6 +1,5 @@
 require 'rake'
 require 'erb'
-require 'grit'
 
 PKG_RELEASE=ENV['PKG_RELEASE'] || 1
 

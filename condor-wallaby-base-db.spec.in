@@ -18,6 +18,9 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %endif
 Requires: wallaby-utils >= 0.10.7
 BuildRequires: ruby
+%if ! %{building_for_el5}
+BuildRequires: rubygem-rake
+%endif
 BuildArch: noarch
 
 %description
@@ -75,8 +78,15 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.15.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.16.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.17.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.18.wpatch
 
 %changelog
+* Fri Dec 9 2011 rrati <rrati@redhat> - 1.18-1
+- New params: MASTER.USE_PROCD, RESTART_PROCD_ON_ERROR, COLLECTOR_ARGS,
+              SHARED_PORT_ARGS
+- *_PLUGINS now allow values set on a local machine
+- Added build dep on rake
+
 * Thu Dec 1 2011 rrati <rrati@redhat> - 1.17-1
 - Added SCHEDD.SPOOL and SCHEDD.HISTORY params
 - Updated BaseHAScheduler to use new SCHEDD.* params
