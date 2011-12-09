@@ -62,6 +62,14 @@ end
 
 def commit_version
   new_version = pkg_version
+  # This is a hack.  We need to label the database version and generate
+  # the patch file, then re-label so we get the patch file in the label
+  patch_message = "generated database patch for #{new_version}"
+  sh "git tag v#{new_version}"
+  sh "bin/create-db-diffs.rb"
+  sh "git add #{db_patch_dir}/*"
+  sh "git commit -m '#{patch_message}' #{db_patch_dir}/*"
+  sh "git tag -d v#{new_version}"
   message = "bumping DB_VERSION from #{@old_version} to #{new_version}"
   sh "git commit -m '#{message}' #{db_version_file}"
   sh "git tag v#{new_version}"
