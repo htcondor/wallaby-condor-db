@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.17.wpatch
 
 %changelog
+* Fri Dec 02 2011 rrati <rrati@redhat> - 1.17-2
+- Rebuild with old packaging spec
+
 * Thu Dec 1 2011 rrati <rrati@redhat> - 1.17-1
 - Added SCHEDD.SPOOL and SCHEDD.HISTORY params
 - Updated BaseHAScheduler to use new SCHEDD.* params
