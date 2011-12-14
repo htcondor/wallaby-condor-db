@@ -818,6 +818,18 @@ params:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
+  default_val: ""
+  depends: []
+
+  description: Debug flags shared by all subsystems
+  kind: String
+  level: 0
+  must_change: false
+  name: ALL_DEBUG
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
   default_val: $(SBIN)/amazon_gahp
   depends: []
 
