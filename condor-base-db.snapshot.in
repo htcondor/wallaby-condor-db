@@ -631,7 +631,7 @@ features:
   name: PowerManagementSubnetManager
   params: 
     ROOSTER_MAX_UNHIBERNATE: 0
-    UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
+    UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
     DAEMON_LIST: ">= ROOSTER"
     ROOSTER_UNHIBERNATE: Offline && Unhibernate
     ROOSTER_INTERVAL: "300"
