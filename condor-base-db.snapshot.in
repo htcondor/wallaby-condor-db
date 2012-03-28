@@ -808,7 +808,6 @@ features:
     VM_NETWORKING: 0
     VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
     LIBVIRT_XML_SCRIPT: 0
-    VM_SCRIPT: $(SBIN)/condor_vm_xen.sh
     VM_GAHP_LOG: $(LOG)/VMGahpLog
     MAX_VM_GAHP_LOG: "1000000"
 groups: 
@@ -4157,7 +4156,7 @@ params:
   level: 0
   must_change: true
   name: VM_MEMORY
-  needs_restart: false
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4169,7 +4168,19 @@ params:
   level: 0
   must_change: true
   name: VM_NETWORKING
-  needs_restart: false
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The networking interface VM Universe jobs will use for bridge networking
+  kind: String
+  level: 0
+  must_change: true
+  name: VM_NETWORKING_BRIDGE_INTERFACE
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4181,7 +4192,7 @@ params:
   level: 0
   must_change: true
   name: VM_NETWORKING_DEFAULT_TYPE
-  needs_restart: false
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4193,19 +4204,7 @@ params:
   level: 0
   must_change: false
   name: VM_NETWORKING_TYPE
-  needs_restart: false
-- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  conflicts: []
-
-  default_val: $(SBIN)/condor_vm_xen.sh
-  depends: []
-
-  description: The location of the VM Universe control program
-  kind: String
-  level: 0
-  must_change: false
-  name: VM_SCRIPT
-  needs_restart: false
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4217,7 +4216,7 @@ params:
   level: 0
   must_change: true
   name: VM_TYPE
-  needs_restart: false
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4543,9 +4542,11 @@ subsystems:
   - CONSOLE_DEVICES
   - CONTINUE
   - KILL
+  - LIBVIRT_XML_SCRIPT
   - MAXJOBRETIREMENTTIME
   - MAX_STARTD_LOG
   - MAX_STARTER_LOG
+  - MAX_VM_GAHP_LOG
   - PERIODIC_CHECKPOINT
   - PREEMPT
   - QMF_BROKER_AUTH_MECH
@@ -4575,6 +4576,14 @@ subsystems:
   - TRIGGER_DATA_GETDATA_RECONFIG
   - TRIGGER_DATA_JOBLIST
   - UPDATE_INTERVAL
+  - VM_GAHP_LOG
+  - VM_GAHP_SERVER
+  - VM_MEMORY
+  - VM_NETWORKING
+  - VM_NETWORKING_BRIDGE_INTERFACE
+  - VM_NETWORKING_DEFAULT_TYPE
+  - VM_NETWORKING_TYPE
+  - VM_TYPE
   - WANT_SUSPEND
   - WANT_VACATE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
