@@ -1288,7 +1288,7 @@ params:
   level: 0
   must_change: true
   name: DAEMON_LIST
-  needs_restart: true
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
