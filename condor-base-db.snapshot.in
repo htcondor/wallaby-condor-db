@@ -3,6 +3,29 @@ features:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
+  depends: []
+
+  included: 
+  - Collector
+  - AviaryPublishingEnabled
+  name: AviaryLocator
+  params: 
+    AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+    AVIARY_LOCATOR_MISSED_UPDATES: "2"
+    COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
+  depends: []
+
+  included: []
+
+  name: AviaryPublishingEnabled
+  params: 
+    AVIARY_PUBLISH_LOCATION: "True"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
   depends: 
   - BaseScheduler
   included: 
@@ -11,6 +34,17 @@ features:
   params: 
     SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
     SCHEDD.HTTP_PORT: "9090"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
+  depends: []
+
+  included: 
+  - AviaryScheduler
+  - AviaryPublishingEnabled
+  name: AviarySchedulerPublisher
+  params: 
+    AVIARY_PUBLISH_INTERVAL: "10"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -639,6 +673,17 @@ features:
   depends: []
 
   included: 
+  - QueryServer
+  - AviaryPublishingEnabled
+  name: QueryServerPublisher
+  params: 
+    AVIARY_PUBLISH_INTERVAL: "10"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
+  depends: []
+
+  included: 
   - AviaryScheduler
   name: SSLEnabledAviaryScheduler
   params: 
@@ -873,6 +918,54 @@ params:
   must_change: false
   name: AMAZON_GAHP_LOG
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: "2"
+  depends: []
+
+  description: The number of updates an endpoint can miss before becoming a candidate for garbage collection from the available list
+  kind: string
+  level: 0
+  must_change: false
+  name: AVIARY_LOCATOR_MISSED_UPDATES
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: "20"
+  depends: []
+
+  description: The interval in seconds that the Aviary locator scans the known endpoints and marks them unresponsive or missing
+  kind: string
+  level: 0
+  must_change: false
+  name: AVIARY_LOCATOR_PRUNE_INTERVAL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: "10"
+  depends: []
+
+  description: The interval in seconds that the Aviary endpoints send their heartbeats
+  kind: string
+  level: 0
+  must_change: false
+  name: AVIARY_PUBLISH_INTERVAL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  conflicts: []
+
+  default_val: "False"
+  depends: []
+
+  description: Controls Aviary locator publishing
+  kind: string
+  level: 0
+  must_change: false
+  name: AVIARY_PUBLISH_LOCATION
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4203,6 +4296,9 @@ subsystems:
   params: 
   - ALLOW_READ
   - ALLOW_WRITE
+  - AVIARY_LOCATOR_MISSED_UPDATES
+  - AVIARY_LOCATOR_PRUNE_INTERVAL
+  - AVIARY_PUBLISH_LOCATION
   - COLLECTOR
   - COLLECTOR.PLUGINS
   - COLLECTOR_ADDRESS_FILE
@@ -4349,6 +4445,8 @@ subsystems:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: query_server
   params: 
+  - AVIARY_PUBLISH_INTERVAL
+  - AVIARY_PUBLISH_LOCATION
   - MAX_QUERY_SERVER_LOG
   - QUERY_SERVER
   - QUERY_SERVER.AVIARY_SSL
@@ -4391,6 +4489,8 @@ subsystems:
   params: 
   - ALLOW_NEGOTIATOR_SCHEDD
   - ALLOW_WRITE
+  - AVIARY_PUBLISH_INTERVAL
+  - AVIARY_PUBLISH_LOCATION
   - HISTORY
   - MAX_SCHEDD_LOG
   - MAX_SHADOW_LOG
