@@ -1,0 +1,973 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.20"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    SchedulerDedicatedPreemption: 
+      params: 
+        SCHEDD_PREEMPTION_RANK: "0"
+        SCHEDD_PREEMPTION_REQUIREMENTS: 0
+    VMUniverse: 
+      params: 
+        VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+        VM_MEMORY: $(DETECTED_MEMORY)
+        VM_GAHP_LOG: $(LOG)/VMGahpLog
+        MAX_VM_GAHP_LOG: "1000000"
+        VM_NETWORKING: 0
+        VM_TYPE: 0
+        VM_SCRIPT: $(SBIN)/condor_vm_xen.sh
+        LIBVIRT_XML_SCRIPT: 0
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.19"
+    QueryServer: 
+      included_features: 
+      - Axis2Home
+      depends: 
+      - Master
+      - JobQueueLocation
+      params: 
+        QUERY_SERVER_ARGS: -f
+        DAEMON_LIST: ">= QUERY_SERVER"
+        QUERY_SERVER.HISTORY_INTERVAL: "120"
+        QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
+        QUERY_SERVER: $(SBIN)/aviary_query_server
+        QUERY_SERVER.HTTP_PORT: "9091"
+        QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
+    ExecuteNode: 
+      params: 
+        MAXJOBRETIREMENTTIME: "0"
+        STARTER: $(SBIN)/condor_starter
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        DAEMON_LIST: ">= STARTD"
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD: $(SBIN)/condor_startd
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        STARTER_LIST: STARTER
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTD_LOG: $(LOG)/StartLog
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        CONSOLE_DEVICES: mouse, console
+        STARTD_DEBUG: ""
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        MAX_STARTD_LOG: "1000000"
+    JobServer: 
+      included_features: []
+
+      depends: 
+      - Master
+      - JobQueueLocation
+      - QMF
+      params: 
+        JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
+        JOB_SERVER: $(SBIN)/condor_job_server
+        DAEMON_LIST: ">= JOB_SERVER"
+        JOB_SERVER_LOG: $(LOG)/JobServerLog
+        DC_DAEMON_LIST: ">= JOB_SERVER"
+        QMF_PUBLISH_SUBMISSIONS: "FALSE"
+        JOB_SERVER_DEBUG: ""
+        MAX_JOB_SERVER_LOG: "1000000"
+    PowerManagementSubnetManager: 
+      params: 
+        ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
+        ROOSTER: $(LIBEXEC)/condor_rooster
+        DAEMON_LIST: ">= ROOSTER"
+        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+        ROOSTER_MAX_UNHIBERNATE: "0"
+        UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
+        ROOSTER_UNHIBERNATE: Offline && Unhibernate
+        ROOSTER_INTERVAL: "300"
+        ROOSTER_SUBNET_MASK: 0
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    VM_NETWORKING_DEFAULT_TYPE: 
+      requires_restart: false
+    VM_MEMORY: 
+      requires_restart: false
+    DAEMON_LIST: 
+      requires_restart: true
+    VM_NETWORKING_TYPE: 
+      requires_restart: false
+    VM_NETWORKING: 
+      requires_restart: false
+    VM_SCRIPT: 
+      visibility_level: 0
+      depends: []
+
+      conflicts: []
+
+      must_change: false
+      requires_restart: false
+      default: $(SBIN)/condor_vm_xen.sh
+      kind: String
+      description: The location of the VM Universe control program
+    VM_TYPE: 
+      requires_restart: false
+  subsystems: 
+    job_server: 
+      params: 
+      - HISTORY
+      - HISTORY_INTERVAL
+      - JOB_SERVER
+      - JOB_SERVER_ADDRESS_FILE
+      - JOB_SERVER_DEBUG
+      - JOB_SERVER_LOG
+      - MAX_JOB_SERVER_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - SPOOL
+    schedd: 
+      params: 
+      - ALLOW_NEGOTIATOR_SCHEDD
+      - ALLOW_WRITE
+      - HISTORY
+      - MAX_SCHEDD_LOG
+      - MAX_SHADOW_LOG
+      - MAX_STARTER_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_PUBLISH_SUBMISSIONS
+      - QUEUE_ALL_USERS_TRUSTED
+      - QUEUE_SUPER_USERS
+      - SCHEDD
+      - SCHEDD.PLUGINS
+      - SCHEDD_ADDRESS_FILE
+      - SCHEDD_DAEMON_AD_FILE
+      - SCHEDD_DEBUG
+      - SCHEDD_LOG
+      - SHADOW
+      - SHADOW_DEBUG
+      - SHADOW_LIST
+      - SHADOW_LOCK
+      - SHADOW_LOG
+      - SHADOW_SIZE_ESTIMATE
+      - STARTER_DEBUG
+      - STARTER_LOCAL
+      - STARTER_LOG
+      - START_LOCAL_UNIVERSE
+      - START_SCHEDULER_UNIVERSE
+    query_server: 
+      params: 
+      - HISTORY
+      - QUERY_SERVER
+      - QUERY_SERVER.HISTORY_INTERVAL
+      - QUERY_SERVER.HTTP_PORT
+      - QUERY_SERVER.QUERY_SERVER_DEBUG
+      - QUERY_SERVER.QUERY_SERVER_LOG
+      - QUERY_SERVER.SCHEDD_NAME
+      - QUERY_SERVER_ARGS
+      - SPOOL
+    startd: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - BENCHMARKTIMER
+      - CONSOLE_DEVICES
+      - CONTINUE
+      - KILL
+      - MAXJOBRETIREMENTTIME
+      - MAX_STARTD_LOG
+      - MAX_STARTER_LOG
+      - PERIODIC_CHECKPOINT
+      - PREEMPT
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - RUNBENCHMARKS
+      - START
+      - STARTD
+      - STARTD_ADDRESS_FILE
+      - STARTD_ATTRS
+      - STARTD_CRON_AUTOPUBLISH
+      - STARTD_CRON_NAME
+      - STARTD_DEBUG
+      - STARTD_JOB_EXPRS
+      - STARTD_LOG
+      - STARTER
+      - STARTER_DEBUG
+      - STARTER_LIST
+      - STARTER_LOG
+      - SUSPEND
+      - TRIGGER_DATA_GETDATA_EXECUTABLE
+      - TRIGGER_DATA_GETDATA_PERIOD
+      - TRIGGER_DATA_GETDATA_PREFIX
+      - TRIGGER_DATA_GETDATA_RECONFIG
+      - TRIGGER_DATA_JOBLIST
+      - UPDATE_INTERVAL
+      - WANT_SUSPEND
+      - WANT_VACATE
+    collector: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - COLLECTOR
+      - COLLECTOR.PLUGINS
+      - COLLECTOR_ADDRESS_FILE
+      - COLLECTOR_DEBUG
+      - COLLECTOR_HOST
+      - COLLECTOR_LOG
+      - FLOCK_COLLECTOR_HOSTS
+      - MAX_COLLECTOR_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_IGNORE_UPDATE_STARTD_AD
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    QueryServerPublisher: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - QueryServer
+        - AviaryPublishingEnabled
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_INTERVAL: "10"
+      - {}
+
+    SchedulerDedicatedPreemption: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD_PREEMPTION_REQUIREMENTS: 0
+        SCHEDD_PREEMPTION_RANK: 0
+      - {}
+
+    VMUniverse: 
+      modifyParams: 
+      - REPLACE
+      - VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+        VM_MEMORY: $(DETECTED_MEMORY)
+        VM_GAHP_LOG: $(LOG)/VMGahpLog
+        MAX_VM_GAHP_LOG: "1000000"
+        VM_NETWORKING: 0
+        VM_TYPE: 0
+        LIBVIRT_XML_SCRIPT: 0
+      - {}
+
+    BaseJobServer: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - JOB_SERVER.JOB_SERVER_DEBUG: ""
+        JOB_SERVER: $(SBIN)/condor_job_server
+        QMF_PUBLISH_SUBMISSIONS: "false"
+        MAX_JOB_SERVER_LOG: "1000000"
+      - {}
+
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.20
+      - {}
+
+    QueryServer: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - BaseQueryServer
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - DAEMON_LIST: ">= QUERY_SERVER"
+        QUERY_SERVER.HISTORY: $(QUERY_SERVER.SPOOL)/history
+        QUERY_SERVER.SPOOL: 0
+        DC_DAEMON_LIST: ">= QUERY_SERVER"
+        QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: $(LOG)/.query_server_address
+        QUERY_SERVER.HTTP_PORT: "9091"
+        QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
+      - {}
+
+    BaseQueryServer: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Axis2Home
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - QUERY_SERVER_ARGS: -f
+        QUERY_SERVER.HISTORY_INTERVAL: "120"
+        QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
+        QUERY_SERVER: $(SBIN)/aviary_query_server
+        MAX_QUERY_SERVER_LOG: "1000000"
+      - {}
+
+    ExecuteNode: 
+      modifyParams: 
+      - REPLACE
+      - MAXJOBRETIREMENTTIME: 0
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        STARTER: $(SBIN)/condor_starter
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        DAEMON_LIST: ">= STARTD"
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        STARTD: $(SBIN)/condor_startd
+        STARTER_LIST: STARTER
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTD_LOG: $(LOG)/StartLog
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        CONSOLE_DEVICES: mouse, console
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        STARTD_DEBUG: ""
+        MAX_STARTD_LOG: "1000000"
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+      - {}
+
+    JobServer: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - BaseJobServer
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - JOB_SERVER.HISTORY: $(JOB_SERVER.SPOOL)/history
+        DAEMON_LIST: ">= JOB_SERVER"
+        DC_DAEMON_LIST: ">= JOB_SERVER"
+        JOB_SERVER.JOB_SERVER_LOG: $(LOG)/JobServerLog
+        JOB_SERVER.SPOOL: 0
+        JOB_SERVER.JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
+      - {}
+
+    AviaryLocator: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+        - AviaryPublishingEnabled
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+        AVIARY_LOCATOR_MISSED_UPDATES: "2"
+      - {}
+
+    AviaryPublishingEnabled: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_LOCATION: "True"
+      - {}
+
+    PowerManagementSubnetManager: 
+      modifyParams: 
+      - REPLACE
+      - ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
+        ROOSTER: $(LIBEXEC)/condor_rooster
+        DAEMON_LIST: ">= ROOSTER"
+        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+        ROOSTER_MAX_UNHIBERNATE: 0
+        UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
+        ROOSTER_UNHIBERNATE: Offline && Unhibernate
+        ROOSTER_INTERVAL: "300"
+        ROOSTER_SUBNET_MASK: 0
+      - {}
+
+    AviarySchedulerPublisher: 
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - AviaryScheduler
+        - AviaryPublishingEnabled
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_INTERVAL: "10"
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    VM_NETWORKING_DEFAULT_TYPE: 
+      setRequiresRestart: true
+    VM_MEMORY: 
+      setRequiresRestart: true
+    JOB_SERVER.SCHEDD_NAME: 
+      setMustChange: true
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The name of the Scehduler that the Job Server is working with
+      setVisibilityLevel: 0
+      setDefault: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    JOB_SERVER.HISTORY: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - - JOB_SERVER.SPOOL
+      - {}
+
+      setDescription: The location of the historical jobs file used by the Job Server
+      setVisibilityLevel: 0
+      setDefault: $(JOB_SERVER.SPOOL)/history
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER.JOB_SERVER_DEBUG: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The level of debugging output the Job Server will produce in its log file
+      setVisibilityLevel: 0
+      setDefault: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    QUERY_SERVER.HISTORY: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - - QUERY_SERVER.SPOOL
+      - {}
+
+      setDescription: The location of the historical jobs file used by the Query Server
+      setVisibilityLevel: 0
+      setDefault: $(QUERY_SERVER.SPOOL)/history
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    DAEMON_LIST: 
+      setRequiresRestart: false
+    QUERY_SERVER.SPOOL: 
+      setMustChange: true
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the job queue file used by the Query Server
+      setVisibilityLevel: 0
+      setDefault: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    AVIARY_PUBLISH_INTERVAL: 
+      setMustChange: false
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The interval in seconds that the Aviary endpoints send their heartbeats
+      setVisibilityLevel: 0
+      setDefault: "10"
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    VM_NETWORKING_TYPE: 
+      setRequiresRestart: true
+    VM_NETWORKING: 
+      setRequiresRestart: true
+    AVIARY_LOCATOR_PRUNE_INTERVAL: 
+      setMustChange: false
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The interval in seconds that the Aviary locator scans the known endpoints and marks them unresponsive or missing
+      setVisibilityLevel: 0
+      setDefault: "20"
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    VM_TYPE: 
+      setRequiresRestart: true
+    QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Query Server will write its address information
+      setVisibilityLevel: 0
+      setDefault: $(LOG)/.query_server_address
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER.JOB_SERVER_LOG: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the Job Server log file
+      setVisibilityLevel: 0
+      setDefault: $(LOG)/JobServerLog
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+    MAX_QUERY_SERVER_LOG: 
+      setMustChange: false
+      setKind: Integer
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The maximum size of the Query Server daemon log
+      setVisibilityLevel: 0
+      setDefault: "1000000"
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER.JOB_SERVER_ADDRESS_FILE: 
+      setMustChange: false
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The file where the Job Server will store its address information
+      setVisibilityLevel: 0
+      setDefault: $(LOG)/.job_server_address
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    VM_NETWORKING_BRIDGE_INTERFACE: 
+      setMustChange: true
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The networking interface VM Universe jobs will use for bridge networking
+      setVisibilityLevel: 0
+      setDefault: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    AVIARY_PUBLISH_LOCATION: 
+      setMustChange: false
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: Controls Aviary locator publishing
+      setVisibilityLevel: 0
+      setDefault: "False"
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    JOB_SERVER.SPOOL: 
+      setMustChange: true
+      setKind: String
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The location of the job queue file used by the Job Server
+      setVisibilityLevel: 0
+      setDefault: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+    AVIARY_LOCATOR_MISSED_UPDATES: 
+      setMustChange: false
+      setKind: string
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDescription: The number of updates an endpoint can miss before becoming a candidate for garbage collection from the available list
+      setVisibilityLevel: 0
+      setDefault: "2"
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+  subsystems: 
+    job_server: 
+      modifyParams: 
+      - REPLACE
+      - - HISTORY_INTERVAL
+        - JOB_SERVER
+        - JOB_SERVER.HISTORY
+        - JOB_SERVER.JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER.JOB_SERVER_DEBUG
+        - JOB_SERVER.JOB_SERVER_LOG
+        - JOB_SERVER.SCHEDD_NAME
+        - JOB_SERVER.SPOOL
+        - JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER_DEBUG
+        - JOB_SERVER_LOG
+        - MAX_JOB_SERVER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+      - {}
+
+    schedd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR_SCHEDD
+        - ALLOW_WRITE
+        - AVIARY_PUBLISH_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - HISTORY
+        - MAX_SCHEDD_LOG
+        - MAX_SHADOW_LOG
+        - MAX_STARTER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+        - QUEUE_ALL_USERS_TRUSTED
+        - QUEUE_SUPER_USERS
+        - SCHEDD
+        - SCHEDD.AVIARY_SSL
+        - SCHEDD.AVIARY_SSL_CA_DIR
+        - SCHEDD.AVIARY_SSL_CA_FILE
+        - SCHEDD.AVIARY_SSL_SERVER_CERT
+        - SCHEDD.AVIARY_SSL_SERVER_KEY
+        - SCHEDD.HTTP_PORT
+        - SCHEDD.PLUGINS
+        - SCHEDD_ADDRESS_FILE
+        - SCHEDD_DAEMON_AD_FILE
+        - SCHEDD_DEBUG
+        - SCHEDD_LOG
+        - SHADOW
+        - SHADOW_DEBUG
+        - SHADOW_LIST
+        - SHADOW_LOCK
+        - SHADOW_LOG
+        - SHADOW_SIZE_ESTIMATE
+        - STARTER_DEBUG
+        - STARTER_LOCAL
+        - STARTER_LOG
+        - START_LOCAL_UNIVERSE
+        - START_SCHEDULER_UNIVERSE
+      - {}
+
+    query_server: 
+      modifyParams: 
+      - REPLACE
+      - - AVIARY_PUBLISH_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - MAX_QUERY_SERVER_LOG
+        - QUERY_SERVER
+        - QUERY_SERVER.AVIARY_SSL
+        - QUERY_SERVER.AVIARY_SSL_CA_DIR
+        - QUERY_SERVER.AVIARY_SSL_CA_FILE
+        - QUERY_SERVER.AVIARY_SSL_SERVER_CERT
+        - QUERY_SERVER.AVIARY_SSL_SERVER_KEY
+        - QUERY_SERVER.HISTORY
+        - QUERY_SERVER.HISTORY_INTERVAL
+        - QUERY_SERVER.HTTP_PORT
+        - QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE
+        - QUERY_SERVER.QUERY_SERVER_DEBUG
+        - QUERY_SERVER.QUERY_SERVER_LOG
+        - QUERY_SERVER.SCHEDD_NAME
+        - QUERY_SERVER.SPOOL
+        - QUERY_SERVER_ARGS
+        - WSFCPP_HOME
+      - {}
+
+    startd: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - BENCHMARKTIMER
+        - CONSOLE_DEVICES
+        - CONTINUE
+        - KILL
+        - LIBVIRT_XML_SCRIPT
+        - MAXJOBRETIREMENTTIME
+        - MAX_STARTD_LOG
+        - MAX_STARTER_LOG
+        - MAX_VM_GAHP_LOG
+        - PERIODIC_CHECKPOINT
+        - PREEMPT
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - RUNBENCHMARKS
+        - START
+        - STARTD
+        - STARTD_ADDRESS_FILE
+        - STARTD_ATTRS
+        - STARTD_CRON_AUTOPUBLISH
+        - STARTD_CRON_NAME
+        - STARTD_DEBUG
+        - STARTD_JOB_EXPRS
+        - STARTD_LOG
+        - STARTER
+        - STARTER_DEBUG
+        - STARTER_LIST
+        - STARTER_LOG
+        - SUSPEND
+        - TRIGGER_DATA_GETDATA_EXECUTABLE
+        - TRIGGER_DATA_GETDATA_PERIOD
+        - TRIGGER_DATA_GETDATA_PREFIX
+        - TRIGGER_DATA_GETDATA_RECONFIG
+        - TRIGGER_DATA_JOBLIST
+        - UPDATE_INTERVAL
+        - VM_GAHP_LOG
+        - VM_GAHP_SERVER
+        - VM_MEMORY
+        - VM_NETWORKING
+        - VM_NETWORKING_BRIDGE_INTERFACE
+        - VM_NETWORKING_DEFAULT_TYPE
+        - VM_NETWORKING_TYPE
+        - VM_TYPE
+        - WANT_SUSPEND
+        - WANT_VACATE
+      - {}
+
+    collector: 
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_READ
+        - ALLOW_WRITE
+        - AVIARY_LOCATOR_MISSED_UPDATES
+        - AVIARY_LOCATOR_PRUNE_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - COLLECTOR
+        - COLLECTOR.PLUGINS
+        - COLLECTOR_ADDRESS_FILE
+        - COLLECTOR_DEBUG
+        - COLLECTOR_HOST
+        - COLLECTOR_LOG
+        - FLOCK_COLLECTOR_HOSTS
+        - MAX_COLLECTOR_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_IGNORE_UPDATE_STARTD_AD
+      - {}
+
