@@ -12,7 +12,7 @@ features:
   params: 
     AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
     AVIARY_LOCATOR_MISSED_UPDATES: "2"
-    COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -32,7 +32,7 @@ features:
   - Axis2Home
   name: AviaryScheduler
   params: 
-    SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+    SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
     SCHEDD.HTTP_PORT: "9090"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
@@ -203,7 +203,7 @@ features:
   name: ConsoleCollector
   params: 
     QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
-    COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
+    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -214,7 +214,7 @@ features:
 
   name: ConsoleExecuteNode
   params: 
-    STARTD.PLUGINS: ">= $(STARTD.PLUGINS), $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
+    STARTD.PLUGINS: ">= $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -225,7 +225,7 @@ features:
 
   name: ConsoleMaster
   params: 
-    MASTER.PLUGINS: ">= $(MASTER.PLUGINS), $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
+    MASTER.PLUGINS: ">= $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -236,7 +236,7 @@ features:
 
   name: ConsoleNegotiator
   params: 
-    NEGOTIATOR.PLUGINS: ">= $(NEGOTIATOR.PLUGINS), $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
+    NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -247,7 +247,7 @@ features:
 
   name: ConsoleScheduler
   params: 
-    SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
+    SCHEDD.PLUGINS: ">= $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
     SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
