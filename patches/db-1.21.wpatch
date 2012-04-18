@@ -1,0 +1,1583 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.21"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    ConsoleScheduler: 
+      annotation: 
+      params: 
+        SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
+        SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
+    DedicatedScheduler: 
+      annotation: 
+    EC2: 
+      annotation: 
+    ExecuteNodeTriggerData: 
+      annotation: 
+    SSLEnabledAviaryScheduler: 
+      annotation: 
+    SSLEnabledQueryServer: 
+      annotation: 
+    SchedulerDedicatedPreemption: 
+      annotation: 
+    BaseJobExecuter: 
+      annotation: 
+    EC2Enhanced: 
+      annotation: 
+    LowLatency: 
+      annotation: 
+    PowerManagementCollector: 
+      annotation: 
+    SharedFileSystem: 
+      annotation: 
+    BaseQueryServer: 
+      annotation: 
+    ConsoleExecuteNode: 
+      annotation: 
+      params: 
+        STARTD.PLUGINS: ">= $(STARTD.PLUGINS), $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
+    Negotiator: 
+      annotation: 
+      depends: 
+      - Master
+      - NodeAccess
+    SharedPort: 
+      annotation: 
+    HACentralManager: 
+      annotation: 
+    AviaryPublishingEnabled: 
+      annotation: 
+    AviarySchedulerPublisher: 
+      annotation: 
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: "1.20"
+    AviaryLocator: 
+      annotation: 
+      params: 
+        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+        COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+        AVIARY_LOCATOR_MISSED_UPDATES: "2"
+    BaseHAScheduler: 
+      annotation: 
+    ConsoleMaster: 
+      annotation: 
+      params: 
+        MASTER.PLUGINS: ">= $(MASTER.PLUGINS), $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
+      depends: 
+      - Master
+      - QMF
+    ExecuteNode: 
+      annotation: 
+    SchedulerInDL: 
+      annotation: 
+    Axis2Home: 
+      annotation: 
+    BaseScheduler: 
+      annotation: 
+      depends: 
+      - Master
+      - NodeAccess
+    CommonUIDDomain: 
+      annotation: 
+    DynamicSlots: 
+      annotation: 
+    HAScheduler: 
+      annotation: 
+    KeyboardMonitor: 
+      annotation: 
+    SharedJobQueueLocation: 
+      annotation: 
+    VMUniverse: 
+      annotation: 
+    CentralManager: 
+      annotation: 
+    Collector: 
+      annotation: 
+      depends: 
+      - Master
+      - NodeAccess
+    JobRouter: 
+      annotation: 
+    JobServer: 
+      annotation: 
+    NodeAccess: 
+      annotation: 
+    QueryServerPublisher: 
+      annotation: 
+    AviaryScheduler: 
+      annotation: 
+      params: 
+        SCHEDD.HTTP_PORT: "9090"
+        SCHEDD.PLUGINS: ">= $(SCHEDD.PLUGINS), $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+    BaseJobServer: 
+      annotation: 
+    JobHooks: 
+      annotation: 
+    Master: 
+      annotation: 
+    PowerManagementSubnetManager: 
+      annotation: 
+    Scheduler: 
+      annotation: 
+    TriggerService: 
+      annotation: 
+      depends: 
+      - Master
+      - QMF
+    ConcurrencyLimits: 
+      annotation: 
+    ConsoleCollector: 
+      annotation: 
+      params: 
+        QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+        COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
+    ConsoleNegotiator: 
+      annotation: 
+      params: 
+        NEGOTIATOR.PLUGINS: ">= $(NEGOTIATOR.PLUGINS), $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
+    PowerManagementNode: 
+      annotation: 
+    QMF: 
+      annotation: 
+    QueryServer: 
+      annotation: 
+    DedicatedResource: 
+      annotation: 
+    ExecuteNodeDedicatedPreemption: 
+      annotation: 
+    JobQueueLocation: 
+      annotation: 
+  groups: 
+    +++DEFAULT: 
+      annotation: 
+  nodes: {}
+
+  params: 
+    STARTD_CRON_AUTOPUBLISH: 
+      annotation: 
+    UNHIBERNATE: 
+      annotation: 
+    JOB_SERVER_DEBUG: 
+      annotation: 
+    SCHEDD_ADDRESS_FILE: 
+      annotation: 
+    QMF_DELETE_ON_SHUTDOWN: 
+      annotation: 
+    VM_GAHP_SERVER: 
+      annotation: 
+    MASTER_HA_LIST: 
+      annotation: 
+    COLLECTOR_ADDRESS_FILE: 
+      annotation: 
+    ROOSTER_SUBNET_MASK: 
+      annotation: 
+    DEDICATEDSCHEDULER: 
+      annotation: 
+    VM_NETWORKING_TYPE: 
+      annotation: 
+    GRIDMANAGER_JOB_PROBE_INTERVAL: 
+      annotation: 
+    MAXJOBRETIREMENTTIME: 
+      annotation: 
+    HAD: 
+      annotation: 
+    RUNBENCHMARKS: 
+      annotation: 
+    CONDOR_DEVELOPERS: 
+      annotation: 
+    NEGOTIATOR_ADDRESS_FILE: 
+      annotation: 
+    JOB_HOOKS_IP: 
+      annotation: 
+    ROOSTER_INTERVAL: 
+      annotation: 
+    MAX_NEGOTIATOR_LOG: 
+      annotation: 
+    TRIGGER_DATA_GETDATA_RECONFIG: 
+      annotation: 
+    JOB_HOOKS_LOG: 
+      annotation: 
+    UNUSED_CLAIM_TIMEOUT: 
+      annotation: 
+    WANT_SUSPEND: 
+      annotation: 
+    RESTART_PROCD_ON_ERROR: 
+      annotation: 
+    CONTINUE: 
+      annotation: 
+    HIBERNATE_CHECK_INTERVAL: 
+      annotation: 
+    JOB_SERVER.JOB_SERVER_ADDRESS_FILE: 
+      annotation: 
+    REPLICATION_ARGS: 
+      annotation: 
+    NEGOTIATOR_LOG: 
+      annotation: 
+    QMF_BROKER_USERNAME: 
+      annotation: 
+    TRANSFERER_LOG: 
+      annotation: 
+    SHADOW_DEBUG: 
+      annotation: 
+    QUERY_SERVER.QUERY_SERVER_LOG: 
+      annotation: 
+    SCHEDD: 
+      annotation: 
+    HA_LOCK_HOLD_TIME: 
+      annotation: 
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      annotation: 
+    ROOSTER: 
+      annotation: 
+    SHARED_PORT: 
+      annotation: 
+    HISTORY_INTERVAL: 
+      annotation: 
+    MAX_NEGOTIATOR_MATCH_LOG: 
+      annotation: 
+    SCHEDD_PREEMPTION_RANK: 
+      annotation: 
+    QUEUE_SUPER_USERS: 
+      annotation: 
+    START: 
+      annotation: 
+    MASTER: 
+      annotation: 
+    JOB_ROUTER_DEFAULTS: 
+      annotation: 
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      annotation: 
+    JOB_SERVER_ADDRESS_FILE: 
+      annotation: 
+    QUEUE_ALL_USERS_TRUSTED: 
+      annotation: 
+    HAD_USE_PRIMARY: 
+      annotation: 
+    MAX_SHADOW_LOG: 
+      annotation: 
+    MAX_HISTORY_ROTATIONS: 
+      annotation: 
+    NEED_SET_EC2E_ROUTES: 
+      annotation: 
+    VM_GAHP_LOG: 
+      annotation: 
+    HIBERNATE: 
+      annotation: 
+    SUSPEND: 
+      annotation: 
+    STARTER_LIST: 
+      annotation: 
+    STARTER_LOCAL: 
+      annotation: 
+    BENCHMARKTIMER: 
+      annotation: 
+    NEGOTIATOR_MATCH_LOG: 
+      annotation: 
+    QMF_BROKER_PASSWORD_FILE: 
+      annotation: 
+    QUERY_SERVER.HTTP_PORT: 
+      annotation: 
+    QUERY_SERVER.AVIARY_SSL_CA_DIR: 
+      annotation: 
+    MAX_REPLICATION_LOG: 
+      annotation: 
+    COLLECTOR_ARGS: 
+      annotation: 
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      annotation: 
+    TRIGGERD: 
+      annotation: 
+    KBDD: 
+      annotation: 
+    KILL: 
+      annotation: 
+    MAX_TRIGGERD_LOG: 
+      annotation: 
+    MAX_JOB_SERVER_LOG: 
+      annotation: 
+    SCHEDD.HTTP_PORT: 
+      annotation: 
+    AVIARY_PUBLISH_INTERVAL: 
+      annotation: 
+    SCHEDD_PREEMPTION_REQUIREMENTS: 
+      annotation: 
+    QUERY_SERVER.HISTORY: 
+      annotation: 
+    VM_NETWORKING_BRIDGE_INTERFACE: 
+      annotation: 
+    REPLICATION_INTERVAL: 
+      annotation: 
+    EC2_GAHP_LOG: 
+      annotation: 
+    CAROD_LOG: 
+      annotation: 
+    STATE_FILE: 
+      annotation: 
+    JOB_SERVER.JOB_SERVER_DEBUG: 
+      annotation: 
+    SCHEDD_HOST: 
+      annotation: 
+    SCHEDD.HISTORY: 
+      annotation: 
+    CAROD_BROKER_IP: 
+      annotation: 
+    NEGOTIATOR_PRE_JOB_RANK: 
+      annotation: 
+    KBDD_ADDRESS_FILE: 
+      annotation: 
+    REPLICATION_LOG: 
+      annotation: 
+    UID_DOMAIN: 
+      annotation: 
+    SCHEDD_LOG: 
+      annotation: 
+    SCHEDD_DAEMON_AD_FILE: 
+      annotation: 
+    JOB_SERVER: 
+      annotation: 
+    ALLOW_ADMINISTRATOR: 
+      annotation: 
+    SEC_DEFAULT_INTEGRITY: 
+      annotation: 
+    REPLICATION_LIST: 
+      annotation: 
+    MASTER_HAD_BACKOFF_CONSTANT: 
+      annotation: 
+    EC2_GAHP: 
+      annotation: 
+    SHADOW_LOCK: 
+      annotation: 
+    MAX_TRANSFERER_LIFETIME: 
+      annotation: 
+    SCHEDD.AVIARY_SSL_CA_DIR: 
+      annotation: 
+    DAEMON_SOCKET_DIR: 
+      annotation: 
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      annotation: 
+    TRIGGERD_ADDRESS_FILE: 
+      annotation: 
+    STARTER_LOG: 
+      annotation: 
+    QMF_PUBLISH_SUBMISSIONS: 
+      annotation: 
+    RANK_FACTOR: 
+      annotation: 
+    START_LOCAL_UNIVERSE: 
+      annotation: 
+    SCHEDD.AVIARY_SSL: 
+      annotation: 
+    JOB_ROUTER_POLLING_PERIOD: 
+      annotation: 
+    NEGOTIATOR: 
+      annotation: 
+    COLLECTOR_NAME: 
+      annotation: 
+    TimeToWait: 
+      annotation: 
+    AVIARY_PUBLISH_LOCATION: 
+      annotation: 
+    JOB_ROUTER: 
+      annotation: 
+    MAX_HAD_LOG: 
+      annotation: 
+    CONCURRENCY_LIMIT_DEFAULT: 
+      annotation: 
+    SEC_DEFAULT_AUTHENTICATION: 
+      annotation: 
+    HAD_PORT: 
+      annotation: 
+    AVIARY_LOCATOR_PRUNE_INTERVAL: 
+      annotation: 
+    STARTD_JOB_EXPRS: 
+      annotation: 
+    SCHEDD.QMF_STOREFILE: 
+      annotation: 
+    STARTD_DEBUG: 
+      annotation: 
+    QUERY_SERVER.AVIARY_SSL_CA_FILE: 
+      annotation: 
+    TRIGGERD_LOG: 
+      annotation: 
+    WSFCPP_HOME: 
+      annotation: 
+    TRIGGERD.QMF_STOREFILE: 
+      annotation: 
+    CAROD_LEASE_CHECK_INTERVAL: 
+      annotation: 
+    WALLABY_FORCE_RESTART: 
+      annotation: 
+    TRIGGER_DATA_JOBLIST: 
+      annotation: 
+    QUERY_SERVER: 
+      annotation: 
+    ROOSTER_MAX_UNHIBERNATE: 
+      annotation: 
+    QUERY_SERVER.AVIARY_SSL: 
+      annotation: 
+    CAROD_PORT: 
+      annotation: 
+    QMF_BROKER_HOST: 
+      annotation: 
+    HAD_ARGS: 
+      annotation: 
+    STARTD_ATTRS: 
+      annotation: 
+    AMAZON_GAHP_LOG: 
+      annotation: 
+    PREEMPTION_REQUIREMENTS: 
+      annotation: 
+    COLLECTOR_DEBUG: 
+      annotation: 
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      annotation: 
+    SHADOW: 
+      annotation: 
+    JOB_SERVER_LOG: 
+      annotation: 
+    MASTER_ADDRESS_FILE: 
+      annotation: 
+    JOB_ROUTER_ADDRESS_FILE: 
+      annotation: 
+    KBDD_DEBUG: 
+      annotation: 
+    MAX_STARTER_LOG: 
+      annotation: 
+    VALID_SPOOL_FILES: 
+      annotation: 
+    QUERY_SERVER.SCHEDD_NAME: 
+      annotation: 
+    REPLICATION_PORT: 
+      annotation: 
+    EC2E_ATTRS_TO_COPY: 
+      annotation: 
+    CAROD_IP: 
+      annotation: 
+    SLOT_TYPE_1: 
+      annotation: 
+    HAD_CONNECTION_TIMEOUT: 
+      annotation: 
+    SCHEDD_DEBUG: 
+      annotation: 
+    DEDICATED_SCHEDULER_USE_FIFO: 
+      annotation: 
+    STARTER_DEBUG: 
+      annotation: 
+    QMF_IGNORE_UPDATE_STARTD_AD: 
+      annotation: 
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      annotation: 
+    NEGOTIATOR_DEBUG: 
+      annotation: 
+    JOB_SERVER.SPOOL: 
+      annotation: 
+    MAX_JOB_HOOKS_LOG: 
+      annotation: 
+    JOB_ROUTER_HOOK_KEYWORD: 
+      annotation: 
+    SHARED_PORT_DEBUG: 
+      annotation: 
+    SPOOL: 
+      annotation: 
+    SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      annotation: 
+    EC2E_HOOK_JOB_EXIT: 
+      annotation: 
+    CAROD_LEASE_TIME: 
+      annotation: 
+    KBDD_LOG: 
+      annotation: 
+    HA_LOCK_URL: 
+      annotation: 
+    HAD_USE_REPLICATION: 
+      annotation: 
+    ROOSTER_WAKEUP_CMD: 
+      annotation: 
+    TRIGGER_DATA_GETDATA_PREFIX: 
+      annotation: 
+    ENABLE_ABSENT_NODES_DETECTION: 
+      annotation: 
+    STARTD: 
+      annotation: 
+    VM_NETWORKING_DEFAULT_TYPE: 
+      annotation: 
+    FETCHWORKDELAY: 
+      annotation: 
+    QUERY_SERVER_ARGS: 
+      annotation: 
+    QMF_BROKER_PORT: 
+      annotation: 
+    STARTD_ADDRESS_FILE: 
+      annotation: 
+    START_SCHEDULER_UNIVERSE: 
+      annotation: 
+    MAX_QUERY_SERVER_LOG: 
+      annotation: 
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      annotation: 
+    LIBVIRT_XML_SCRIPT: 
+      annotation: 
+    TRIGGERD_DEFAULT_EVAL_PERIOD: 
+      annotation: 
+    SEC_DEFAULT_CRYPTO_METHODS: 
+      annotation: 
+    SCHEDD.AVIARY_SSL_SERVER_KEY: 
+      annotation: 
+    FLOCK_NEGOTIATOR_HOSTS: 
+      annotation: 
+    WALLABY_FORCE_CONFIG_PULL: 
+      annotation: 
+    JOB_SERVER.HISTORY: 
+      annotation: 
+    SCHEDD.AVIARY_SSL_SERVER_CERT: 
+      annotation: 
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      annotation: 
+    TRIGGER_DATA_GETDATA_PERIOD: 
+      annotation: 
+    EC2E_HOOK_TRANSLATE_JOB: 
+      annotation: 
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      annotation: 
+    AMAZON_GAHP: 
+      annotation: 
+    PREEMPTION_RANK: 
+      annotation: 
+    CAROD_BROKER_QUEUE: 
+      annotation: 
+    MASTER.USE_PROCD: 
+      annotation: 
+    STARTD.PLUGINS: 
+      annotation: 
+    HISTORY: 
+      annotation: 
+    SCHEDD.AVIARY_SSL_CA_FILE: 
+      annotation: 
+    MAX_CAROD_LOG: 
+      annotation: 
+    USE_SHARED_PORT: 
+      annotation: 
+    NEGOTIATOR.PLUGINS: 
+      annotation: 
+    CONSOLE_DEVICES: 
+      annotation: 
+    OFFLINE_LOG: 
+      annotation: 
+    QMF_BROKER_AUTH_MECH: 
+      annotation: 
+    MAX_VM_GAHP_LOG: 
+      annotation: 
+    MAX_STARTD_LOG: 
+      annotation: 
+    ALLOW_READ: 
+      annotation: 
+    TRIGGER_DATA_GETDATA_EXECUTABLE: 
+      annotation: 
+    SHADOW_SIZE_ESTIMATE: 
+      annotation: 
+    VM_MEMORY: 
+      annotation: 
+    QUERY_SERVER.SPOOL: 
+      annotation: 
+    DC_DAEMON_LIST: 
+      annotation: 
+    ALLOW_NEGOTIATOR_SCHEDD: 
+      annotation: 
+    QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: 
+      annotation: 
+    STARTD_LOG: 
+      annotation: 
+    CONDOR_HOST: 
+      annotation: 
+    ALLOW_NEGOTIATOR: 
+      annotation: 
+    COLLECTOR_HOST: 
+      annotation: 
+    HAD_LOG: 
+      annotation: 
+    COLLECTOR_LOG: 
+      annotation: 
+    FLOCK_COLLECTOR_HOSTS: 
+      annotation: 
+    STARTER: 
+      annotation: 
+    SCHEDD_NAME: 
+      annotation: 
+    COLLECTOR.PLUGINS: 
+      annotation: 
+    FILESYSTEM_DOMAIN: 
+      annotation: 
+    CAROD_QUEUED_CONNECTIONS: 
+      annotation: 
+    MAX_KBDD_LOG: 
+      annotation: 
+    MAX_SCHEDD_LOG: 
+      annotation: 
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      annotation: 
+    BaseDBVersion: 
+      annotation: 
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      annotation: 
+    XEN_BOOTLOADER: 
+      annotation: 
+    CONDOR_DEVELOPERS_COLLECTOR: 
+      annotation: 
+    JOB_ROUTER_DEBUG: 
+      annotation: 
+    JOB_HOOKS_PORT: 
+      annotation: 
+    MASTER_NEGOTIATOR_CONTROLLER: 
+      annotation: 
+    RANK: 
+      annotation: 
+    NUM_SLOTS_TYPE_1: 
+      annotation: 
+    SEC_DEFAULT_ENCRYPTION: 
+      annotation: 
+    SHARED_PORT_ARGS: 
+      annotation: 
+    SCHEDD.SPOOL: 
+      annotation: 
+    UPDATE_INTERVAL: 
+      annotation: 
+    DATA: 
+      annotation: 
+    MAX_JOB_ROUTER_LOG: 
+      annotation: 
+    EC2E_HOOK_JOB_CLEANUP: 
+      annotation: 
+    QUERY_SERVER.QUERY_SERVER_DEBUG: 
+      annotation: 
+    SHADOW_LOG: 
+      annotation: 
+    STARTER_UPDATE_INTERVAL: 
+      annotation: 
+    WANT_VACATE: 
+      annotation: 
+    QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 
+      annotation: 
+    JOB_ROUTER_ENTRIES: 
+      annotation: 
+    JOB_SERVER.JOB_SERVER_LOG: 
+      annotation: 
+    CAROD_BROKER_PORT: 
+      annotation: 
+    VM_NETWORKING: 
+      annotation: 
+    ROOSTER_UNHIBERNATE_RANK: 
+      annotation: 
+    CAROD: 
+      annotation: 
+    MAX_COLLECTOR_LOG: 
+      annotation: 
+    ALL_DEBUG: 
+      annotation: 
+    REPLICATION: 
+      annotation: 
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      annotation: 
+    STARTD_CRON_NAME: 
+      annotation: 
+    ShouldHibernate: 
+      annotation: 
+    ALLOW_WRITE: 
+      annotation: 
+    NUM_SLOTS: 
+      annotation: 
+    QUERY_SERVER.HISTORY_INTERVAL: 
+      annotation: 
+    DAEMON_LIST: 
+      annotation: 
+    SCHEDD.PLUGINS: 
+      annotation: 
+    ROOSTER_UNHIBERNATE: 
+      annotation: 
+    NEGOTIATOR_INTERVAL: 
+      annotation: 
+    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 
+      annotation: 
+    AVIARY_LOCATOR_MISSED_UPDATES: 
+      annotation: 
+    VM_TYPE: 
+      annotation: 
+    JOB_ROUTER_LOG: 
+      annotation: 
+    JOB_SERVER.SCHEDD_NAME: 
+      annotation: 
+    PREEMPT: 
+      annotation: 
+    MASTER.PLUGINS: 
+      annotation: 
+    SEC_DEFAULT_NEGOTIATION: 
+      annotation: 
+    SHADOW_LIST: 
+      annotation: 
+    SLOT_TYPE_1_PARTITIONABLE: 
+      annotation: 
+    HA_POLL_PERIOD: 
+      annotation: 
+    COLLECTOR: 
+      annotation: 
+    HAD_UPDATE_INTERVAL: 
+      annotation: 
+    STARTD_JOB_HOOK_KEYWORD: 
+      annotation: 
+    TRIGGERD_QUERY_COLLECTOR: 
+      annotation: 
+    PERIODIC_CHECKPOINT: 
+      annotation: 
+    HAD_LIST: 
+      annotation: 
+    TRIGGERD.QMF_UPDATE_INTERVAL: 
+      annotation: 
+  subsystems: 
+    startd: 
+      annotation: 
+    ll_daemon: 
+      annotation: 
+    negotiator: 
+      annotation: 
+    job_router: 
+      annotation: 
+    kbdd: 
+      annotation: 
+    master: 
+      annotation: 
+    replication: 
+      annotation: 
+    transferer: 
+      annotation: 
+    query_server: 
+      annotation: 
+    schedd: 
+      annotation: 
+    triggerd: 
+      annotation: 
+    had: 
+      annotation: 
+    rooster: 
+      annotation: 
+    collector: 
+      annotation: 
+    job_server: 
+      annotation: 
+    shared_port: 
+      annotation: 
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    ConsoleScheduler: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.PLUGINS: ">= $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
+        SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
+      - {}
+
+      setAnnotation: Enables QMF publishing of scheduler data
+    DedicatedScheduler: 
+      setAnnotation: Configures a scheduler as a dedicated scheduler
+    EC2: 
+      setAnnotation: Enables running ec2 jobs on an execute node
+    ExecuteNodeTriggerData: 
+      setAnnotation: Enables publishing execute node data used by the trigger service
+    SSLEnabledAviaryScheduler: 
+      setAnnotation: Enables SSL security for the aviary scheduler
+    SSLEnabledQueryServer: 
+      setAnnotation: Enables SSL security for the query server
+    SchedulerDedicatedPreemption: 
+      setAnnotation: Enables preemption for a dedicated scheduler
+    BaseJobExecuter: 
+      setAnnotation: A non-functional base for executing jobs.  This needs further configuration and is not meant to be used by itself
+    EC2Enhanced: 
+      setAnnotation: Enables routing ec2 enhanced jobs on a job router
+    LowLatency: 
+      setAnnotation: Enables low-latency scheduling for an execute node
+    PowerManagementCollector: 
+      setAnnotation: Enables power management on the collector
+    SharedFileSystem: 
+      setAnnotation: Sets the filesystem domain
+    BaseQueryServer: 
+      setAnnotation: A non-functional base for the query server.  This needs furher configuration and is not meant to be used by itself
+    ConsoleExecuteNode: 
+      modifyParams: 
+      - REPLACE
+      - STARTD.PLUGINS: ">= $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
+      - {}
+
+      setAnnotation: Enables QMF publishing of startd data
+    Negotiator: 
+      setAnnotation: Enables negotiator functionality
+      modifyDepends: 
+      - REPLACE
+      - - NodeAccess
+        - Master
+      - {}
+
+    SharedPort: 
+      setAnnotation: Enables shared port
+    HACentralManager: 
+      setAnnotation: Enables high availability for the central manager
+    AviaryPublishingEnabled: 
+      setAnnotation: Enables publishing aviary locator information
+    AviarySchedulerPublisher: 
+      setAnnotation: Enables publishing aviary locator data for the Aviary Scheduler
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.21
+      - {}
+
+    AviaryLocator: 
+      modifyParams: 
+      - REPLACE
+      - AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+        COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+        AVIARY_LOCATOR_MISSED_UPDATES: "2"
+      - {}
+
+      setAnnotation: Collector additions to provide the aviary locator
+    BaseHAScheduler: 
+      setAnnotation: A non-functional base for an highly available scheduler.  This needs further configuration and is not meant to be used by itself
+    ConsoleMaster: 
+      modifyParams: 
+      - REPLACE
+      - MASTER.PLUGINS: ">= $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
+      - {}
+
+      setAnnotation: Enables QMF publishing of master data
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - Master
+      - {}
+
+    ExecuteNode: 
+      setAnnotation: Enables running jobs
+    SchedulerInDL: 
+      setAnnotation: Adds the scheduler to the list of daemons to run.  This is not intended to be used alone, but as a part of other features.
+    Axis2Home: 
+      setAnnotation: The Axis2 configuration file
+    BaseScheduler: 
+      setAnnotation: A non-functional base for the scheduler.  This needs furher configuration and is not meant to be used by itself
+      modifyDepends: 
+      - REPLACE
+      - - NodeAccess
+        - Master
+      - {}
+
+    CommonUIDDomain: 
+      setAnnotation: Sets the UID domain
+    DynamicSlots: 
+      setAnnotation: Enables dynamic slots for an execute node
+    HAScheduler: 
+      setAnnotation: Enables high availability for a scheduler
+    KeyboardMonitor: 
+      setAnnotation: Enables keyboard monitoring
+    SharedJobQueueLocation: 
+      setAnnotation: The location on a shared filesystem of the job queue used by the schedd.
+    VMUniverse: 
+      setAnnotation: Enables the vm universe on an execute node
+    CentralManager: 
+      setAnnotation: A set of features that comprise a central manager
+    Collector: 
+      setAnnotation: Enables collector functionality
+      modifyDepends: 
+      - REPLACE
+      - - NodeAccess
+        - Master
+      - {}
+
+    JobRouter: 
+      setAnnotation: Enables a job router
+    JobServer: 
+      setAnnotation: Enables a job server
+    NodeAccess: 
+      setAnnotation: Configures read/write access to the node
+    QueryServerPublisher: 
+      setAnnotation: Enables publishing aviary locator data for the query server
+    AviaryScheduler: 
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.HTTP_PORT: "9090"
+        SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+      - {}
+
+      setAnnotation: Scheduler additions to provide the Aviary Scheduler
+    BaseJobServer: 
+      setAnnotation: A non-functional base for the job server.  This needs furher configuration and is not meant to be used by itself
+    JobHooks: 
+      setAnnotation: Configures startd job hooks on an execute node
+    Master: 
+      setAnnotation: Enables master functionality
+    PowerManagementSubnetManager: 
+      setAnnotation: Enables power management wake up for a subnet
+    Scheduler: 
+      setAnnotation: Enables job scheduling
+    TriggerService: 
+      setAnnotation: Enables event triggers over QMF
+      modifyDepends: 
+      - REPLACE
+      - - QMF
+        - Master
+      - {}
+
+    ConcurrencyLimits: 
+      setAnnotation: Enables concurrency limits in the negotiator
+    ConsoleCollector: 
+      modifyParams: 
+      - REPLACE
+      - QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+        COLLECTOR.PLUGINS: ">= $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
+      - {}
+
+      setAnnotation: Enables QMF publishing of collector data
+    ConsoleNegotiator: 
+      modifyParams: 
+      - REPLACE
+      - NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
+      - {}
+
+      setAnnotation: Enables QMF publishing of negotiator data
+    PowerManagementNode: 
+      setAnnotation: Enables power management for an execute node
+    QMF: 
+      setAnnotation: QMF related parameters
+    QueryServer: 
+      setAnnotation: Enables query server functionality
+    DedicatedResource: 
+      setAnnotation: Configures an exceute node as a dedicated resource
+    ExecuteNodeDedicatedPreemption: 
+      setAnnotation: Enables preemption for an execute node that is a dedicated resource
+    JobQueueLocation: 
+      setAnnotation: The location of the job queue used by the scheduler
+  groups: 
+    +++SKEL: 
+      modifyFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - {}
+
+      - {}
+
+      setAnnotation: The skeleton group
+    +++DEFAULT: 
+      setAnnotation: The default group
+  nodes: {}
+
+  params: 
+    STARTD_CRON_AUTOPUBLISH: 
+      setAnnotation: ""
+    UNHIBERNATE: 
+      setAnnotation: ""
+    JOB_SERVER_DEBUG: 
+      setAnnotation: ""
+    SCHEDD_ADDRESS_FILE: 
+      setAnnotation: ""
+    QMF_DELETE_ON_SHUTDOWN: 
+      setAnnotation: ""
+    VM_GAHP_SERVER: 
+      setAnnotation: ""
+    MASTER_HA_LIST: 
+      setAnnotation: ""
+    COLLECTOR_ADDRESS_FILE: 
+      setAnnotation: ""
+    ROOSTER_SUBNET_MASK: 
+      setAnnotation: ""
+    DEDICATEDSCHEDULER: 
+      setAnnotation: ""
+    VM_NETWORKING_TYPE: 
+      setAnnotation: ""
+    GRIDMANAGER_JOB_PROBE_INTERVAL: 
+      setAnnotation: ""
+    MAXJOBRETIREMENTTIME: 
+      setAnnotation: ""
+    HAD: 
+      setAnnotation: ""
+    RUNBENCHMARKS: 
+      setAnnotation: ""
+    CONDOR_DEVELOPERS: 
+      setAnnotation: ""
+    NEGOTIATOR_ADDRESS_FILE: 
+      setAnnotation: ""
+    JOB_HOOKS_IP: 
+      setAnnotation: ""
+    ROOSTER_INTERVAL: 
+      setAnnotation: ""
+    MAX_NEGOTIATOR_LOG: 
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_RECONFIG: 
+      setAnnotation: ""
+    JOB_HOOKS_LOG: 
+      setAnnotation: ""
+    UNUSED_CLAIM_TIMEOUT: 
+      setAnnotation: ""
+    WANT_SUSPEND: 
+      setAnnotation: ""
+    RESTART_PROCD_ON_ERROR: 
+      setAnnotation: ""
+    CONTINUE: 
+      setAnnotation: ""
+    HIBERNATE_CHECK_INTERVAL: 
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_ADDRESS_FILE: 
+      setAnnotation: ""
+    REPLICATION_ARGS: 
+      setAnnotation: ""
+    NEGOTIATOR_LOG: 
+      setAnnotation: ""
+    QMF_BROKER_USERNAME: 
+      setAnnotation: ""
+    TRANSFERER_LOG: 
+      setAnnotation: ""
+    SHADOW_DEBUG: 
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_LOG: 
+      setAnnotation: ""
+    SCHEDD: 
+      setAnnotation: ""
+    HA_LOCK_HOLD_TIME: 
+      setAnnotation: ""
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      setAnnotation: ""
+    ROOSTER: 
+      setAnnotation: ""
+    SHARED_PORT: 
+      setAnnotation: ""
+    HISTORY_INTERVAL: 
+      setAnnotation: ""
+    MAX_NEGOTIATOR_MATCH_LOG: 
+      setAnnotation: ""
+    SCHEDD_PREEMPTION_RANK: 
+      setAnnotation: ""
+    QUEUE_SUPER_USERS: 
+      setAnnotation: ""
+    START: 
+      setAnnotation: ""
+    MASTER: 
+      setAnnotation: ""
+    JOB_ROUTER_DEFAULTS: 
+      setAnnotation: ""
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      setAnnotation: ""
+    JOB_SERVER_ADDRESS_FILE: 
+      setAnnotation: ""
+    QUEUE_ALL_USERS_TRUSTED: 
+      setAnnotation: ""
+    HAD_USE_PRIMARY: 
+      setAnnotation: ""
+    MAX_SHADOW_LOG: 
+      setAnnotation: ""
+    MAX_HISTORY_ROTATIONS: 
+      setAnnotation: ""
+    NEED_SET_EC2E_ROUTES: 
+      setAnnotation: ""
+    VM_GAHP_LOG: 
+      setAnnotation: ""
+    HIBERNATE: 
+      setAnnotation: ""
+    SUSPEND: 
+      setAnnotation: ""
+    STARTER_LIST: 
+      setAnnotation: ""
+    STARTER_LOCAL: 
+      setAnnotation: ""
+    BENCHMARKTIMER: 
+      setAnnotation: ""
+    NEGOTIATOR_MATCH_LOG: 
+      setAnnotation: ""
+    QMF_BROKER_PASSWORD_FILE: 
+      setAnnotation: ""
+    QUERY_SERVER.HTTP_PORT: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_CA_DIR: 
+      setAnnotation: ""
+    MAX_REPLICATION_LOG: 
+      setAnnotation: ""
+    COLLECTOR_ARGS: 
+      setAnnotation: ""
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setAnnotation: ""
+    TRIGGERD: 
+      setAnnotation: ""
+    KBDD: 
+      setAnnotation: ""
+    KILL: 
+      setAnnotation: ""
+    MAX_TRIGGERD_LOG: 
+      setAnnotation: ""
+    MAX_JOB_SERVER_LOG: 
+      setAnnotation: ""
+    SCHEDD.HTTP_PORT: 
+      setAnnotation: ""
+    AVIARY_PUBLISH_INTERVAL: 
+      setAnnotation: ""
+    SCHEDD_PREEMPTION_REQUIREMENTS: 
+      setAnnotation: ""
+    QUERY_SERVER.HISTORY: 
+      setAnnotation: ""
+    VM_NETWORKING_BRIDGE_INTERFACE: 
+      setAnnotation: ""
+    REPLICATION_INTERVAL: 
+      setAnnotation: ""
+    EC2_GAHP_LOG: 
+      setAnnotation: ""
+    CAROD_LOG: 
+      setAnnotation: ""
+    STATE_FILE: 
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_DEBUG: 
+      setAnnotation: ""
+    SCHEDD_HOST: 
+      setAnnotation: ""
+    SCHEDD.HISTORY: 
+      setAnnotation: ""
+    CAROD_BROKER_IP: 
+      setAnnotation: ""
+    NEGOTIATOR_PRE_JOB_RANK: 
+      setAnnotation: ""
+    KBDD_ADDRESS_FILE: 
+      setAnnotation: ""
+    REPLICATION_LOG: 
+      setAnnotation: ""
+    UID_DOMAIN: 
+      setAnnotation: ""
+    SCHEDD_LOG: 
+      setAnnotation: ""
+    SCHEDD_DAEMON_AD_FILE: 
+      setAnnotation: ""
+    JOB_SERVER: 
+      setAnnotation: ""
+    ALLOW_ADMINISTRATOR: 
+      setAnnotation: ""
+    SEC_DEFAULT_INTEGRITY: 
+      setAnnotation: ""
+    REPLICATION_LIST: 
+      setAnnotation: ""
+    MASTER_HAD_BACKOFF_CONSTANT: 
+      setAnnotation: ""
+    EC2_GAHP: 
+      setAnnotation: ""
+    SHADOW_LOCK: 
+      setAnnotation: ""
+    MAX_TRANSFERER_LIFETIME: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_CA_DIR: 
+      setAnnotation: ""
+    DAEMON_SOCKET_DIR: 
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      setAnnotation: ""
+    TRIGGERD_ADDRESS_FILE: 
+      setAnnotation: ""
+    STARTER_LOG: 
+      setAnnotation: ""
+    QMF_PUBLISH_SUBMISSIONS: 
+      setAnnotation: ""
+    RANK_FACTOR: 
+      setAnnotation: ""
+    START_LOCAL_UNIVERSE: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL: 
+      setAnnotation: ""
+    JOB_ROUTER_POLLING_PERIOD: 
+      setAnnotation: ""
+    NEGOTIATOR: 
+      setAnnotation: ""
+    COLLECTOR_NAME: 
+      setAnnotation: ""
+    TimeToWait: 
+      setAnnotation: ""
+    AVIARY_PUBLISH_LOCATION: 
+      setAnnotation: ""
+    JOB_ROUTER: 
+      setAnnotation: ""
+    MAX_HAD_LOG: 
+      setAnnotation: ""
+    CONCURRENCY_LIMIT_DEFAULT: 
+      setAnnotation: ""
+    SEC_DEFAULT_AUTHENTICATION: 
+      setAnnotation: ""
+    HAD_PORT: 
+      setAnnotation: ""
+    AVIARY_LOCATOR_PRUNE_INTERVAL: 
+      setAnnotation: ""
+    STARTD_JOB_EXPRS: 
+      setAnnotation: ""
+    SCHEDD.QMF_STOREFILE: 
+      setAnnotation: ""
+    STARTD_DEBUG: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_CA_FILE: 
+      setAnnotation: ""
+    TRIGGERD_LOG: 
+      setAnnotation: ""
+    WSFCPP_HOME: 
+      setAnnotation: ""
+    TRIGGERD.QMF_STOREFILE: 
+      setAnnotation: ""
+    CAROD_LEASE_CHECK_INTERVAL: 
+      setAnnotation: ""
+    WALLABY_FORCE_RESTART: 
+      setAnnotation: ""
+    TRIGGER_DATA_JOBLIST: 
+      setAnnotation: ""
+    QUERY_SERVER: 
+      setAnnotation: ""
+    ROOSTER_MAX_UNHIBERNATE: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL: 
+      setAnnotation: ""
+    CAROD_PORT: 
+      setAnnotation: ""
+    QMF_BROKER_HOST: 
+      setAnnotation: ""
+    HAD_ARGS: 
+      setAnnotation: ""
+    STARTD_ATTRS: 
+      setAnnotation: ""
+    AMAZON_GAHP_LOG: 
+      setAnnotation: ""
+    PREEMPTION_REQUIREMENTS: 
+      setAnnotation: ""
+    COLLECTOR_DEBUG: 
+      setAnnotation: ""
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setAnnotation: ""
+    SHADOW: 
+      setAnnotation: ""
+    JOB_SERVER_LOG: 
+      setAnnotation: ""
+    MASTER_ADDRESS_FILE: 
+      setAnnotation: ""
+    JOB_ROUTER_ADDRESS_FILE: 
+      setAnnotation: ""
+    KBDD_DEBUG: 
+      setAnnotation: ""
+    MAX_STARTER_LOG: 
+      setAnnotation: ""
+    VALID_SPOOL_FILES: 
+      setAnnotation: ""
+    QUERY_SERVER.SCHEDD_NAME: 
+      setAnnotation: ""
+    REPLICATION_PORT: 
+      setAnnotation: ""
+    EC2E_ATTRS_TO_COPY: 
+      setAnnotation: ""
+    CAROD_IP: 
+      setAnnotation: ""
+    SLOT_TYPE_1: 
+      setAnnotation: ""
+    HAD_CONNECTION_TIMEOUT: 
+      setAnnotation: ""
+    SCHEDD_DEBUG: 
+      setAnnotation: ""
+    DEDICATED_SCHEDULER_USE_FIFO: 
+      setAnnotation: ""
+    STARTER_DEBUG: 
+      setAnnotation: ""
+    QMF_IGNORE_UPDATE_STARTD_AD: 
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      setAnnotation: ""
+    NEGOTIATOR_DEBUG: 
+      setAnnotation: ""
+    JOB_SERVER.SPOOL: 
+      setAnnotation: ""
+    MAX_JOB_HOOKS_LOG: 
+      setAnnotation: ""
+    JOB_ROUTER_HOOK_KEYWORD: 
+      setAnnotation: ""
+    SHARED_PORT_DEBUG: 
+      setAnnotation: ""
+    SPOOL: 
+      setAnnotation: ""
+    SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setAnnotation: ""
+    EC2E_HOOK_JOB_EXIT: 
+      setAnnotation: ""
+    CAROD_LEASE_TIME: 
+      setAnnotation: ""
+    KBDD_LOG: 
+      setAnnotation: ""
+    HA_LOCK_URL: 
+      setAnnotation: ""
+    HAD_USE_REPLICATION: 
+      setAnnotation: ""
+    ROOSTER_WAKEUP_CMD: 
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_PREFIX: 
+      setAnnotation: ""
+    ENABLE_ABSENT_NODES_DETECTION: 
+      setAnnotation: ""
+    STARTD: 
+      setAnnotation: ""
+    VM_NETWORKING_DEFAULT_TYPE: 
+      setAnnotation: ""
+    FETCHWORKDELAY: 
+      setAnnotation: ""
+    QUERY_SERVER_ARGS: 
+      setAnnotation: ""
+    QMF_BROKER_PORT: 
+      setAnnotation: ""
+    STARTD_ADDRESS_FILE: 
+      setAnnotation: ""
+    START_SCHEDULER_UNIVERSE: 
+      setAnnotation: ""
+    MAX_QUERY_SERVER_LOG: 
+      setAnnotation: ""
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      setAnnotation: ""
+    LIBVIRT_XML_SCRIPT: 
+      setAnnotation: ""
+    TRIGGERD_DEFAULT_EVAL_PERIOD: 
+      setAnnotation: ""
+    SEC_DEFAULT_CRYPTO_METHODS: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_SERVER_KEY: 
+      setAnnotation: ""
+    FLOCK_NEGOTIATOR_HOSTS: 
+      setAnnotation: ""
+    WALLABY_FORCE_CONFIG_PULL: 
+      setAnnotation: ""
+    JOB_SERVER.HISTORY: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_SERVER_CERT: 
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_PERIOD: 
+      setAnnotation: ""
+    EC2E_HOOK_TRANSLATE_JOB: 
+      setAnnotation: ""
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      setAnnotation: ""
+    AMAZON_GAHP: 
+      setAnnotation: ""
+    PREEMPTION_RANK: 
+      setAnnotation: ""
+    CAROD_BROKER_QUEUE: 
+      setAnnotation: ""
+    MASTER.USE_PROCD: 
+      setAnnotation: ""
+    STARTD.PLUGINS: 
+      setAnnotation: ""
+    HISTORY: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_CA_FILE: 
+      setAnnotation: ""
+    MAX_CAROD_LOG: 
+      setAnnotation: ""
+    USE_SHARED_PORT: 
+      setAnnotation: ""
+    NEGOTIATOR.PLUGINS: 
+      setAnnotation: ""
+    CONSOLE_DEVICES: 
+      setAnnotation: ""
+    OFFLINE_LOG: 
+      setAnnotation: ""
+    QMF_BROKER_AUTH_MECH: 
+      setAnnotation: ""
+    MAX_VM_GAHP_LOG: 
+      setAnnotation: ""
+    MAX_STARTD_LOG: 
+      setAnnotation: ""
+    ALLOW_READ: 
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_EXECUTABLE: 
+      setAnnotation: ""
+    SHADOW_SIZE_ESTIMATE: 
+      setAnnotation: ""
+    VM_MEMORY: 
+      setAnnotation: ""
+    QUERY_SERVER.SPOOL: 
+      setAnnotation: ""
+    DC_DAEMON_LIST: 
+      setAnnotation: ""
+    ALLOW_NEGOTIATOR_SCHEDD: 
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: 
+      setAnnotation: ""
+    STARTD_LOG: 
+      setAnnotation: ""
+    CONDOR_HOST: 
+      setAnnotation: ""
+    ALLOW_NEGOTIATOR: 
+      setAnnotation: ""
+    COLLECTOR_HOST: 
+      setAnnotation: ""
+    HAD_LOG: 
+      setAnnotation: ""
+    COLLECTOR_LOG: 
+      setAnnotation: ""
+    FLOCK_COLLECTOR_HOSTS: 
+      setAnnotation: ""
+    STARTER: 
+      setAnnotation: ""
+    SCHEDD_NAME: 
+      setAnnotation: ""
+    COLLECTOR.PLUGINS: 
+      setAnnotation: ""
+    FILESYSTEM_DOMAIN: 
+      setAnnotation: ""
+    CAROD_QUEUED_CONNECTIONS: 
+      setAnnotation: ""
+    MAX_KBDD_LOG: 
+      setAnnotation: ""
+    MAX_SCHEDD_LOG: 
+      setAnnotation: ""
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      setAnnotation: ""
+    BaseDBVersion: 
+      setAnnotation: ""
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      setAnnotation: ""
+    XEN_BOOTLOADER: 
+      setAnnotation: ""
+    CONDOR_DEVELOPERS_COLLECTOR: 
+      setAnnotation: ""
+    JOB_ROUTER_DEBUG: 
+      setAnnotation: ""
+    JOB_HOOKS_PORT: 
+      setAnnotation: ""
+    MASTER_NEGOTIATOR_CONTROLLER: 
+      setAnnotation: ""
+    RANK: 
+      setAnnotation: ""
+    NUM_SLOTS_TYPE_1: 
+      setAnnotation: ""
+    SEC_DEFAULT_ENCRYPTION: 
+      setAnnotation: ""
+    SHARED_PORT_ARGS: 
+      setAnnotation: ""
+    SCHEDD.SPOOL: 
+      setAnnotation: ""
+    UPDATE_INTERVAL: 
+      setAnnotation: ""
+    DATA: 
+      setAnnotation: ""
+    MAX_JOB_ROUTER_LOG: 
+      setAnnotation: ""
+    EC2E_HOOK_JOB_CLEANUP: 
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_DEBUG: 
+      setAnnotation: ""
+    SHADOW_LOG: 
+      setAnnotation: ""
+    STARTER_UPDATE_INTERVAL: 
+      setAnnotation: ""
+    WANT_VACATE: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 
+      setAnnotation: ""
+    JOB_ROUTER_ENTRIES: 
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_LOG: 
+      setAnnotation: ""
+    CAROD_BROKER_PORT: 
+      setAnnotation: ""
+    VM_NETWORKING: 
+      setAnnotation: ""
+    ROOSTER_UNHIBERNATE_RANK: 
+      setAnnotation: ""
+    CAROD: 
+      setAnnotation: ""
+    MAX_COLLECTOR_LOG: 
+      setAnnotation: ""
+    ALL_DEBUG: 
+      setAnnotation: ""
+    REPLICATION: 
+      setAnnotation: ""
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setAnnotation: ""
+    STARTD_CRON_NAME: 
+      setAnnotation: ""
+    ShouldHibernate: 
+      setAnnotation: ""
+    ALLOW_WRITE: 
+      setAnnotation: ""
+    NUM_SLOTS: 
+      setAnnotation: ""
+    QUERY_SERVER.HISTORY_INTERVAL: 
+      setAnnotation: ""
+    DAEMON_LIST: 
+      setAnnotation: ""
+    SCHEDD.PLUGINS: 
+      setAnnotation: ""
+    ROOSTER_UNHIBERNATE: 
+      setAnnotation: ""
+    NEGOTIATOR_INTERVAL: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 
+      setAnnotation: ""
+    AVIARY_LOCATOR_MISSED_UPDATES: 
+      setAnnotation: ""
+    VM_TYPE: 
+      setAnnotation: ""
+    JOB_ROUTER_LOG: 
+      setAnnotation: ""
+    JOB_SERVER.SCHEDD_NAME: 
+      setAnnotation: ""
+    PREEMPT: 
+      setAnnotation: ""
+    MASTER.PLUGINS: 
+      setAnnotation: ""
+    SEC_DEFAULT_NEGOTIATION: 
+      setAnnotation: ""
+    SHADOW_LIST: 
+      setAnnotation: ""
+    SLOT_TYPE_1_PARTITIONABLE: 
+      setAnnotation: ""
+    HA_POLL_PERIOD: 
+      setAnnotation: ""
+    COLLECTOR: 
+      setAnnotation: ""
+    HAD_UPDATE_INTERVAL: 
+      setAnnotation: ""
+    STARTD_JOB_HOOK_KEYWORD: 
+      setAnnotation: ""
+    TRIGGERD_QUERY_COLLECTOR: 
+      setAnnotation: ""
+    PERIODIC_CHECKPOINT: 
+      setAnnotation: ""
+    HAD_LIST: 
+      setAnnotation: ""
+    TRIGGERD.QMF_UPDATE_INTERVAL: 
+      setAnnotation: ""
+  subsystems: 
+    startd: 
+      setAnnotation: The list of parameters affecting the startd subsystem
+    ll_daemon: 
+      setAnnotation: The list of parameters affecting the low-latency subsystem
+    negotiator: 
+      setAnnotation: The list of parameters affecting the negotiator subsystem
+    job_router: 
+      setAnnotation: The list of parameters affecting the job_router subsystem
+    kbdd: 
+      setAnnotation: The list of parameters affecting the kbdd subsystem
+    master: 
+      setAnnotation: The list of parameters affecting the master subsystem
+    replication: 
+      setAnnotation: The list of parameters affecting the replication subsystem
+    transferer: 
+      setAnnotation: The list of parameters affecting the transferer subsystem
+    query_server: 
+      setAnnotation: The list of parameters affecting the query_server subsystem
+    schedd: 
+      setAnnotation: The list of parameters affecting the schedd subsystem
+    triggerd: 
+      setAnnotation: The list of parameters affecting the triggerd subsystem
+    had: 
+      setAnnotation: The list of parameters affecting the had subsystem
+    rooster: 
+      setAnnotation: The list of parameters affecting the rooster subsystem
+    collector: 
+      setAnnotation: The list of parameters affecting the collector subsystem
+    job_server: 
+      setAnnotation: The list of parameters affecting the job_server subsystem
+    shared_port: 
+      setAnnotation: The list of parameters affecting the shared_port subsystem
