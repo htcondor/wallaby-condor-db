@@ -81,8 +81,13 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.18.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.19.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.20.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.21.wpatch
 
 %changelog
+* Wed Apr 18 2012 rrati <rrati@redhat> - 1.21-1
+- Added annotations (BZ802823)
+- *_PLUGINS no longer allow values set on a local machine (BZ812126)
+
 * Tue Apr  3 2012 rrati <rrati@redhat> - 1.20-1
 - Updates for Aviary Locator support (BZ800660)
 - Updated Job/Query Server feature definitions (BZ806071)
