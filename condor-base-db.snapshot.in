@@ -245,7 +245,7 @@ features:
   params: 
     MASTER.PLUGINS: ">= $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing of negotiator data
+  annotation: Enables QMF publishing and dynamic configuration for the negotiator
   conflicts: []
 
   depends: 
@@ -255,6 +255,7 @@ features:
 
   name: ConsoleNegotiator
   params: 
+    NEGOTIATOR.ENABLE_RUNTIME_CONFIG: "TRUE"
     NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables QMF publishing of scheduler data
