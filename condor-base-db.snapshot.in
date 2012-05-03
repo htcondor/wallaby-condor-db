@@ -11,9 +11,9 @@ features:
   - AviaryPublishingEnabled
   name: AviaryLocator
   params: 
-    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
     AVIARY_LOCATOR_MISSED_UPDATES: "2"
     AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables publishing aviary locator information
   conflicts: []
@@ -35,8 +35,8 @@ features:
   - Axis2Home
   name: AviaryScheduler
   params: 
-    SCHEDD.HTTP_PORT: "9090"
     SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
+    SCHEDD.HTTP_PORT: "9090"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables publishing aviary locator data for the Aviary Scheduler
   conflicts: []
@@ -93,8 +93,8 @@ features:
 
   name: BaseJobExecuter
   params: 
-    STARTER_LOG: $(LOG)/StarterLog
     MAX_STARTER_LOG: "1000000"
+    STARTER_LOG: $(LOG)/StarterLog
     STARTER_DEBUG: D_NODATE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: A non-functional base for the job server.  This needs furher configuration and is not meant to be used by itself
@@ -106,10 +106,10 @@ features:
 
   name: BaseJobServer
   params: 
-    QMF_PUBLISH_SUBMISSIONS: "false"
-    JOB_SERVER: $(SBIN)/condor_job_server
-    MAX_JOB_SERVER_LOG: "1000000"
     JOB_SERVER.JOB_SERVER_DEBUG: ""
+    MAX_JOB_SERVER_LOG: "1000000"
+    JOB_SERVER: $(SBIN)/condor_job_server
+    QMF_PUBLISH_SUBMISSIONS: "false"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: A non-functional base for the query server.  This needs furher configuration and is not meant to be used by itself
   conflicts: []
@@ -120,40 +120,40 @@ features:
   - Axis2Home
   name: BaseQueryServer
   params: 
-    MAX_QUERY_SERVER_LOG: "1000000"
     QUERY_SERVER_ARGS: -f
     QUERY_SERVER.HISTORY_INTERVAL: "120"
-    QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
     QUERY_SERVER: $(SBIN)/aviary_query_server
+    QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
+    MAX_QUERY_SERVER_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: A non-functional base for the scheduler.  This needs furher configuration and is not meant to be used by itself
   conflicts: []
 
   depends: 
-  - NodeAccess
   - Master
+  - NodeAccess
   included: 
   - BaseJobExecuter
   name: BaseScheduler
   params: 
-    SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
-    SHADOW_LOG: $(LOG)/ShadowLog
-    START_SCHEDULER_UNIVERSE: "True"
-    STARTER_LOCAL: $(SBIN)/condor_starter
-    SHADOW_LIST: SHADOW
     SHADOW_SIZE_ESTIMATE: "1800"
-    SCHEDD_LOG: $(LOG)/SchedLog
-    MAX_SCHEDD_LOG: "1000000"
-    MAX_SHADOW_LOG: "1000000"
-    ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
-    SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
-    QUEUE_SUPER_USERS: root, condor
-    START_LOCAL_UNIVERSE: "True"
-    SHADOW: $(SBIN)/condor_shadow
-    SCHEDD_DEBUG: D_PID
     SCHEDD: $(SBIN)/condor_schedd
+    START_SCHEDULER_UNIVERSE: "True"
+    SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+    START_LOCAL_UNIVERSE: "True"
+    SHADOW_LIST: SHADOW
+    SCHEDD_DEBUG: D_PID
+    STARTER_LOCAL: $(SBIN)/condor_starter
+    SHADOW_LOG: $(LOG)/ShadowLog
+    SCHEDD_LOG: $(LOG)/SchedLog
+    ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
     SHADOW_LOCK: $(LOCK)/ShadowLock
     SHADOW_DEBUG: ""
+    SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+    QUEUE_SUPER_USERS: root, condor
+    MAX_SCHEDD_LOG: "1000000"
+    SHADOW: $(SBIN)/condor_shadow
+    MAX_SHADOW_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: A set of features that comprise a central manager
   conflicts: []
@@ -171,21 +171,21 @@ features:
   conflicts: []
 
   depends: 
-  - NodeAccess
   - Master
+  - NodeAccess
   included: []
 
   name: Collector
   params: 
-    COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
-    MAX_COLLECTOR_LOG: "1000000"
-    COLLECTOR_DEBUG: ""
-    COLLECTOR: $(SBIN)/condor_collector
-    COLLECTOR_LOG: $(LOG)/CollectorLog
-    DAEMON_LIST: ">= COLLECTOR"
     COLLECTOR_HOST: $(CONDOR_HOST)
-    FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+    MAX_COLLECTOR_LOG: "1000000"
     COLLECTOR_NAME: Wallaby Configured Pool
+    FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+    COLLECTOR: $(SBIN)/condor_collector
+    DAEMON_LIST: ">= COLLECTOR"
+    COLLECTOR_LOG: $(LOG)/CollectorLog
+    COLLECTOR_DEBUG: ""
+    COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Sets the UID domain
   conflicts: []
@@ -218,15 +218,15 @@ features:
   - Collector
   name: ConsoleCollector
   params: 
-    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
     QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
+    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables QMF publishing of startd data
   conflicts: []
 
   depends: 
-  - ExecuteNode
   - QMF
+  - ExecuteNode
   included: []
 
   name: ConsoleExecuteNode
@@ -237,8 +237,8 @@ features:
   conflicts: []
 
   depends: 
-  - QMF
   - Master
+  - QMF
   included: []
 
   name: ConsoleMaster
@@ -279,16 +279,16 @@ features:
   - ExecuteNode
   name: DedicatedResource
   params: 
-    RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
-    WANT_VACATE: "False"
-    WANT_SUSPEND: "False"
-    KILL: "False"
-    START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
-    DEDICATEDSCHEDULER: 0
     STARTD_ATTRS: ">= DEDICATEDSCHEDULER"
-    RANK_FACTOR: "1000000"
-    CONTINUE: "True"
+    WANT_SUSPEND: "False"
     SUSPEND: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) || ($(SUSPEND))
+    KILL: "False"
+    CONTINUE: "True"
+    WANT_VACATE: "False"
+    START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
+    RANK_FACTOR: "1000000"
+    DEDICATEDSCHEDULER: 0
+    RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
     PREEMPT: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) && ($(PREEMPT))
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Configures a scheduler as a dedicated scheduler
@@ -312,10 +312,10 @@ features:
   - ExecuteNode
   name: DynamicSlots
   params: 
-    NUM_SLOTS: "1"
-    SLOT_TYPE_1: cpus=100%,disk=100%,swap=100%
-    NUM_SLOTS_TYPE_1: "1"
     SLOT_TYPE_1_PARTITIONABLE: "TRUE"
+    NUM_SLOTS_TYPE_1: "1"
+    SLOT_TYPE_1: cpus=100%,disk=100%,swap=100%
+    NUM_SLOTS: "1"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables running ec2 jobs on an execute node
   conflicts: []
@@ -326,13 +326,13 @@ features:
   - ExecuteNode
   name: EC2
   params: 
-    EC2_GAHP: $(SBIN)/ec2_gahp
-    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: "20"
-    AMAZON_GAHP: $(SBIN)/amazon_gahp
-    EC2_GAHP_LOG: /tmp/EC2GahpLog.$(USERNAME)
     AMAZON_GAHP_LOG: /tmp/AmazonGahpLog.$(USERNAME)
-    GRIDMANAGER_JOB_PROBE_INTERVAL: "300"
+    AMAZON_GAHP: $(SBIN)/amazon_gahp
+    EC2_GAHP: $(SBIN)/ec2_gahp
+    EC2_GAHP_LOG: /tmp/EC2GahpLog.$(USERNAME)
     GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: "20"
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: "20"
+    GRIDMANAGER_JOB_PROBE_INTERVAL: "300"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables routing ec2 enhanced jobs on a job router
   conflicts: []
@@ -343,15 +343,15 @@ features:
   - JobRouter
   name: EC2Enhanced
   params: 
-    NEED_SET_EC2E_ROUTES: "TRUE"
-    EC2E_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_retrieve_status.py
-    JOB_ROUTER_ENTRIES: 0
-    JOB_ROUTER_DEFAULTS: $(JOB_ROUTER_DEFAULTS) [ MaxIdleJobs = 10; MaxJobs = 200; set_PeriodicRemove = (JobStatus == 5 && HoldReason =!= "Spooling input data files") || (JobStatus == 1 && (CurrentTime - QDate) > 3600*6); set_requirements = true; set_WantAWS = false; ]
-    EC2E_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_finalize.py
     JOB_ROUTER_HOOK_KEYWORD: EC2E
+    EC2E_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_finalize.py
+    NEED_SET_EC2E_ROUTES: "TRUE"
+    JOB_ROUTER_ENTRIES: 0
+    EC2E_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_retrieve_status.py
     EC2E_HOOK_JOB_CLEANUP: $(LIBEXEC)/hooks/hook_cleanup.py
     EC2E_ATTRS_TO_COPY: EC2RunAttempts, EC2JobSuccessful
     EC2E_HOOK_TRANSLATE_JOB: $(LIBEXEC)/hooks/hook_translate.py
+    JOB_ROUTER_DEFAULTS: $(JOB_ROUTER_DEFAULTS) [ MaxIdleJobs = 10; MaxJobs = 200; set_PeriodicRemove = (JobStatus == 5 && HoldReason =!= "Spooling input data files") || (JobStatus == 1 && (CurrentTime - QDate) > 3600*6); set_requirements = true; set_WantAWS = false; ]
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables running jobs
   conflicts: []
@@ -362,27 +362,27 @@ features:
   - BaseJobExecuter
   name: ExecuteNode
   params: 
-    PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
-    WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
-    WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
-    STARTD_ADDRESS_FILE: $(LOG)/.startd_address
-    MAX_STARTD_LOG: "1000000"
-    DAEMON_LIST: ">= STARTD"
+    STARTER_LIST: STARTER
     RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
-    STARTER: $(SBIN)/condor_starter
+    STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+    WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+    SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+    KILL: $(ActivityTimer) > $(MaxVacateTime)
+    CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+    BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+    WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+    START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+    MAXJOBRETIREMENTTIME: 0
+    CONSOLE_DEVICES: mouse, console
+    STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+    STARTD_LOG: $(LOG)/StartLog
     STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
     STARTD_DEBUG: ""
-    KILL: $(ActivityTimer) > $(MaxVacateTime)
-    BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+    PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+    MAX_STARTD_LOG: "1000000"
+    DAEMON_LIST: ">= STARTD"
+    STARTER: $(SBIN)/condor_starter
     STARTD: $(SBIN)/condor_startd
-    START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
-    CONSOLE_DEVICES: mouse, console
-    STARTER_LIST: STARTER
-    MAXJOBRETIREMENTTIME: 0
-    STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
-    CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
-    SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
-    STARTD_LOG: $(LOG)/StartLog
     PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables preemption for an execute node that is a dedicated resource
@@ -405,13 +405,13 @@ features:
   - ExecuteNode
   name: ExecuteNodeTriggerData
   params: 
-    TRIGGER_DATA_GETDATA_EXECUTABLE: $(BIN)/get_trigger_data
-    STARTD_CRON_AUTOPUBLISH: If_Changed
-    TRIGGER_DATA_GETDATA_PERIOD: 5m
-    TRIGGER_DATA_JOBLIST: GetData
-    TRIGGER_DATA_GETDATA_PREFIX: Triggerd
-    TRIGGER_DATA_GETDATA_RECONFIG: "FALSE"
     STARTD_CRON_NAME: TRIGGER_DATA
+    TRIGGER_DATA_GETDATA_PERIOD: 5m
+    TRIGGER_DATA_GETDATA_PREFIX: Triggerd
+    STARTD_CRON_AUTOPUBLISH: If_Changed
+    TRIGGER_DATA_JOBLIST: GetData
+    TRIGGER_DATA_GETDATA_RECONFIG: "FALSE"
+    TRIGGER_DATA_GETDATA_EXECUTABLE: $(BIN)/get_trigger_data
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables high availability for the central manager
   conflicts: []
@@ -422,34 +422,34 @@ features:
   - CentralManager
   name: HACentralManager
   params: 
-    REPLICATION_LOG: $(LOG)/ReplicationLog
     MASTER_NEGOTIATOR_CONTROLLER: HAD
-    MAX_HAD_LOG: "640000"
-    HAD_CONNECTION_TIMEOUT: "2"
-    TRANSFERER_LOG: $(LOG)/TransfererLog
-    HAD_USE_REPLICATION: "true"
-    HAD_PORT: "51450"
-    HAD_ARGS: -p $(HAD_PORT)
-    DAEMON_LIST: ">= HAD REPLICATION"
-    ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
-    REPLICATION_INTERVAL: "300"
-    MASTER_HAD_BACKOFF_CONSTANT: "360"
-    HAD_LOG: $(LOG)/HADLog
-    CONDOR_HOST: 0
-    REPLICATION_LIST: 0
+    REPLICATION_ARGS: -p $(REPLICATION_PORT)
     MAX_TRANSFERER_LIFETIME: "300"
+    HAD_ARGS: -p $(HAD_PORT)
+    CONDOR_HOST: 0
+    REPLICATION_INTERVAL: "300"
+    MAX_HAD_LOG: "640000"
+    HAD_USE_PRIMARY: "true"
+    COLLECTOR_HOST: $(CONDOR_HOST)
+    MAX_REPLICATION_LOG: "640000"
+    MASTER_HAD_BACKOFF_CONSTANT: "360"
+    HAD_PORT: "51450"
+    REPLICATION_LOG: $(LOG)/ReplicationLog
+    HAD_LOG: $(LOG)/HADLog
     ALLOW_NEGOTIATOR_SCHEDD: $(FLOCK_NEGOTIATOR_HOSTS), $(COLLECTOR_HOST)
     ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(COLLECTOR_HOST)
-    REPLICATION_PORT: "41450"
+    TRANSFERER_LOG: $(LOG)/TransfererLog
     REPLICATION: $(SBIN)/condor_replication
-    HAD: $(SBIN)/condor_had
-    COLLECTOR_HOST: $(CONDOR_HOST)
-    REPLICATION_ARGS: -p $(REPLICATION_PORT)
+    HAD_USE_REPLICATION: "true"
+    ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
+    STATE_FILE: $(SPOOL)/Accountantnew.log
+    HAD_CONNECTION_TIMEOUT: "2"
+    REPLICATION_PORT: "41450"
+    REPLICATION_LIST: 0
+    DAEMON_LIST: ">= HAD REPLICATION"
     HAD_UPDATE_INTERVAL: "300"
     HAD_LIST: 0
-    STATE_FILE: $(SPOOL)/Accountantnew.log
-    MAX_REPLICATION_LOG: "640000"
-    HAD_USE_PRIMARY: "true"
+    HAD: $(SBIN)/condor_had
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables high availability for a scheduler
   conflicts: []
@@ -462,10 +462,10 @@ features:
   name: HAScheduler
   params: 
     HA_POLL_PERIOD: "60"
-    VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), SCHEDD.lock
-    HA_LOCK_HOLD_TIME: "300"
     HA_LOCK_URL: 0
+    HA_LOCK_HOLD_TIME: "300"
     MASTER_HA_LIST: $(MASTER_HA_LIST), SCHEDD
+    VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), SCHEDD.lock
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Configures startd job hooks on an execute node
   conflicts: []
@@ -476,10 +476,10 @@ features:
 
   name: JobHooks
   params: 
-    JOB_HOOKS_IP: 127.0.0.1
-    MAX_JOB_HOOKS_LOG: "10000000"
     JOB_HOOKS_PORT: "10000"
     JOB_HOOKS_LOG: $(LOG)/JobHooksLog
+    MAX_JOB_HOOKS_LOG: "10000000"
+    JOB_HOOKS_IP: 127.0.0.1
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: The location of the job queue used by the scheduler
   conflicts: []
@@ -490,8 +490,8 @@ features:
 
   name: JobQueueLocation
   params: 
-    SPOOL: 0
     HISTORY: $(SPOOL)/history
+    SPOOL: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables a job router
   conflicts: []
@@ -503,14 +503,14 @@ features:
 
   name: JobRouter
   params: 
-    JOB_ROUTER: $(LIBEXEC)/condor_job_router
     MAX_HISTORY_ROTATIONS: "20"
-    DAEMON_LIST: ">= JOB_ROUTER"
-    JOB_ROUTER_DEBUG: ""
     MAX_JOB_ROUTER_LOG: "1000000"
     JOB_ROUTER_LOG: $(LOG)/JobRouterLog
     JOB_ROUTER_ADDRESS_FILE: $(LOG)/.job_router_address
     JOB_ROUTER_POLLING_PERIOD: "10"
+    JOB_ROUTER_DEBUG: ""
+    DAEMON_LIST: ">= JOB_ROUTER"
+    JOB_ROUTER: $(LIBEXEC)/condor_job_router
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables a job server
   conflicts: []
@@ -523,9 +523,9 @@ features:
   params: 
     JOB_SERVER.JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
     DC_DAEMON_LIST: ">= JOB_SERVER"
-    DAEMON_LIST: ">= JOB_SERVER"
     JOB_SERVER.SPOOL: 0
     JOB_SERVER.JOB_SERVER_LOG: $(LOG)/JobServerLog
+    DAEMON_LIST: ">= JOB_SERVER"
     JOB_SERVER.HISTORY: $(JOB_SERVER.SPOOL)/history
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables keyboard monitoring
@@ -538,11 +538,11 @@ features:
   name: KeyboardMonitor
   params: 
     KBDD: $(SBIN)/condor_kbdd
-    DAEMON_LIST: ">= KBDD"
-    KBDD_LOG: $(LOG)/KbdLog
-    KBDD_ADDRESS_FILE: $(LOG)/.kbdd_address
     MAX_KBDD_LOG: "1000000"
+    KBDD_ADDRESS_FILE: $(LOG)/.kbdd_address
     KBDD_DEBUG: ""
+    KBDD_LOG: $(LOG)/KbdLog
+    DAEMON_LIST: ">= KBDD"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables low-latency scheduling for an execute node
   conflicts: []
@@ -553,27 +553,27 @@ features:
   - ExecuteNode
   name: LowLatency
   params: 
-    MAX_CAROD_LOG: "1000000"
-    CAROD_LEASE_TIME: "35"
-    JOB_HOOKS_PORT: $(CAROD_PORT)
-    DAEMON_LIST: ">= CAROD"
+    LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
     CAROD_IP: 127.0.0.1
-    CAROD: $(SBIN)/carod
+    MAX_CAROD_LOG: "1000000"
+    JOB_HOOKS_PORT: $(CAROD_PORT)
+    CAROD_BROKER_QUEUE: 0
+    CAROD_LEASE_CHECK_INTERVAL: "30"
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
+    CAROD_PORT: "10000"
+    CAROD_BROKER_PORT: "5672"
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
     LOW_LATENCY_JOB_HOOK_JOB_EXIT: $(LIBEXEC)/hooks/hook_job_exit.py
     LOW_LATENCY_HOOK_REPLY_FETCH: $(LIBEXEC)/hooks/hook_reply_fetch.py
-    CAROD_PORT: "10000"
-    CAROD_LEASE_CHECK_INTERVAL: "30"
-    STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
-    CAROD_BROKER_PORT: "5672"
-    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: $(LIBEXEC)/hooks/hook_update_job_status.py
-    CAROD_BROKER_IP: 0
-    CAROD_QUEUED_CONNECTIONS: "5"
-    CAROD_BROKER_QUEUE: 0
-    STARTER_UPDATE_INTERVAL: "30"
-    LOW_LATENCY_HOOK_FETCH_WORK: $(LIBEXEC)/hooks/hook_fetch_work.py
-    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: $(LIBEXEC)/hooks/hook_prepare_job.py
     FETCHWORKDELAY: 10 * (Activity == "Idle")
     CAROD_LOG: $(LOG)/CaroLog
+    CAROD_QUEUED_CONNECTIONS: "5"
+    CAROD_BROKER_IP: 0
+    DAEMON_LIST: ">= CAROD"
+    CAROD_LEASE_TIME: "35"
+    STARTER_UPDATE_INTERVAL: "30"
+    STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
+    CAROD: $(SBIN)/carod
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables master functionality
   conflicts: []
@@ -584,43 +584,43 @@ features:
 
   name: Master
   params: 
-    SEC_DEFAULT_AUTHENTICATION: OPTIONAL
-    SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS, NTLM, CLAIMTOBE
-    CONDOR_DEVELOPERS: NONE
-    MASTER_ADDRESS_FILE: $(LOG)/.master_address
-    DAEMON_LIST: ">= MASTER"
-    ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(CONDOR_HOST)
-    CONDOR_HOST: 0
-    CONDOR_DEVELOPERS_COLLECTOR: NONE
-    SEC_DEFAULT_CRYPTO_METHODS: 3DES
     MASTER: $(SBIN)/condor_master
-    COLLECTOR_NAME: ""
+    CONDOR_DEVELOPERS: NONE
     SEC_DEFAULT_NEGOTIATION: OPTIONAL
+    SEC_DEFAULT_CRYPTO_METHODS: 3DES
+    MASTER_ADDRESS_FILE: $(LOG)/.master_address
+    CONDOR_HOST: 0
+    SEC_DEFAULT_AUTHENTICATION: OPTIONAL
+    COLLECTOR_NAME: ""
+    SEC_DEFAULT_AUTHENTICATION_METHODS: $(SEC_DEFAULT_AUTHENTICATION_METHODS), FS, NTLM, CLAIMTOBE
+    ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(CONDOR_HOST)
+    DAEMON_LIST: ">= MASTER"
+    CONDOR_DEVELOPERS_COLLECTOR: NONE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables negotiator functionality
   conflicts: []
 
   depends: 
-  - NodeAccess
   - Master
+  - NodeAccess
   included: []
 
   name: Negotiator
   params: 
-    NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
-    NEGOTIATOR_DEBUG: D_MATCH
-    DAEMON_LIST: ">= NEGOTIATOR"
     PREEMPTION_REQUIREMENTS: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
-    NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
+    NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
+    FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+    NEGOTIATOR_INTERVAL: "20"
     NEGOTIATOR: $(SBIN)/condor_negotiator
     MAX_NEGOTIATOR_LOG: "1000000"
-    ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST)
+    NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
     PREEMPTION_RANK: (RemoteUserPrio * 1000000) - TARGET.ImageSize
-    MAX_NEGOTIATOR_MATCH_LOG: "1000000"
-    NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
     NEGOTIATOR_ADDRESS_FILE: $(LOG)/.negotiator_address
-    NEGOTIATOR_INTERVAL: "20"
-    FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+    ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST)
+    NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
+    DAEMON_LIST: ">= NEGOTIATOR"
+    NEGOTIATOR_DEBUG: D_MATCH
+    MAX_NEGOTIATOR_MATCH_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Configures read/write access to the node
   conflicts: []
@@ -643,9 +643,9 @@ features:
   - Collector
   name: PowerManagementCollector
   params: 
-    VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), OfflineLog
     OFFLINE_LOG: $(SPOOL)/OfflineLog
     OFFLINE_EXPIRE_ADS_AFTER: "28800"
+    VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), OfflineLog
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables power management for an execute node
   conflicts: 
@@ -659,9 +659,9 @@ features:
   name: PowerManagementNode
   params: 
     HIBERNATE: ifThenElse( $(ShouldHibernate), "RAM", "NONE" )
-    TimeToWait: (2 * $(HOUR))
-    HIBERNATE_CHECK_INTERVAL: "300"
     ShouldHibernate: ( (KeyboardIdle > $(StartIdleTime)) && $(CPUIdle) && ($(StateTimer) > $(TimeToWait)) )
+    HIBERNATE_CHECK_INTERVAL: "300"
+    TimeToWait: (2 * $(HOUR))
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables power management wake up for a subnet
   conflicts: 
@@ -672,15 +672,15 @@ features:
 
   name: PowerManagementSubnetManager
   params: 
+    ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
+    UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
+    ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+    ROOSTER_MAX_UNHIBERNATE: 0
+    ROOSTER_SUBNET_MASK: 0
     ROOSTER: $(LIBEXEC)/condor_rooster
-    DAEMON_LIST: ">= ROOSTER"
     ROOSTER_INTERVAL: "300"
     ROOSTER_UNHIBERNATE: Offline && Unhibernate
-    ROOSTER_SUBNET_MASK: 0
-    ROOSTER_MAX_UNHIBERNATE: 0
-    UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
-    ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
-    ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+    DAEMON_LIST: ">= ROOSTER"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: QMF related parameters
   conflicts: []
@@ -691,9 +691,9 @@ features:
 
   name: QMF
   params: 
-    QMF_DELETE_ON_SHUTDOWN: "TRUE"
-    QMF_BROKER_HOST: 0
     QMF_BROKER_PORT: "5672"
+    QMF_BROKER_HOST: 0
+    QMF_DELETE_ON_SHUTDOWN: "TRUE"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables query server functionality
   conflicts: []
@@ -704,13 +704,13 @@ features:
   - BaseQueryServer
   name: QueryServer
   params: 
-    QUERY_SERVER.SPOOL: 0
-    QUERY_SERVER.HISTORY: $(QUERY_SERVER.SPOOL)/history
-    QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
-    DC_DAEMON_LIST: ">= QUERY_SERVER"
-    DAEMON_LIST: ">= QUERY_SERVER"
     QUERY_SERVER.HTTP_PORT: "9091"
+    QUERY_SERVER.SPOOL: 0
+    DC_DAEMON_LIST: ">= QUERY_SERVER"
     QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: $(LOG)/.query_server_address
+    QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
+    DAEMON_LIST: ">= QUERY_SERVER"
+    QUERY_SERVER.HISTORY: $(QUERY_SERVER.SPOOL)/history
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables publishing aviary locator data for the query server
   conflicts: []
@@ -733,9 +733,9 @@ features:
   - AviaryScheduler
   name: SSLEnabledAviaryScheduler
   params: 
-    SCHEDD.AVIARY_SSL_CA_DIR: 0
-    SCHEDD.AVIARY_SSL_SERVER_KEY: 0
     SCHEDD.AVIARY_SSL: "True"
+    SCHEDD.AVIARY_SSL_SERVER_KEY: 0
+    SCHEDD.AVIARY_SSL_CA_DIR: 0
     SCHEDD.AVIARY_SSL_CA_FILE: 0
     SCHEDD.AVIARY_SSL_SERVER_CERT: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
@@ -748,11 +748,11 @@ features:
   - QueryServer
   name: SSLEnabledQueryServer
   params: 
+    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 0
     QUERY_SERVER.AVIARY_SSL_CA_FILE: 0
+    QUERY_SERVER.AVIARY_SSL_CA_DIR: 0
     QUERY_SERVER.AVIARY_SSL: "True"
     QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 0
-    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 0
-    QUERY_SERVER.AVIARY_SSL_CA_DIR: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables job scheduling
   conflicts: 
@@ -776,8 +776,8 @@ features:
   - DedicatedScheduler
   name: SchedulerDedicatedPreemption
   params: 
-    SCHEDD_PREEMPTION_REQUIREMENTS: 0
     SCHEDD_PREEMPTION_RANK: 0
+    SCHEDD_PREEMPTION_REQUIREMENTS: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Adds the scheduler to the list of daemons to run.  This is not intended to be used alone, but as a part of other features.
   conflicts: []
@@ -822,32 +822,32 @@ features:
 
   name: SharedPort
   params: 
+    USE_SHARED_PORT: "True"
     SHARED_PORT_DEBUG: ""
+    SHARED_PORT: $(LIBEXEC)/condor_shared_port
     DAEMON_SOCKET_DIR: $(RUN)
     DAEMON_LIST: ">= SHARED_PORT"
-    SHARED_PORT: $(LIBEXEC)/condor_shared_port
-    USE_SHARED_PORT: "True"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables event triggers over QMF
   conflicts: []
 
   depends: 
-  - QMF
   - Master
+  - QMF
   included: []
 
   name: TriggerService
   params: 
-    TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
     TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
-    ENABLE_ABSENT_NODES_DETECTION: "True"
     MAX_TRIGGERD_LOG: "1000000"
+    TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+    ENABLE_ABSENT_NODES_DETECTION: "True"
     TRIGGERD_LOG: $(LOG)/TriggerLog
     DC_DAEMON_LIST: ">= TRIGGERD"
-    DAEMON_LIST: ">= TRIGGERD"
-    TRIGGERD: $(SBIN)/condor_triggerd
-    TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
     DATA: 0
+    DAEMON_LIST: ">= TRIGGERD"
+    TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+    TRIGGERD: $(SBIN)/condor_triggerd
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables the vm universe on an execute node
   conflicts: []
@@ -858,13 +858,13 @@ features:
   - ExecuteNode
   name: VMUniverse
   params: 
+    VM_MEMORY: $(DETECTED_MEMORY)
     VM_TYPE: 0
     VM_NETWORKING: 0
     LIBVIRT_XML_SCRIPT: 0
-    VM_MEMORY: $(DETECTED_MEMORY)
-    VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
-    VM_GAHP_LOG: $(LOG)/VMGahpLog
     MAX_VM_GAHP_LOG: "1000000"
+    VM_GAHP_LOG: $(LOG)/VMGahpLog
+    VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
 groups: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Group 
   annotation: The default group
@@ -1305,6 +1305,19 @@ params:
   annotation: ""
   conflicts: []
 
+  default_val: "900"
+  depends: []
+
+  description: The frequency in seconds the collector sends updates to other collectors
+  kind: Integer
+  level: 0
+  must_change: false
+  name: COLLECTOR_UPDATE_INTERVAL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
   default_val: "200"
   depends: []
 
@@ -1560,6 +1573,19 @@ params:
   level: 0
   must_change: false
   name: ENABLE_ABSENT_NODES_DETECTION
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
+  default_val: "FALSE"
+  depends: []
+
+  description: Allow dynamic modification of configuration parameters
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: ENABLE_RUNTIME_CONFIG
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
@@ -2679,6 +2705,19 @@ params:
   must_change: false
   name: NEGOTIATOR
   needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
+  default_val: "FALSE"
+  depends: []
+
+  description: Enable dynamic modification of configuration parameters for the negotiator
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: NEGOTIATOR.ENABLE_RUNTIME_CONFIG
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
   conflicts: []
@@ -4658,6 +4697,8 @@ subsystems:
   - COLLECTOR_DEBUG
   - COLLECTOR_HOST
   - COLLECTOR_LOG
+  - COLLECTOR_UPDATE_INTERVAL
+  - ENABLE_RUNTIME_CONFIG
   - FLOCK_COLLECTOR_HOSTS
   - MAX_COLLECTOR_LOG
   - QMF_BROKER_AUTH_MECH
@@ -4671,6 +4712,7 @@ subsystems:
   annotation: The list of parameters affecting the had subsystem
   name: had
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - HAD
   - HAD_ARGS
   - HAD_CONNECTION_TIMEOUT
@@ -4690,6 +4732,7 @@ subsystems:
   - EC2E_HOOK_JOB_EXIT
   - EC2E_HOOK_TRANSLATE_JOB
   - EC2E_HOOK_UPDATE_JOB_INFO
+  - ENABLE_RUNTIME_CONFIG
   - JOB_ROUTER
   - JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
   - JOB_ROUTER_ADDRESS_FILE
@@ -4705,6 +4748,7 @@ subsystems:
   annotation: The list of parameters affecting the job_server subsystem
   name: job_server
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - HISTORY_INTERVAL
   - JOB_SERVER
   - JOB_SERVER.HISTORY
@@ -4728,6 +4772,7 @@ subsystems:
   annotation: The list of parameters affecting the kbdd subsystem
   name: kbdd
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - KBDD
   - KBDD_ADDRESS_FILE
   - KBDD_DEBUG
@@ -4759,6 +4804,7 @@ subsystems:
   - CONDOR_HOST
   - DAEMON_LIST
   - DC_DAEMON_LIST
+  - ENABLE_RUNTIME_CONFIG
   - MASTER
   - MASTER.PLUGINS
   - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
@@ -4783,10 +4829,12 @@ subsystems:
   name: negotiator
   params: 
   - ALLOW_NEGOTIATOR
+  - ENABLE_RUNTIME_CONFIG
   - FLOCK_NEGOTIATOR_HOSTS
   - MAX_NEGOTIATOR_LOG
   - MAX_NEGOTIATOR_MATCH_LOG
   - NEGOTIATOR
+  - NEGOTIATOR.ENABLE_RUNTIME_CONFIG
   - NEGOTIATOR.PLUGINS
   - NEGOTIATOR_ADDRESS_FILE
   - NEGOTIATOR_DEBUG
@@ -4808,6 +4856,7 @@ subsystems:
   params: 
   - AVIARY_PUBLISH_INTERVAL
   - AVIARY_PUBLISH_LOCATION
+  - ENABLE_RUNTIME_CONFIG
   - MAX_QUERY_SERVER_LOG
   - QUERY_SERVER
   - QUERY_SERVER.AVIARY_SSL
@@ -4829,6 +4878,7 @@ subsystems:
   annotation: The list of parameters affecting the replication subsystem
   name: replication
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - HAD_USE_REPLICATION
   - MAX_REPLICATION_LOG
   - REPLICATION
@@ -4841,6 +4891,7 @@ subsystems:
   annotation: The list of parameters affecting the rooster subsystem
   name: rooster
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - ROOSTER
   - ROOSTER_INTERVAL
   - ROOSTER_MAX_UNHIBERNATE
@@ -4855,6 +4906,7 @@ subsystems:
   - ALLOW_WRITE
   - AVIARY_PUBLISH_INTERVAL
   - AVIARY_PUBLISH_LOCATION
+  - ENABLE_RUNTIME_CONFIG
   - HISTORY
   - MAX_SCHEDD_LOG
   - MAX_SHADOW_LOG
@@ -4896,6 +4948,7 @@ subsystems:
   name: shared_port
   params: 
   - DAEMON_SOCKET_DIR
+  - ENABLE_RUNTIME_CONFIG
   - SHARED_PORT
   - SHARED_PORT_DEBUG
   - USE_SHARED_PORT
@@ -4908,6 +4961,7 @@ subsystems:
   - BENCHMARKTIMER
   - CONSOLE_DEVICES
   - CONTINUE
+  - ENABLE_RUNTIME_CONFIG
   - KILL
   - LIBVIRT_XML_SCRIPT
   - MAXJOBRETIREMENTTIME
@@ -4957,6 +5011,7 @@ subsystems:
   annotation: The list of parameters affecting the transferer subsystem
   name: transferer
   params: 
+  - ENABLE_RUNTIME_CONFIG
   - MAX_TRANSFERER_LIFETIME
   - TRANSFERER_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
@@ -4965,6 +5020,7 @@ subsystems:
   params: 
   - DATA
   - ENABLE_ABSENT_NODES_DETECTION
+  - ENABLE_RUNTIME_CONFIG
   - QMF_BROKER_AUTH_MECH
   - QMF_BROKER_HOST
   - QMF_BROKER_PASSWORD_FILE
