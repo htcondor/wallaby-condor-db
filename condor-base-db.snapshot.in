@@ -186,6 +186,7 @@ features:
     COLLECTOR_LOG: $(LOG)/CollectorLog
     COLLECTOR_DEBUG: ""
     COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
+    COLLECTOR_UPDATE_INTERVAL: "900"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Sets the UID domain
   conflicts: []
