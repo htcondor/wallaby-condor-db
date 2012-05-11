@@ -73,7 +73,11 @@ def commit_version
   message = "bumping DB_VERSION from #{@old_version} to #{new_version}"
   sh "git commit -m '#{message}' #{db_version_file}"
   sh "git tag v#{new_version}"
-  sh "git push origin master v#{new_version}" 
+end
+
+desc "push changes to the central repo"
+task :push do
+  sh "git push origin master v#{pkg_version}" 
 end
 
 desc "bump the minor version number"
