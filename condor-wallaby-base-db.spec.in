@@ -64,8 +64,8 @@ rm -rf %{buildroot}
 %defattr(-, root, root, -)
 %endif
 %doc LICENSE
-%defattr(-, wallaby, wallaby, -)
 %{_localstatedir}/lib/condor-wallaby-base-db/condor-base-db.snapshot
+%defattr(-, wallaby, wallaby, -)
 %{_localstatedir}/lib/wallaby/patches/db-1.5.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.6.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.7.wpatch
@@ -86,6 +86,9 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
 
 %changelog
+* Fri May 11 2012 rrati <rrati@redhat> - 1.22-2
+- Database snapshot file should not by owned by user wallaby
+
 * Fri May 11 2012 rrati <rrati@redhat> - 1.22-1
 - Updated wallaby-utils dep
 - Database patches are now owned by user wallaby (BZ767272)
