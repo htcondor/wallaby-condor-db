@@ -16,7 +16,7 @@ Source0: https://fedorahosted.org/releases/g/r/grid/%{name}-%{version}.tar.gz
 %if %{building_for_el5}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %endif
-Requires: wallaby-utils >= 0.10.7
+Requires: wallaby-utils >= 0.14.2-2
 BuildRequires: ruby
 %if ! %{building_for_el5}
 BuildRequires: rubygem-rake
@@ -64,6 +64,7 @@ rm -rf %{buildroot}
 %defattr(-, root, root, -)
 %endif
 %doc LICENSE
+%defattr(-, wallaby, wallaby, -)
 %{_localstatedir}/lib/condor-wallaby-base-db/condor-base-db.snapshot
 %{_localstatedir}/lib/wallaby/patches/db-1.5.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.6.wpatch
@@ -82,8 +83,17 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.19.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.20.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.21.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
 
 %changelog
+* Fri May 11 2012 rrati <rrati@redhat> - 1.22-1
+- Updated wallaby-utils dep
+- Database patches are now owned by user wallaby (BZ767272)
+- Added Parameters: COLLECTOR_UPDATE_INTERVAL, ENABLE_RUNTIME_CONFIG
+                    NEGOTIATOR.ENABLE_RUNTIME_CONFIG (BZ816278)
+- Updated ConsoleNegotiator feature (BZ816715)
+- Updated Collector feature (BZ816718)
+
 * Wed Apr 18 2012 rrati <rrati@redhat> - 1.21-1
 - Added annotations (BZ802823)
 - *_PLUGINS no longer allow values set on a local machine (BZ812126)
