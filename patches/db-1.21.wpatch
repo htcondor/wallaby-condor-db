@@ -6,11 +6,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       depends: 
       - Master
       - NodeAccess
-    AviaryLocator: 
-      params: 
-        AVIARY_LOCATOR_MISSED_UPDATES: "2"
-        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
-        COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
     Negotiator: 
       depends: 
       - Master
@@ -65,14 +60,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - REPLACE
       - - NodeAccess
         - Master
-      - {}
-
-    AviaryLocator: 
-      modifyParams: 
-      - REPLACE
-      - AVIARY_LOCATOR_MISSED_UPDATES: "2"
-        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
-        COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
       - {}
 
     Negotiator: 
