@@ -14,7 +14,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - QMF
       - Master
     ConsoleNegotiator: 
-      annotation: Enables QMF publishing of negotiator data
       params: 
         NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
     ConsoleExecuteNode: 
@@ -367,7 +366,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
       - {}
 
-      setAnnotation: Enables QMF publishing and dynamic configuration for the negotiator
     ConsoleExecuteNode: 
       modifyDepends: 
       - REPLACE
@@ -432,7 +430,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - {}
 
       setRequiresRestart: true
-      setAnnotation: ""
       setMustChange: false
       setKind: Boolean
     NEGOTIATOR.ENABLE_RUNTIME_CONFIG: 
@@ -452,7 +449,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - {}
 
       setRequiresRestart: false
-      setAnnotation: ""
       setMustChange: false
       setKind: Boolean
     COLLECTOR_UPDATE_INTERVAL: 
@@ -472,7 +468,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - {}
 
       setRequiresRestart: false
-      setAnnotation: ""
       setMustChange: false
       setKind: Integer
   subsystems: 

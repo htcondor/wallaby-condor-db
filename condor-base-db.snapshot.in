@@ -1,32 +1,6 @@
 --- !ruby/object:Mrg::Grid::SerializedConfigs::Store 
 features: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Collector additions to provide the aviary locator
-  conflicts: []
-
-  depends: []
-
-  included: 
-  - Collector
-  - AviaryPublishingEnabled
-  name: AviaryLocator
-  params: 
-    AVIARY_LOCATOR_MISSED_UPDATES: "2"
-    AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
-    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables publishing aviary locator information
-  conflicts: []
-
-  depends: []
-
-  included: []
-
-  name: AviaryPublishingEnabled
-  params: 
-    AVIARY_PUBLISH_LOCATION: "True"
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Scheduler additions to provide the Aviary Scheduler
   conflicts: []
 
   depends: 
@@ -38,19 +12,6 @@ features:
     SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
     SCHEDD.HTTP_PORT: "9090"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables publishing aviary locator data for the Aviary Scheduler
-  conflicts: []
-
-  depends: []
-
-  included: 
-  - AviaryScheduler
-  - AviaryPublishingEnabled
-  name: AviarySchedulerPublisher
-  params: 
-    AVIARY_PUBLISH_INTERVAL: "10"
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: The Axis2 configuration file
   conflicts: []
 
   depends: []
@@ -61,7 +22,6 @@ features:
   params: 
     WSFCPP_HOME: /var/lib/condor/aviary/axis2.xml
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: The version of the database
   conflicts: []
 
   depends: []
@@ -72,7 +32,6 @@ features:
   params: 
     BaseDBVersion: v<%= db_version %>
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A non-functional base for an highly available scheduler.  This needs further configuration and is not meant to be used by itself
   conflicts: 
   - Scheduler
   depends: []
@@ -84,7 +43,6 @@ features:
   params: 
     SCHEDD_NAME: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A non-functional base for executing jobs.  This needs further configuration and is not meant to be used by itself
   conflicts: []
 
   depends: []
@@ -97,7 +55,6 @@ features:
     STARTER_LOG: $(LOG)/StarterLog
     STARTER_DEBUG: D_NODATE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A non-functional base for the job server.  This needs furher configuration and is not meant to be used by itself
   conflicts: []
 
   depends: 
@@ -111,7 +68,6 @@ features:
     JOB_SERVER: $(SBIN)/condor_job_server
     QMF_PUBLISH_SUBMISSIONS: "false"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A non-functional base for the query server.  This needs furher configuration and is not meant to be used by itself
   conflicts: []
 
   depends: []
@@ -126,7 +82,6 @@ features:
     QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
     MAX_QUERY_SERVER_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A non-functional base for the scheduler.  This needs furher configuration and is not meant to be used by itself
   conflicts: []
 
   depends: 
@@ -155,7 +110,6 @@ features:
     SHADOW: $(SBIN)/condor_shadow
     MAX_SHADOW_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: A set of features that comprise a central manager
   conflicts: []
 
   depends: 
@@ -167,7 +121,6 @@ features:
   params: {}
 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables collector functionality
   conflicts: []
 
   depends: 
@@ -188,7 +141,6 @@ features:
     COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
     COLLECTOR_UPDATE_INTERVAL: "900"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Sets the UID domain
   conflicts: []
 
   depends: []
@@ -199,7 +151,6 @@ features:
   params: 
     UID_DOMAIN: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables concurrency limits in the negotiator
   conflicts: []
 
   depends: []
@@ -210,7 +161,6 @@ features:
   params: 
     CONCURRENCY_LIMIT_DEFAULT: "200"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing of collector data
   conflicts: []
 
   depends: 
@@ -222,7 +172,6 @@ features:
     QMF_IGNORE_UPDATE_STARTD_AD: "TRUE"
     COLLECTOR.PLUGINS: ">= $(LIB)/plugins/MgmtCollectorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing of startd data
   conflicts: []
 
   depends: 
@@ -234,7 +183,6 @@ features:
   params: 
     STARTD.PLUGINS: ">= $(LIB)/plugins/MgmtStartdPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing of master data
   conflicts: []
 
   depends: 
@@ -246,7 +194,6 @@ features:
   params: 
     MASTER.PLUGINS: ">= $(LIB)/plugins/MgmtMasterPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing and dynamic configuration for the negotiator
   conflicts: []
 
   depends: 
@@ -259,7 +206,6 @@ features:
     NEGOTIATOR.ENABLE_RUNTIME_CONFIG: "TRUE"
     NEGOTIATOR.PLUGINS: ">= $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables QMF publishing of scheduler data
   conflicts: []
 
   depends: 
@@ -272,7 +218,6 @@ features:
     SCHEDD.QMF_STOREFILE: $(SPOOL)/.schedd_storefile
     SCHEDD.PLUGINS: ">= $(LIB)/plugins/MgmtScheddPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Configures an exceute node as a dedicated resource
   conflicts: []
 
   depends: []
@@ -293,7 +238,6 @@ features:
     RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
     PREEMPT: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) && ($(PREEMPT))
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Configures a scheduler as a dedicated scheduler
   conflicts: []
 
   depends: []
@@ -305,7 +249,6 @@ features:
     DEDICATED_SCHEDULER_USE_FIFO: "TRUE"
     UNUSED_CLAIM_TIMEOUT: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables dynamic slots for an execute node
   conflicts: []
 
   depends: []
@@ -319,7 +262,6 @@ features:
     SLOT_TYPE_1: cpus=100%,disk=100%,swap=100%
     NUM_SLOTS: "1"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables running ec2 jobs on an execute node
   conflicts: []
 
   depends: []
@@ -336,7 +278,6 @@ features:
     GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: "20"
     GRIDMANAGER_JOB_PROBE_INTERVAL: "300"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables routing ec2 enhanced jobs on a job router
   conflicts: []
 
   depends: []
@@ -355,7 +296,6 @@ features:
     EC2E_HOOK_TRANSLATE_JOB: $(LIBEXEC)/hooks/hook_translate.py
     JOB_ROUTER_DEFAULTS: $(JOB_ROUTER_DEFAULTS) [ MaxIdleJobs = 10; MaxJobs = 200; set_PeriodicRemove = (JobStatus == 5 && HoldReason =!= "Spooling input data files") || (JobStatus == 1 && (CurrentTime - QDate) > 3600*6); set_requirements = true; set_WantAWS = false; ]
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables running jobs
   conflicts: []
 
   depends: 
@@ -387,7 +327,6 @@ features:
     STARTD: $(SBIN)/condor_startd
     PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables preemption for an execute node that is a dedicated resource
   conflicts: []
 
   depends: []
@@ -398,7 +337,6 @@ features:
   params: 
     STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables publishing execute node data used by the trigger service
   conflicts: []
 
   depends: []
@@ -415,7 +353,6 @@ features:
     TRIGGER_DATA_GETDATA_RECONFIG: "FALSE"
     TRIGGER_DATA_GETDATA_EXECUTABLE: $(BIN)/get_trigger_data
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables high availability for the central manager
   conflicts: []
 
   depends: []
@@ -453,7 +390,6 @@ features:
     HAD_LIST: 0
     HAD: $(SBIN)/condor_had
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables high availability for a scheduler
   conflicts: []
 
   depends: []
@@ -469,7 +405,6 @@ features:
     MASTER_HA_LIST: $(MASTER_HA_LIST), SCHEDD
     VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), SCHEDD.lock
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Configures startd job hooks on an execute node
   conflicts: []
 
   depends: []
@@ -483,7 +418,6 @@ features:
     MAX_JOB_HOOKS_LOG: "10000000"
     JOB_HOOKS_IP: 127.0.0.1
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: The location of the job queue used by the scheduler
   conflicts: []
 
   depends: []
@@ -495,7 +429,6 @@ features:
     HISTORY: $(SPOOL)/history
     SPOOL: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables a job router
   conflicts: []
 
   depends: 
@@ -514,7 +447,6 @@ features:
     DAEMON_LIST: ">= JOB_ROUTER"
     JOB_ROUTER: $(LIBEXEC)/condor_job_router
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables a job server
   conflicts: []
 
   depends: 
@@ -530,7 +462,6 @@ features:
     DAEMON_LIST: ">= JOB_SERVER"
     JOB_SERVER.HISTORY: $(JOB_SERVER.SPOOL)/history
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables keyboard monitoring
   conflicts: []
 
   depends: 
@@ -546,7 +477,6 @@ features:
     KBDD_LOG: $(LOG)/KbdLog
     DAEMON_LIST: ">= KBDD"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables low-latency scheduling for an execute node
   conflicts: []
 
   depends: 
@@ -577,7 +507,6 @@ features:
     STARTD_JOB_HOOK_KEYWORD: LOW_LATENCY
     CAROD: $(SBIN)/carod
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables master functionality
   conflicts: []
 
   depends: 
@@ -599,7 +528,6 @@ features:
     DAEMON_LIST: ">= MASTER"
     CONDOR_DEVELOPERS_COLLECTOR: NONE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables negotiator functionality
   conflicts: []
 
   depends: 
@@ -624,7 +552,6 @@ features:
     NEGOTIATOR_DEBUG: D_MATCH
     MAX_NEGOTIATOR_MATCH_LOG: "1000000"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Configures read/write access to the node
   conflicts: []
 
   depends: []
@@ -636,7 +563,6 @@ features:
     ALLOW_READ: 0
     ALLOW_WRITE: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables power management on the collector
   conflicts: []
 
   depends: []
@@ -649,7 +575,6 @@ features:
     OFFLINE_EXPIRE_ADS_AFTER: "28800"
     VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), OfflineLog
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables power management for an execute node
   conflicts: 
   - Collector
   - Negotiator
@@ -665,7 +590,6 @@ features:
     HIBERNATE_CHECK_INTERVAL: "300"
     TimeToWait: (2 * $(HOUR))
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables power management wake up for a subnet
   conflicts: 
   - PowerManagementNode
   depends: []
@@ -684,7 +608,6 @@ features:
     ROOSTER_UNHIBERNATE: Offline && Unhibernate
     DAEMON_LIST: ">= ROOSTER"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: QMF related parameters
   conflicts: []
 
   depends: []
@@ -697,7 +620,6 @@ features:
     QMF_BROKER_HOST: 0
     QMF_DELETE_ON_SHUTDOWN: "TRUE"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables query server functionality
   conflicts: []
 
   depends: 
@@ -714,19 +636,6 @@ features:
     DAEMON_LIST: ">= QUERY_SERVER"
     QUERY_SERVER.HISTORY: $(QUERY_SERVER.SPOOL)/history
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables publishing aviary locator data for the query server
-  conflicts: []
-
-  depends: []
-
-  included: 
-  - QueryServer
-  - AviaryPublishingEnabled
-  name: QueryServerPublisher
-  params: 
-    AVIARY_PUBLISH_INTERVAL: "10"
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables SSL security for the aviary scheduler
   conflicts: []
 
   depends: []
@@ -741,7 +650,6 @@ features:
     SCHEDD.AVIARY_SSL_CA_FILE: 0
     SCHEDD.AVIARY_SSL_SERVER_CERT: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables SSL security for the query server
   conflicts: []
 
   depends: []
@@ -756,7 +664,6 @@ features:
     QUERY_SERVER.AVIARY_SSL: "True"
     QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables job scheduling
   conflicts: 
   - HAScheduler
   depends: []
@@ -769,7 +676,6 @@ features:
   params: 
     SPOOL: $(LOCAL_DIR)/spool
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables preemption for a dedicated scheduler
   conflicts: []
 
   depends: []
@@ -781,7 +687,6 @@ features:
     SCHEDD_PREEMPTION_RANK: 0
     SCHEDD_PREEMPTION_REQUIREMENTS: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Adds the scheduler to the list of daemons to run.  This is not intended to be used alone, but as a part of other features.
   conflicts: []
 
   depends: []
@@ -792,7 +697,6 @@ features:
   params: 
     DAEMON_LIST: ">= SCHEDD"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Sets the filesystem domain
   conflicts: []
 
   depends: []
@@ -803,7 +707,6 @@ features:
   params: 
     FILESYSTEM_DOMAIN: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: The location on a shared filesystem of the job queue used by the schedd.
   conflicts: []
 
   depends: []
@@ -815,7 +718,6 @@ features:
     SCHEDD.HISTORY: $(SCHEDD.SPOOL)/history
     SCHEDD.SPOOL: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables shared port
   conflicts: []
 
   depends: []
@@ -830,7 +732,6 @@ features:
     DAEMON_SOCKET_DIR: $(RUN)
     DAEMON_LIST: ">= SHARED_PORT"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables event triggers over QMF
   conflicts: []
 
   depends: 
@@ -851,7 +752,6 @@ features:
     TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
     TRIGGERD: $(SBIN)/condor_triggerd
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables the vm universe on an execute node
   conflicts: []
 
   depends: []
@@ -869,7 +769,6 @@ features:
     VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
 groups: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Group 
-  annotation: The default group
   features: []
 
   is_identity_group: false
@@ -877,7 +776,6 @@ groups:
   params: {}
 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Group 
-  annotation: The skeleton group
   features: []
 
   is_identity_group: false
@@ -888,7 +786,6 @@ nodes: []
 
 params: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -901,7 +798,6 @@ params:
   name: ALLOW_ADMINISTRATOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -914,7 +810,6 @@ params:
   name: ALLOW_NEGOTIATOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -927,7 +822,6 @@ params:
   name: ALLOW_NEGOTIATOR_SCHEDD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -940,7 +834,6 @@ params:
   name: ALLOW_READ
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -953,7 +846,6 @@ params:
   name: ALLOW_WRITE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -966,7 +858,6 @@ params:
   name: ALL_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/amazon_gahp
@@ -979,7 +870,6 @@ params:
   name: AMAZON_GAHP
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: /tmp/AmazonGahpLog.$(USERNAME)
@@ -992,7 +882,6 @@ params:
   name: AMAZON_GAHP_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "2"
@@ -1005,7 +894,6 @@ params:
   name: AVIARY_LOCATOR_MISSED_UPDATES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "20"
@@ -1018,7 +906,6 @@ params:
   name: AVIARY_LOCATOR_PRUNE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10"
@@ -1031,7 +918,6 @@ params:
   name: AVIARY_PUBLISH_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -1044,7 +930,6 @@ params:
   name: AVIARY_PUBLISH_LOCATION
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: (CurrentTime - LastBenchmark)
@@ -1057,7 +942,6 @@ params:
   name: BENCHMARKTIMER
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -1070,7 +954,6 @@ params:
   name: BaseDBVersion
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/carod
@@ -1083,7 +966,6 @@ params:
   name: CAROD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1096,7 +978,6 @@ params:
   name: CAROD_BROKER_IP
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "5672"
@@ -1109,7 +990,6 @@ params:
   name: CAROD_BROKER_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1122,7 +1002,6 @@ params:
   name: CAROD_BROKER_QUEUE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: 127.0.0.1
@@ -1135,7 +1014,6 @@ params:
   name: CAROD_IP
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "30"
@@ -1148,7 +1026,6 @@ params:
   name: CAROD_LEASE_CHECK_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "35"
@@ -1161,7 +1038,6 @@ params:
   name: CAROD_LEASE_TIME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/CaroLog
@@ -1174,7 +1050,6 @@ params:
   name: CAROD_LOG
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10000"
@@ -1187,7 +1062,6 @@ params:
   name: CAROD_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "5"
@@ -1200,7 +1074,6 @@ params:
   name: CAROD_QUEUED_CONNECTIONS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_collector
@@ -1213,7 +1086,6 @@ params:
   name: COLLECTOR
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIB)/plugins/MgmtCollectorPlugin-plugin.so
@@ -1226,7 +1098,6 @@ params:
   name: COLLECTOR.PLUGINS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.collector_address
@@ -1239,7 +1110,6 @@ params:
   name: COLLECTOR_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1252,7 +1122,6 @@ params:
   name: COLLECTOR_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1265,7 +1134,6 @@ params:
   name: COLLECTOR_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1278,7 +1146,6 @@ params:
   name: COLLECTOR_HOST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/CollectorLog
@@ -1291,7 +1158,6 @@ params:
   name: COLLECTOR_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(FULL_HOSTNAME)
@@ -1304,7 +1170,6 @@ params:
   name: COLLECTOR_NAME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "900"
@@ -1317,7 +1182,6 @@ params:
   name: COLLECTOR_UPDATE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "200"
@@ -1330,7 +1194,6 @@ params:
   name: CONCURRENCY_LIMIT_DEFAULT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: NONE
@@ -1343,7 +1206,6 @@ params:
   name: CONDOR_DEVELOPERS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: NONE
@@ -1356,7 +1218,6 @@ params:
   name: CONDOR_DEVELOPERS_COLLECTOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1369,7 +1230,6 @@ params:
   name: CONDOR_HOST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: mouse, console
@@ -1382,7 +1242,6 @@ params:
   name: CONSOLE_DEVICES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
@@ -1395,7 +1254,6 @@ params:
   name: CONTINUE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1408,7 +1266,6 @@ params:
   name: DAEMON_LIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(RUN)
@@ -1421,7 +1278,6 @@ params:
   name: DAEMON_SOCKET_DIR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1434,7 +1290,6 @@ params:
   name: DATA
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1447,7 +1302,6 @@ params:
   name: DC_DAEMON_LIST
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1460,7 +1314,6 @@ params:
   name: DEDICATEDSCHEDULER
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -1473,7 +1326,6 @@ params:
   name: DEDICATED_SCHEDULER_USE_FIFO
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: EC2RunAttempts, EC2JobSuccessful
@@ -1486,7 +1338,6 @@ params:
   name: EC2E_ATTRS_TO_COPY
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_cleanup.py
@@ -1499,7 +1350,6 @@ params:
   name: EC2E_HOOK_JOB_CLEANUP
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_job_finalize.py
@@ -1512,7 +1362,6 @@ params:
   name: EC2E_HOOK_JOB_EXIT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_translate.py
@@ -1525,7 +1374,6 @@ params:
   name: EC2E_HOOK_TRANSLATE_JOB
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_retrieve_status.py
@@ -1538,7 +1386,6 @@ params:
   name: EC2E_HOOK_UPDATE_JOB_INFO
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/ec2_gahp
@@ -1551,7 +1398,6 @@ params:
   name: EC2_GAHP
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: /tmp/EC2GahpLog.$(USERNAME)
@@ -1564,7 +1410,6 @@ params:
   name: EC2_GAHP_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -1577,7 +1422,6 @@ params:
   name: ENABLE_ABSENT_NODES_DETECTION
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -1590,7 +1434,6 @@ params:
   name: ENABLE_RUNTIME_CONFIG
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: 10 * (Activity == "Idle")
@@ -1603,7 +1446,6 @@ params:
   name: FETCHWORKDELAY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1616,7 +1458,6 @@ params:
   name: FILESYSTEM_DOMAIN
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1629,7 +1470,6 @@ params:
   name: FLOCK_COLLECTOR_HOSTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1642,7 +1482,6 @@ params:
   name: FLOCK_NEGOTIATOR_HOSTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -1655,7 +1494,6 @@ params:
   name: GRIDMANAGER_JOB_PROBE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "20"
@@ -1668,7 +1506,6 @@ params:
   name: GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "20"
@@ -1681,7 +1518,6 @@ params:
   name: GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_had
@@ -1694,7 +1530,6 @@ params:
   name: HAD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: -p $(HAD_PORT)
@@ -1707,7 +1542,6 @@ params:
   name: HAD_ARGS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "2"
@@ -1720,7 +1554,6 @@ params:
   name: HAD_CONNECTION_TIMEOUT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1733,7 +1566,6 @@ params:
   name: HAD_LIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/HADLog
@@ -1746,7 +1578,6 @@ params:
   name: HAD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "51450"
@@ -1759,7 +1590,6 @@ params:
   name: HAD_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -1772,7 +1602,6 @@ params:
   name: HAD_UPDATE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -1785,7 +1614,6 @@ params:
   name: HAD_USE_PRIMARY
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -1798,7 +1626,6 @@ params:
   name: HAD_USE_REPLICATION
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "3600"
@@ -1811,7 +1638,6 @@ params:
   name: HA_LOCK_HOLD_TIME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1824,7 +1650,6 @@ params:
   name: HA_LOCK_URL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -1837,7 +1662,6 @@ params:
   name: HA_POLL_PERIOD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ifThenElse( $(ShouldHibernate), "RAM", "NONE" )
@@ -1850,7 +1674,6 @@ params:
   name: HIBERNATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -1863,7 +1686,6 @@ params:
   name: HIBERNATE_CHECK_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SPOOL)/history
@@ -1876,7 +1698,6 @@ params:
   name: HISTORY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "600"
@@ -1889,7 +1710,6 @@ params:
   name: HISTORY_INTERVAL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: 127.0.0.1
@@ -1902,7 +1722,6 @@ params:
   name: JOB_HOOKS_IP
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/JobHooksLog
@@ -1915,7 +1734,6 @@ params:
   name: JOB_HOOKS_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10000"
@@ -1928,7 +1746,6 @@ params:
   name: JOB_HOOKS_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/condor_job_router
@@ -1941,7 +1758,6 @@ params:
   name: JOB_ROUTER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
@@ -1954,7 +1770,6 @@ params:
   name: JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.job_router_address
@@ -1967,7 +1782,6 @@ params:
   name: JOB_ROUTER_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1980,7 +1794,6 @@ params:
   name: JOB_ROUTER_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -1993,7 +1806,6 @@ params:
   name: JOB_ROUTER_DEFAULTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2006,7 +1818,6 @@ params:
   name: JOB_ROUTER_ENTRIES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2019,7 +1830,6 @@ params:
   name: JOB_ROUTER_HOOK_KEYWORD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/JobRouterLog
@@ -2032,7 +1842,6 @@ params:
   name: JOB_ROUTER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10"
@@ -2045,7 +1854,6 @@ params:
   name: JOB_ROUTER_POLLING_PERIOD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_job_server
@@ -2058,7 +1866,6 @@ params:
   name: JOB_SERVER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(JOB_SERVER.SPOOL)/history
@@ -2071,7 +1878,6 @@ params:
   name: JOB_SERVER.HISTORY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.job_server_address
@@ -2084,7 +1890,6 @@ params:
   name: JOB_SERVER.JOB_SERVER_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2097,7 +1902,6 @@ params:
   name: JOB_SERVER.JOB_SERVER_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/JobServerLog
@@ -2110,7 +1914,6 @@ params:
   name: JOB_SERVER.JOB_SERVER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2123,7 +1926,6 @@ params:
   name: JOB_SERVER.SCHEDD_NAME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2136,7 +1938,6 @@ params:
   name: JOB_SERVER.SPOOL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.job_server_address
@@ -2149,7 +1950,6 @@ params:
   name: JOB_SERVER_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2162,7 +1962,6 @@ params:
   name: JOB_SERVER_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/JobServerLog
@@ -2175,7 +1974,6 @@ params:
   name: JOB_SERVER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_kbdd
@@ -2188,7 +1986,6 @@ params:
   name: KBDD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.kbdd_address
@@ -2201,7 +1998,6 @@ params:
   name: KBDD_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2214,7 +2010,6 @@ params:
   name: KBDD_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/KbdLog
@@ -2227,7 +2022,6 @@ params:
   name: KBDD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(ActivityTimer) > $(MaxVacateTime)
@@ -2240,7 +2034,6 @@ params:
   name: KILL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/libvirt_simple_script.awk
@@ -2253,7 +2046,6 @@ params:
   name: LIBVIRT_XML_SCRIPT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_fetch_work.py
@@ -2266,7 +2058,6 @@ params:
   name: LOW_LATENCY_HOOK_FETCH_WORK
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_reply_fetch.py
@@ -2279,7 +2070,6 @@ params:
   name: LOW_LATENCY_HOOK_REPLY_FETCH
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_job_exit.py
@@ -2292,7 +2082,6 @@ params:
   name: LOW_LATENCY_JOB_HOOK_JOB_EXIT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_prepare_job.py
@@ -2305,7 +2094,6 @@ params:
   name: LOW_LATENCY_JOB_HOOK_PREPARE_JOB
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/hooks/hook_update_job_status.py
@@ -2318,7 +2106,6 @@ params:
   name: LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_master
@@ -2331,7 +2118,6 @@ params:
   name: MASTER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIB)/plugins/MgmtMasterPlugin-plugin.so
@@ -2344,7 +2130,6 @@ params:
   name: MASTER.PLUGINS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
@@ -2357,7 +2142,6 @@ params:
   name: MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "True"
@@ -2370,7 +2154,6 @@ params:
   name: MASTER.USE_PROCD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.master_address
@@ -2383,7 +2166,6 @@ params:
   name: MASTER_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "360"
@@ -2396,7 +2178,6 @@ params:
   name: MASTER_HAD_BACKOFF_CONSTANT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2409,7 +2190,6 @@ params:
   name: MASTER_HA_LIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: HAD
@@ -2422,7 +2202,6 @@ params:
   name: MASTER_NEGOTIATOR_CONTROLLER
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -2435,7 +2214,6 @@ params:
   name: MAXJOBRETIREMENTTIME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2448,7 +2226,6 @@ params:
   name: MAX_CAROD_LOG
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2461,7 +2238,6 @@ params:
   name: MAX_COLLECTOR_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2474,7 +2250,6 @@ params:
   name: MAX_HAD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "2"
@@ -2487,7 +2262,6 @@ params:
   name: MAX_HISTORY_ROTATIONS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2500,7 +2274,6 @@ params:
   name: MAX_JOB_HOOKS_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2513,7 +2286,6 @@ params:
   name: MAX_JOB_ROUTER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2526,7 +2298,6 @@ params:
   name: MAX_JOB_SERVER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2539,7 +2310,6 @@ params:
   name: MAX_KBDD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2552,7 +2322,6 @@ params:
   name: MAX_NEGOTIATOR_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2565,7 +2334,6 @@ params:
   name: MAX_NEGOTIATOR_MATCH_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2578,7 +2346,6 @@ params:
   name: MAX_QUERY_SERVER_LOG
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2591,7 +2358,6 @@ params:
   name: MAX_REPLICATION_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2604,7 +2370,6 @@ params:
   name: MAX_SCHEDD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2617,7 +2382,6 @@ params:
   name: MAX_SHADOW_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2630,7 +2394,6 @@ params:
   name: MAX_STARTD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2643,7 +2406,6 @@ params:
   name: MAX_STARTER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -2656,7 +2418,6 @@ params:
   name: MAX_TRANSFERER_LIFETIME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2669,7 +2430,6 @@ params:
   name: MAX_TRIGGERD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1000000"
@@ -2682,7 +2442,6 @@ params:
   name: MAX_VM_GAHP_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -2695,7 +2454,6 @@ params:
   name: NEED_SET_EC2E_ROUTES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_negotiator
@@ -2708,7 +2466,6 @@ params:
   name: NEGOTIATOR
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -2721,7 +2478,6 @@ params:
   name: NEGOTIATOR.ENABLE_RUNTIME_CONFIG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIB)/plugins/MgmtNegotiatorPlugin-plugin.so
@@ -2734,7 +2490,6 @@ params:
   name: NEGOTIATOR.PLUGINS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.negotiator_address
@@ -2747,7 +2502,6 @@ params:
   name: NEGOTIATOR_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: D_MATCH
@@ -2760,7 +2514,6 @@ params:
   name: NEGOTIATOR_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "60"
@@ -2773,7 +2526,6 @@ params:
   name: NEGOTIATOR_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/NegotiatorLog
@@ -2786,7 +2538,6 @@ params:
   name: NEGOTIATOR_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/MatchLog
@@ -2799,7 +2550,6 @@ params:
   name: NEGOTIATOR_MATCH_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: RemoteOwner =?= UNDEFINED
@@ -2812,7 +2562,6 @@ params:
   name: NEGOTIATOR_PRE_JOB_RANK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2825,7 +2574,6 @@ params:
   name: NUM_SLOTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2838,7 +2586,6 @@ params:
   name: NUM_SLOTS_TYPE_1
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "28800"
@@ -2851,7 +2598,6 @@ params:
   name: OFFLINE_EXPIRE_ADS_AFTER
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SPOOL)/OfflineLog
@@ -2864,7 +2610,6 @@ params:
   name: OFFLINE_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
@@ -2877,7 +2622,6 @@ params:
   name: PERIODIC_CHECKPOINT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
@@ -2890,7 +2634,6 @@ params:
   name: PREEMPT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: (RemoteUserPrio * 1000000) - TARGET.ImageSize
@@ -2903,7 +2646,6 @@ params:
   name: PREEMPTION_RANK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
@@ -2916,7 +2658,6 @@ params:
   name: PREEMPTION_REQUIREMENTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2929,7 +2670,6 @@ params:
   name: QMF_BROKER_AUTH_MECH
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2942,7 +2682,6 @@ params:
   name: QMF_BROKER_HOST
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2955,7 +2694,6 @@ params:
   name: QMF_BROKER_PASSWORD_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "5672"
@@ -2968,7 +2706,6 @@ params:
   name: QMF_BROKER_PORT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -2981,7 +2718,6 @@ params:
   name: QMF_BROKER_USERNAME
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -2994,7 +2730,6 @@ params:
   name: QMF_DELETE_ON_SHUTDOWN
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -3007,7 +2742,6 @@ params:
   name: QMF_IGNORE_UPDATE_STARTD_AD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -3020,7 +2754,6 @@ params:
   name: QMF_PUBLISH_SUBMISSIONS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/aviary_query_server
@@ -3033,7 +2766,6 @@ params:
   name: QUERY_SERVER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -3046,7 +2778,6 @@ params:
   name: QUERY_SERVER.AVIARY_SSL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3059,7 +2790,6 @@ params:
   name: QUERY_SERVER.AVIARY_SSL_CA_DIR
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3072,7 +2802,6 @@ params:
   name: QUERY_SERVER.AVIARY_SSL_CA_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3085,7 +2814,6 @@ params:
   name: QUERY_SERVER.AVIARY_SSL_SERVER_CERT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3098,7 +2826,6 @@ params:
   name: QUERY_SERVER.AVIARY_SSL_SERVER_KEY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(QUERY_SERVER.SPOOL)/history
@@ -3111,7 +2838,6 @@ params:
   name: QUERY_SERVER.HISTORY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "120"
@@ -3124,7 +2850,6 @@ params:
   name: QUERY_SERVER.HISTORY_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "9091"
@@ -3137,7 +2862,6 @@ params:
   name: QUERY_SERVER.HTTP_PORT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.query_server_address
@@ -3150,7 +2874,6 @@ params:
   name: QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: D_ALWAYS
@@ -3163,7 +2886,6 @@ params:
   name: QUERY_SERVER.QUERY_SERVER_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/QueryServerLog
@@ -3176,7 +2898,6 @@ params:
   name: QUERY_SERVER.QUERY_SERVER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3189,7 +2910,6 @@ params:
   name: QUERY_SERVER.SCHEDD_NAME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3202,7 +2922,6 @@ params:
   name: QUERY_SERVER.SPOOL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3215,7 +2934,6 @@ params:
   name: QUERY_SERVER_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -3228,7 +2946,6 @@ params:
   name: QUEUE_ALL_USERS_TRUSTED
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: root, condor
@@ -3241,7 +2958,6 @@ params:
   name: QUEUE_SUPER_USERS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -3254,7 +2970,6 @@ params:
   name: RANK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3267,7 +2982,6 @@ params:
   name: RANK_FACTOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_replication
@@ -3280,7 +2994,6 @@ params:
   name: REPLICATION
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: -p $(REPLICATION_PORT)
@@ -3293,7 +3006,6 @@ params:
   name: REPLICATION_ARGS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -3306,7 +3018,6 @@ params:
   name: REPLICATION_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3319,7 +3030,6 @@ params:
   name: REPLICATION_LIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/ReplicationLog
@@ -3332,7 +3042,6 @@ params:
   name: REPLICATION_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "41450"
@@ -3345,7 +3054,6 @@ params:
   name: REPLICATION_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -3358,7 +3066,6 @@ params:
   name: RESTART_PROCD_ON_ERROR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/condor_rooster
@@ -3371,7 +3078,6 @@ params:
   name: ROOSTER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -3384,7 +3090,6 @@ params:
   name: ROOSTER_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -3397,7 +3102,6 @@ params:
   name: ROOSTER_MAX_UNHIBERNATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3410,7 +3114,6 @@ params:
   name: ROOSTER_SUBNET_MASK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: Offline && Unhibernate
@@ -3423,7 +3126,6 @@ params:
   name: ROOSTER_UNHIBERNATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: Mips*Cpus
@@ -3436,7 +3138,6 @@ params:
   name: ROOSTER_UNHIBERNATE_RANK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "\"$(BIN)/condor_power -d -i -s 255.255.255.255\""
@@ -3449,7 +3150,6 @@ params:
   name: ROOSTER_WAKEUP_CMD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
@@ -3462,7 +3162,6 @@ params:
   name: RUNBENCHMARKS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_schedd
@@ -3475,7 +3174,6 @@ params:
   name: SCHEDD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -3488,7 +3186,6 @@ params:
   name: SCHEDD.AVIARY_SSL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3501,7 +3198,6 @@ params:
   name: SCHEDD.AVIARY_SSL_CA_DIR
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3514,7 +3210,6 @@ params:
   name: SCHEDD.AVIARY_SSL_CA_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3527,7 +3222,6 @@ params:
   name: SCHEDD.AVIARY_SSL_SERVER_CERT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3540,7 +3234,6 @@ params:
   name: SCHEDD.AVIARY_SSL_SERVER_KEY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SCHEDD.SPOOL)/history
@@ -3553,7 +3246,6 @@ params:
   name: SCHEDD.HISTORY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "9090"
@@ -3566,7 +3258,6 @@ params:
   name: SCHEDD.HTTP_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIB)/plugins/MgmtScheddPlugin-plugin.so
@@ -3579,7 +3270,6 @@ params:
   name: SCHEDD.PLUGINS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SPOOL)/.schedd_storefile
@@ -3592,7 +3282,6 @@ params:
   name: SCHEDD.QMF_STOREFILE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SEC_DEFAULT_AUTHENTICATION_METHODS)
@@ -3605,7 +3294,6 @@ params:
   name: SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3618,7 +3306,6 @@ params:
   name: SCHEDD.SPOOL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.schedd_address
@@ -3631,7 +3318,6 @@ params:
   name: SCHEDD_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.schedd_classad
@@ -3644,7 +3330,6 @@ params:
   name: SCHEDD_DAEMON_AD_FILE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: D_PID
@@ -3657,7 +3342,6 @@ params:
   name: SCHEDD_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3670,7 +3354,6 @@ params:
   name: SCHEDD_HOST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/SchedLog
@@ -3683,7 +3366,6 @@ params:
   name: SCHEDD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3696,7 +3378,6 @@ params:
   name: SCHEDD_NAME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "0"
@@ -3709,7 +3390,6 @@ params:
   name: SCHEDD_PREEMPTION_RANK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3722,7 +3402,6 @@ params:
   name: SCHEDD_PREEMPTION_REQUIREMENTS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: OPTIONAL
@@ -3735,7 +3414,6 @@ params:
   name: SEC_DEFAULT_AUTHENTICATION
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: CLAIMTOBE
@@ -3748,7 +3426,6 @@ params:
   name: SEC_DEFAULT_AUTHENTICATION_METHODS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: 3DES
@@ -3761,7 +3438,6 @@ params:
   name: SEC_DEFAULT_CRYPTO_METHODS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: REQUIRED
@@ -3774,7 +3450,6 @@ params:
   name: SEC_DEFAULT_ENCRYPTION
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: REQUIRED
@@ -3787,7 +3462,6 @@ params:
   name: SEC_DEFAULT_INTEGRITY
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: OPTIONAL
@@ -3800,7 +3474,6 @@ params:
   name: SEC_DEFAULT_NEGOTIATION
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_shadow
@@ -3813,7 +3486,6 @@ params:
   name: SHADOW
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3826,7 +3498,6 @@ params:
   name: SHADOW_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: SHADOW
@@ -3839,7 +3510,6 @@ params:
   name: SHADOW_LIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOCK)/ShadowLock
@@ -3852,7 +3522,6 @@ params:
   name: SHADOW_LOCK
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/ShadowLog
@@ -3865,7 +3534,6 @@ params:
   name: SHADOW_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "1800"
@@ -3878,7 +3546,6 @@ params:
   name: SHADOW_SIZE_ESTIMATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIBEXEC)/condor_shared_port
@@ -3891,7 +3558,6 @@ params:
   name: SHARED_PORT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3904,7 +3570,6 @@ params:
   name: SHARED_PORT_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3917,7 +3582,6 @@ params:
   name: SHARED_PORT_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3930,7 +3594,6 @@ params:
   name: SLOT_TYPE_1
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -3943,7 +3606,6 @@ params:
   name: SLOT_TYPE_1_PARTITIONABLE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -3956,7 +3618,6 @@ params:
   name: SPOOL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
@@ -3969,7 +3630,6 @@ params:
   name: START
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_startd
@@ -3982,7 +3642,6 @@ params:
   name: STARTD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LIB)/plugins/MgmtStartdPlugin-plugin.so
@@ -3995,7 +3654,6 @@ params:
   name: STARTD.PLUGINS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.startd_address
@@ -4008,7 +3666,6 @@ params:
   name: STARTD_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4021,7 +3678,6 @@ params:
   name: STARTD_ATTRS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: If_Changed
@@ -4034,7 +3690,6 @@ params:
   name: STARTD_CRON_AUTOPUBLISH
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4047,7 +3702,6 @@ params:
   name: STARTD_CRON_NAME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4060,7 +3714,6 @@ params:
   name: STARTD_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ImageSize, ExecutableSize, JobUniverse, NiceUser
@@ -4073,7 +3726,6 @@ params:
   name: STARTD_JOB_EXPRS
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4086,7 +3738,6 @@ params:
   name: STARTD_JOB_HOOK_KEYWORD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/StartLog
@@ -4099,7 +3750,6 @@ params:
   name: STARTD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_starter
@@ -4112,7 +3762,6 @@ params:
   name: STARTER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: D_NODATE
@@ -4125,7 +3774,6 @@ params:
   name: STARTER_DEBUG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: STARTER
@@ -4138,7 +3786,6 @@ params:
   name: STARTER_LIST
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_starter
@@ -4151,7 +3798,6 @@ params:
   name: STARTER_LOCAL
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/StarterLog
@@ -4164,7 +3810,6 @@ params:
   name: STARTER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "30"
@@ -4177,7 +3822,6 @@ params:
   name: STARTER_UPDATE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -4190,7 +3834,6 @@ params:
   name: START_LOCAL_UNIVERSE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "TRUE"
@@ -4203,7 +3846,6 @@ params:
   name: START_SCHEDULER_UNIVERSE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SPOOL)/Accountantnew.log
@@ -4216,7 +3858,6 @@ params:
   name: STATE_FILE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
@@ -4229,7 +3870,6 @@ params:
   name: SUSPEND
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( (KeyboardIdle > $(StartIdleTime)) && $(CPUIdle) && ($(StateTimer) > $(TimeToWait)) )
@@ -4242,7 +3882,6 @@ params:
   name: ShouldHibernate
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/TransfererLog
@@ -4255,7 +3894,6 @@ params:
   name: TRANSFERER_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_triggerd
@@ -4268,7 +3906,6 @@ params:
   name: TRIGGERD
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(DATA)/.triggerd_storefile
@@ -4281,7 +3918,6 @@ params:
   name: TRIGGERD.QMF_STOREFILE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10"
@@ -4294,7 +3930,6 @@ params:
   name: TRIGGERD.QMF_UPDATE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/.triggerd_address
@@ -4307,7 +3942,6 @@ params:
   name: TRIGGERD_ADDRESS_FILE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "10"
@@ -4320,7 +3954,6 @@ params:
   name: TRIGGERD_DEFAULT_EVAL_PERIOD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/TriggerLog
@@ -4333,7 +3966,6 @@ params:
   name: TRIGGERD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4346,7 +3978,6 @@ params:
   name: TRIGGERD_QUERY_COLLECTOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(BIN)/get_trigger_data
@@ -4359,7 +3990,6 @@ params:
   name: TRIGGER_DATA_GETDATA_EXECUTABLE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: 5m
@@ -4372,7 +4002,6 @@ params:
   name: TRIGGER_DATA_GETDATA_PERIOD
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: TRIGGERD
@@ -4385,7 +4014,6 @@ params:
   name: TRIGGER_DATA_GETDATA_PREFIX
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "FALSE"
@@ -4398,7 +4026,6 @@ params:
   name: TRIGGER_DATA_GETDATA_RECONFIG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: GETDATA
@@ -4411,7 +4038,6 @@ params:
   name: TRIGGER_DATA_JOBLIST
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: (2 * $(HOUR))
@@ -4424,7 +4050,6 @@ params:
   name: TimeToWait
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4437,7 +4062,6 @@ params:
   name: UID_DOMAIN
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: MachineLastMatchTime =!= UNDEFINED
@@ -4450,7 +4074,6 @@ params:
   name: UNHIBERNATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "600"
@@ -4463,7 +4086,6 @@ params:
   name: UNUSED_CLAIM_TIMEOUT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "300"
@@ -4476,7 +4098,6 @@ params:
   name: UPDATE_INTERVAL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: "False"
@@ -4489,7 +4110,6 @@ params:
   name: USE_SHARED_PORT
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4502,7 +4122,6 @@ params:
   name: VALID_SPOOL_FILES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(LOG)/VMGahpLog
@@ -4515,7 +4134,6 @@ params:
   name: VM_GAHP_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: $(SBIN)/condor_vm-gahp
@@ -4528,7 +4146,6 @@ params:
   name: VM_GAHP_SERVER
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4541,7 +4158,6 @@ params:
   name: VM_MEMORY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4554,7 +4170,6 @@ params:
   name: VM_NETWORKING
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4567,7 +4182,6 @@ params:
   name: VM_NETWORKING_BRIDGE_INTERFACE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4580,7 +4194,6 @@ params:
   name: VM_NETWORKING_DEFAULT_TYPE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: nat, bridge
@@ -4593,7 +4206,6 @@ params:
   name: VM_NETWORKING_TYPE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4606,7 +4218,6 @@ params:
   name: VM_TYPE
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4619,7 +4230,6 @@ params:
   name: WALLABY_FORCE_CONFIG_PULL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4632,7 +4242,6 @@ params:
   name: WALLABY_FORCE_RESTART
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
@@ -4645,7 +4254,6 @@ params:
   name: WANT_SUSPEND
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
@@ -4658,7 +4266,6 @@ params:
   name: WANT_VACATE
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: /var/lib/condor/aviary/axis2.xml
@@ -4671,7 +4278,6 @@ params:
   name: WSFCPP_HOME
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
   conflicts: []
 
   default_val: /usr/bin/pygrub
@@ -4685,7 +4291,6 @@ params:
   needs_restart: false
 subsystems: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the collector subsystem
   name: collector
   params: 
   - ALLOW_READ
@@ -4711,7 +4316,6 @@ subsystems:
   - QMF_DELETE_ON_SHUTDOWN
   - QMF_IGNORE_UPDATE_STARTD_AD
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the had subsystem
   name: had
   params: 
   - ENABLE_RUNTIME_CONFIG
@@ -4726,7 +4330,6 @@ subsystems:
   - HAD_USE_REPLICATION
   - MAX_HAD_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the job_router subsystem
   name: job_router
   params: 
   - EC2E_ATTRS_TO_COPY
@@ -4747,7 +4350,6 @@ subsystems:
   - MAX_HISTORY_ROTATIONS
   - MAX_JOB_ROUTER_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the job_server subsystem
   name: job_server
   params: 
   - ENABLE_RUNTIME_CONFIG
@@ -4771,7 +4373,6 @@ subsystems:
   - QMF_DELETE_ON_SHUTDOWN
   - QMF_PUBLISH_SUBMISSIONS
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the kbdd subsystem
   name: kbdd
   params: 
   - ENABLE_RUNTIME_CONFIG
@@ -4781,7 +4382,6 @@ subsystems:
   - KBDD_LOG
   - MAX_KBDD_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the low-latency subsystem
   name: ll_daemon
   params: 
   - CAROD
@@ -4796,7 +4396,6 @@ subsystems:
   - CAROD_QUEUED_CONNECTIONS
   - MAX_CAROD_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the master subsystem
   name: master
   params: 
   - ALLOW_ADMINISTRATOR
@@ -4827,7 +4426,6 @@ subsystems:
   - WALLABY_FORCE_CONFIG_PULL
   - WALLABY_FORCE_RESTART
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the negotiator subsystem
   name: negotiator
   params: 
   - ALLOW_NEGOTIATOR
@@ -4853,7 +4451,6 @@ subsystems:
   - QMF_BROKER_USERNAME
   - QMF_DELETE_ON_SHUTDOWN
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the query_server subsystem
   name: query_server
   params: 
   - AVIARY_PUBLISH_INTERVAL
@@ -4877,7 +4474,6 @@ subsystems:
   - QUERY_SERVER_ARGS
   - WSFCPP_HOME
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the replication subsystem
   name: replication
   params: 
   - ENABLE_RUNTIME_CONFIG
@@ -4890,7 +4486,6 @@ subsystems:
   - REPLICATION_LOG
   - REPLICATION_PORT
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the rooster subsystem
   name: rooster
   params: 
   - ENABLE_RUNTIME_CONFIG
@@ -4901,7 +4496,6 @@ subsystems:
   - ROOSTER_UNHIBERNATE_RANK
   - ROOSTER_WAKEUP_CMD
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the schedd subsystem
   name: schedd
   params: 
   - ALLOW_NEGOTIATOR_SCHEDD
@@ -4946,7 +4540,6 @@ subsystems:
   - START_LOCAL_UNIVERSE
   - START_SCHEDULER_UNIVERSE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the shared_port subsystem
   name: shared_port
   params: 
   - DAEMON_SOCKET_DIR
@@ -4955,7 +4548,6 @@ subsystems:
   - SHARED_PORT_DEBUG
   - USE_SHARED_PORT
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the startd subsystem
   name: startd
   params: 
   - ALLOW_READ
@@ -5010,14 +4602,12 @@ subsystems:
   - WANT_SUSPEND
   - WANT_VACATE
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the transferer subsystem
   name: transferer
   params: 
   - ENABLE_RUNTIME_CONFIG
   - MAX_TRANSFERER_LIFETIME
   - TRANSFERER_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
-  annotation: The list of parameters affecting the triggerd subsystem
   name: triggerd
   params: 
   - DATA
