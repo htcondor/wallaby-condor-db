@@ -16,7 +16,8 @@ Source0: https://fedorahosted.org/releases/g/r/grid/%{name}-%{version}.tar.gz
 %if %{building_for_el5}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %endif
-Requires: wallaby-utils >= 0.14.2-2
+#Requires: wallaby-utils >= 0.14.2-2
+Requires: wallaby-utils >= 0.10.7
 BuildRequires: ruby
 %if ! %{building_for_el5}
 BuildRequires: rubygem-rake
@@ -65,7 +66,8 @@ rm -rf %{buildroot}
 %endif
 %doc LICENSE
 %{_localstatedir}/lib/condor-wallaby-base-db/condor-base-db.snapshot
-%defattr(-, wallaby, wallaby, -)
+#%defattr(-, wallaby, wallaby, -)
+%defattr(-, root, root, -)
 %{_localstatedir}/lib/wallaby/patches/db-1.5.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.6.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.7.wpatch
@@ -84,8 +86,15 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.20.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.21.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.23.wpatch
 
 %changelog
+* Fri Jun  1 2012 rrati <rrati@redhat> - 1.23-1
+- Removed annotations (revert BZ802823)
+- Removed locator features (partial revert BZ800660)
+- Database patch files are owned by root (revert BZ767272)
+- Lowered required version of wallaby-utils
+
 * Fri May 11 2012 rrati <rrati@redhat> - 1.22-2
 - Database snapshot file should not by owned by user wallaby
 
