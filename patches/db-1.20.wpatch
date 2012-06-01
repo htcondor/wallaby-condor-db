@@ -237,30 +237,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - QMF_IGNORE_UPDATE_STARTD_AD
 updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
   features: 
-    QueryServerPublisher: 
-      modifyIncludedFeatures: 
-      - REPLACE
-      - - QueryServer
-        - AviaryPublishingEnabled
-      - {}
-
-      modifyDepends: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyConflicts: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyParams: 
-      - REPLACE
-      - AVIARY_PUBLISH_INTERVAL: "10"
-      - {}
-
     SchedulerDedicatedPreemption: 
       modifyParams: 
       - REPLACE
@@ -409,56 +385,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         JOB_SERVER.JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
       - {}
 
-    AviaryLocator: 
-      modifyIncludedFeatures: 
-      - REPLACE
-      - - Collector
-        - AviaryPublishingEnabled
-      - {}
-
-      modifyDepends: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyConflicts: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyParams: 
-      - REPLACE
-      - COLLECTOR.PLUGINS: ">= $(COLLECTOR.PLUGINS), $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
-        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
-        AVIARY_LOCATOR_MISSED_UPDATES: "2"
-      - {}
-
-    AviaryPublishingEnabled: 
-      modifyIncludedFeatures: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyDepends: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyConflicts: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyParams: 
-      - REPLACE
-      - AVIARY_PUBLISH_LOCATION: "True"
-      - {}
-
     PowerManagementSubnetManager: 
       modifyParams: 
       - REPLACE
@@ -471,30 +397,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         ROOSTER_UNHIBERNATE: Offline && Unhibernate
         ROOSTER_INTERVAL: "300"
         ROOSTER_SUBNET_MASK: 0
-      - {}
-
-    AviarySchedulerPublisher: 
-      modifyIncludedFeatures: 
-      - REPLACE
-      - - AviaryScheduler
-        - AviaryPublishingEnabled
-      - {}
-
-      modifyDepends: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyConflicts: 
-      - REPLACE
-      - []
-
-      - {}
-
-      modifyParams: 
-      - REPLACE
-      - AVIARY_PUBLISH_INTERVAL: "10"
       - {}
 
   groups: {}
