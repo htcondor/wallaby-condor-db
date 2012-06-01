@@ -90,8 +90,8 @@ rm -rf %{buildroot}
 
 %changelog
 * Fri Jun  1 2012 rrati <rrati@redhat> - 1.23-1
-- Removed annotations (revert BZ802823)
-- Removed locator features (partial revert BZ800660)
+- Removed annotations from database and patches (revert BZ802823)
+- Removed locator features from database and patches (partial revert BZ800660)
 - Database patch files are owned by root (revert BZ767272)
 - Lowered required version of wallaby-utils
 
