@@ -88,6 +88,9 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
 
 %changelog
+* Mon Jun  4 2012 rrati <rrati@redhat> - 1.22-4
+- Reverted changes to UNHIBERNATE parameter (revert BZ803359)
+
 * Fri Jun  1 2012 rrati <rrati@redhat> - 1.22-3
 - Removed annotations from database and patches (revert BZ802823)
 - Removed locator features from database and patches (partial revert BZ800660)
