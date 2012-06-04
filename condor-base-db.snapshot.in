@@ -599,7 +599,7 @@ features:
   name: PowerManagementSubnetManager
   params: 
     ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
-    UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
+    UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
     ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
     ROOSTER_MAX_UNHIBERNATE: 0
     ROOSTER_SUBNET_MASK: 0

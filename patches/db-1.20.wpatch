@@ -73,17 +73,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         QMF_PUBLISH_SUBMISSIONS: "FALSE"
         JOB_SERVER_DEBUG: ""
         MAX_JOB_SERVER_LOG: "1000000"
-    PowerManagementSubnetManager: 
-      params: 
-        ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
-        ROOSTER: $(LIBEXEC)/condor_rooster
-        DAEMON_LIST: ">= ROOSTER"
-        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
-        ROOSTER_MAX_UNHIBERNATE: "0"
-        UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
-        ROOSTER_UNHIBERNATE: Offline && Unhibernate
-        ROOSTER_INTERVAL: "300"
-        ROOSTER_SUBNET_MASK: 0
   groups: {}
 
   nodes: {}
@@ -383,20 +372,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         JOB_SERVER.JOB_SERVER_LOG: $(LOG)/JobServerLog
         JOB_SERVER.SPOOL: 0
         JOB_SERVER.JOB_SERVER_ADDRESS_FILE: $(LOG)/.job_server_address
-      - {}
-
-    PowerManagementSubnetManager: 
-      modifyParams: 
-      - REPLACE
-      - ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
-        ROOSTER: $(LIBEXEC)/condor_rooster
-        DAEMON_LIST: ">= ROOSTER"
-        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
-        ROOSTER_MAX_UNHIBERNATE: 0
-        UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
-        ROOSTER_UNHIBERNATE: Offline && Unhibernate
-        ROOSTER_INTERVAL: "300"
-        ROOSTER_SUBNET_MASK: 0
       - {}
 
   groups: {}
