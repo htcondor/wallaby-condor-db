@@ -88,6 +88,10 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
 
 %changelog
+* Mon Jun 27 2012 rrati <rrati@redhat> - 1.22-5
+- Fixed values for MAXJOBRETIREMENTTIME, ROOSTER_MAX_UNHIBERNATE,
+  SCHEDD_PREEMPTION_RANK on their respective features
+
 * Mon Jun  4 2012 rrati <rrati@redhat> - 1.22-4
 - Reverted changes to UNHIBERNATE parameter (revert BZ803359)
 
