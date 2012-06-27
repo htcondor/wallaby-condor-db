@@ -314,7 +314,7 @@ features:
     BENCHMARKTIMER: (CurrentTime - LastBenchmark)
     WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
     START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
-    MAXJOBRETIREMENTTIME: 0
+    MAXJOBRETIREMENTTIME: "0"
     CONSOLE_DEVICES: mouse, console
     STARTD_ADDRESS_FILE: $(LOG)/.startd_address
     STARTD_LOG: $(LOG)/StartLog
@@ -601,7 +601,7 @@ features:
     ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
     UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
     ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
-    ROOSTER_MAX_UNHIBERNATE: 0
+    ROOSTER_MAX_UNHIBERNATE: "0"
     ROOSTER_SUBNET_MASK: 0
     ROOSTER: $(LIBEXEC)/condor_rooster
     ROOSTER_INTERVAL: "300"
@@ -684,7 +684,7 @@ features:
   - DedicatedScheduler
   name: SchedulerDedicatedPreemption
   params: 
-    SCHEDD_PREEMPTION_RANK: 0
+    SCHEDD_PREEMPTION_RANK: "0"
     SCHEDD_PREEMPTION_REQUIREMENTS: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []

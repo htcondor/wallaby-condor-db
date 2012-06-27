@@ -2,10 +2,6 @@
 db_version: "1.20"
 expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
   features: 
-    SchedulerDedicatedPreemption: 
-      params: 
-        SCHEDD_PREEMPTION_RANK: "0"
-        SCHEDD_PREEMPTION_REQUIREMENTS: 0
     VMUniverse: 
       params: 
         VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
@@ -33,30 +29,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         QUERY_SERVER: $(SBIN)/aviary_query_server
         QUERY_SERVER.HTTP_PORT: "9091"
         QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
-    ExecuteNode: 
-      params: 
-        MAXJOBRETIREMENTTIME: "0"
-        STARTER: $(SBIN)/condor_starter
-        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
-        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
-        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
-        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
-        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
-        KILL: $(ActivityTimer) > $(MaxVacateTime)
-        DAEMON_LIST: ">= STARTD"
-        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
-        STARTD: $(SBIN)/condor_startd
-        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
-        STARTER_LIST: STARTER
-        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
-        STARTD_LOG: $(LOG)/StartLog
-        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
-        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
-        CONSOLE_DEVICES: mouse, console
-        STARTD_DEBUG: ""
-        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
-        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
-        MAX_STARTD_LOG: "1000000"
     JobServer: 
       included_features: []
 
@@ -226,13 +198,6 @@ expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store
       - QMF_IGNORE_UPDATE_STARTD_AD
 updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
   features: 
-    SchedulerDedicatedPreemption: 
-      modifyParams: 
-      - REPLACE
-      - SCHEDD_PREEMPTION_REQUIREMENTS: 0
-        SCHEDD_PREEMPTION_RANK: 0
-      - {}
-
     VMUniverse: 
       modifyParams: 
       - REPLACE
@@ -324,33 +289,6 @@ updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store
         QUERY_SERVER.QUERY_SERVER_DEBUG: D_ALWAYS
         QUERY_SERVER: $(SBIN)/aviary_query_server
         MAX_QUERY_SERVER_LOG: "1000000"
-      - {}
-
-    ExecuteNode: 
-      modifyParams: 
-      - REPLACE
-      - MAXJOBRETIREMENTTIME: 0
-        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
-        STARTER: $(SBIN)/condor_starter
-        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
-        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
-        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
-        KILL: $(ActivityTimer) > $(MaxVacateTime)
-        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
-        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
-        DAEMON_LIST: ">= STARTD"
-        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
-        STARTD: $(SBIN)/condor_startd
-        STARTER_LIST: STARTER
-        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
-        STARTD_LOG: $(LOG)/StartLog
-        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
-        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
-        CONSOLE_DEVICES: mouse, console
-        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
-        STARTD_DEBUG: ""
-        MAX_STARTD_LOG: "1000000"
-        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
       - {}
 
     JobServer: 
