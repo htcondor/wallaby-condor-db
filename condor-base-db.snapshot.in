@@ -715,7 +715,9 @@ features:
 
   name: SharedJobQueueLocation
   params: 
+    GRIDMANAGER.SPOOL: $(SCHEDD.SPOOL)
     SCHEDD.HISTORY: $(SCHEDD.SPOOL)/history
+    SHADOW.SPOOL: $(SCHEDD.SPOOL)
     SCHEDD.SPOOL: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
@@ -1480,6 +1482,18 @@ params:
   level: 0
   must_change: true
   name: FLOCK_NEGOTIATOR_HOSTS
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Where the gridmanager will look for condor_schedd files
+  kind: String
+  level: 0
+  must_change: true
+  name: GRIDMANAGER.SPOOL
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
@@ -3485,6 +3499,18 @@ params:
   must_change: false
   name: SHADOW
   needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Where the shadow will look for condor_schedd files
+  kind: String
+  level: 0
+  must_change: true
+  name: SHADOW.SPOOL
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4503,6 +4529,7 @@ subsystems:
   - AVIARY_PUBLISH_INTERVAL
   - AVIARY_PUBLISH_LOCATION
   - ENABLE_RUNTIME_CONFIG
+  - GRIDMANAGER.SPOOL
   - HISTORY
   - MAX_SCHEDD_LOG
   - MAX_SHADOW_LOG
@@ -4524,11 +4551,13 @@ subsystems:
   - SCHEDD.AVIARY_SSL_SERVER_KEY
   - SCHEDD.HTTP_PORT
   - SCHEDD.PLUGINS
+  - SCHEDD.SPOOL
   - SCHEDD_ADDRESS_FILE
   - SCHEDD_DAEMON_AD_FILE
   - SCHEDD_DEBUG
   - SCHEDD_LOG
   - SHADOW
+  - SHADOW.SPOOL
   - SHADOW_DEBUG
   - SHADOW_LIST
   - SHADOW_LOCK
