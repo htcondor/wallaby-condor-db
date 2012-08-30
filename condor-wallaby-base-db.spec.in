@@ -86,8 +86,13 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.20.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.21.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.23.wpatch
 
 %changelog
+* Thu Aug 30 2012 rrati <rrati@redhat> - 1.23-1
+- Fixed issue with the shadow and gridmanager not using the same SPOOL
+  location as the HAScheduler
+
 * Mon Jun 27 2012 rrati <rrati@redhat> - 1.22-5
 - Fixed values for MAXJOBRETIREMENTTIME, ROOSTER_MAX_UNHIBERNATE,
   SCHEDD_PREEMPTION_RANK on their respective features
