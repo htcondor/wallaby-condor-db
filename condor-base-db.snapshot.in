@@ -722,7 +722,8 @@ features:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
-  depends: []
+  depends: 
+  - Master
 
   included: []
 
