@@ -806,7 +806,7 @@ params:
   default_val: ""
   depends: []
 
-  description: Machines allowed to advertise a condor_startd to a condor_collec
+  description: Machines allowed to advertise a condor_startd to a condor_collector
   kind: String
   level: 0
   must_change: false
@@ -4332,6 +4332,7 @@ subsystems:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: collector
   params: 
+  - ALLOW_ADVERTISE_STARTD
   - ALLOW_READ
   - ALLOW_WRITE
   - AVIARY_LOCATOR_MISSED_UPDATES
