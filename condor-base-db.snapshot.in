@@ -1933,7 +1933,7 @@ params:
   default_val: ""
   depends: []
 
-  description: The name of the Scehduler that the Job Server is working with
+  description: The name of the scheduler that the job server is working with.  This name must end with an "@" for a high availability scheduler
   kind: string
   level: 0
   must_change: true
@@ -2917,7 +2917,7 @@ params:
   default_val: ""
   depends: []
 
-  description: The name of the Scehduler that the Aviary Query Server is working with
+  description: The name of the scheduler that the aviary query server is working with.  This name must end with an "@" for a high availability scheduler
   kind: String
   level: 0
   must_change: true
@@ -3385,7 +3385,7 @@ params:
   default_val: ""
   depends: []
 
-  description: The name the Scheduler uses to identify itself
+  description: The name the scheduler uses to identify itself.  This name must end with an "@" for a high availability scheduler
   kind: String
   level: 0
   must_change: true
