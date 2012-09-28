@@ -3907,6 +3907,19 @@ params:
   must_change: false
   name: ShouldHibernate
   needs_restart: false
+ - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The host or IP address that should be used as the public address of a daemon
+  kind: String
+  level: 0
+  must_change: false
+  name: TCP_FORWARDING_HOST
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4334,6 +4347,7 @@ subsystems:
   - ENABLE_RUNTIME_CONFIG
   - FLOCK_COLLECTOR_HOSTS
   - MAX_COLLECTOR_LOG
+  - TCP_FORWARDING_HOST
   - QMF_BROKER_AUTH_MECH
   - QMF_BROKER_HOST
   - QMF_BROKER_PASSWORD_FILE
@@ -4355,6 +4369,7 @@ subsystems:
   - HAD_USE_PRIMARY
   - HAD_USE_REPLICATION
   - MAX_HAD_LOG
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: job_router
   params: 
@@ -4375,6 +4390,7 @@ subsystems:
   - JOB_ROUTER_POLLING_PERIOD
   - MAX_HISTORY_ROTATIONS
   - MAX_JOB_ROUTER_LOG
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: job_server
   params: 
@@ -4398,6 +4414,7 @@ subsystems:
   - QMF_BROKER_USERNAME
   - QMF_DELETE_ON_SHUTDOWN
   - QMF_PUBLISH_SUBMISSIONS
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: kbdd
   params: 
@@ -4449,6 +4466,7 @@ subsystems:
   - SEC_DEFAULT_ENCRYPTION
   - SEC_DEFAULT_INTEGRITY
   - SEC_DEFAULT_NEGOTIATION
+  - TCP_FORWARDING_HOST
   - WALLABY_FORCE_CONFIG_PULL
   - WALLABY_FORCE_RESTART
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
@@ -4476,6 +4494,7 @@ subsystems:
   - QMF_BROKER_PORT
   - QMF_BROKER_USERNAME
   - QMF_DELETE_ON_SHUTDOWN
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: query_server
   params: 
@@ -4498,6 +4517,7 @@ subsystems:
   - QUERY_SERVER.SCHEDD_NAME
   - QUERY_SERVER.SPOOL
   - QUERY_SERVER_ARGS
+  - TCP_FORWARDING_HOST
   - WSFCPP_HOME
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: replication
@@ -4511,6 +4531,7 @@ subsystems:
   - REPLICATION_LIST
   - REPLICATION_LOG
   - REPLICATION_PORT
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: rooster
   params: 
@@ -4521,6 +4542,7 @@ subsystems:
   - ROOSTER_UNHIBERNATE
   - ROOSTER_UNHIBERNATE_RANK
   - ROOSTER_WAKEUP_CMD
+  - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: schedd
   params: 
@@ -4543,6 +4565,7 @@ subsystems:
   - QMF_PUBLISH_SUBMISSIONS
   - QUEUE_ALL_USERS_TRUSTED
   - QUEUE_SUPER_USERS
+  - TCP_FORWARDING_HOST
   - SCHEDD
   - SCHEDD.AVIARY_SSL
   - SCHEDD.AVIARY_SSL_CA_DIR
@@ -4575,6 +4598,7 @@ subsystems:
   - ENABLE_RUNTIME_CONFIG
   - SHARED_PORT
   - SHARED_PORT_DEBUG
+  - TCP_FORWARDING_HOST
   - USE_SHARED_PORT
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: startd
@@ -4614,6 +4638,7 @@ subsystems:
   - STARTER_LIST
   - STARTER_LOG
   - SUSPEND
+  - TCP_FORWARDING_HOST
   - TRIGGER_DATA_GETDATA_EXECUTABLE
   - TRIGGER_DATA_GETDATA_PERIOD
   - TRIGGER_DATA_GETDATA_PREFIX
@@ -4635,6 +4660,7 @@ subsystems:
   params: 
   - ENABLE_RUNTIME_CONFIG
   - MAX_TRANSFERER_LIFETIME
+  - TCP_FORWARDING_HOST
   - TRANSFERER_LOG
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: triggerd
@@ -4648,6 +4674,7 @@ subsystems:
   - QMF_BROKER_PORT
   - QMF_BROKER_USERNAME
   - QMF_DELETE_ON_SHUTDOWN
+  - TCP_FORWARDING_HOST
   - TRIGGERD.QMF_STOREFILE
   - TRIGGERD.QMF_UPDATE_INTERVAL
   - TRIGGERD_ADDRESS_FILE
