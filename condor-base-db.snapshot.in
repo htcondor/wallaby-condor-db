@@ -800,6 +800,19 @@ params:
   name: ALLOW_ADMINISTRATOR
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Machines allowed to advertise a condor_master to a condor_collector
+  kind: String
+  level: 0
+  must_change: false
+  name: ALLOW_ADVERTISE_MASTER
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
   default_val: ""
@@ -4319,6 +4332,7 @@ subsystems:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: collector
   params: 
+  - ALLOW_ADVERTISE_MASTER
   - ALLOW_READ
   - ALLOW_WRITE
   - AVIARY_LOCATOR_MISSED_UPDATES
