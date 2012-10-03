@@ -3897,6 +3897,19 @@ params:
   must_change: false
   name: STATE_FILE
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: "TRUE"
+  depends: []
+
+  description: Controls whether the condor_submit command will send a reschedule notification to the scheduler upon successful submission
+  kind: Boolean
+  level: 0
+  must_change: false 
+  name: SUBMIT_SEND_RESCHEDULE
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
