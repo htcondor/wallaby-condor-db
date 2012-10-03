@@ -168,7 +168,7 @@ features:
     MAX_COLLECTOR_LOG: "1000000"
     COLLECTOR_NAME: Wallaby Configured Pool
     FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
-    COLLECTOR: $(SBIN)/condor_collector
+    COLLECTOR: 0
     DAEMON_LIST: ">= COLLECTOR"
     COLLECTOR_LOG: $(LOG)/CollectorLog
     COLLECTOR_DEBUG: ""
@@ -597,6 +597,18 @@ features:
   params: 
     ALLOW_READ: 0
     ALLOW_WRITE: 0
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - ViewServer
+  name: Plumage
+  params:
+    ODS_DB_HOST: localhost
+    ODS_DB_PORT: "27017"
+    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/ODSCollectorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -816,6 +828,36 @@ features:
     MAX_VM_GAHP_LOG: "1000000"
     VM_GAHP_LOG: $(LOG)/VMGahpLog
     VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included: []
+
+  name: ViewServer
+  params:
+    VIEW_SERVER.UPDATE_INTERVAL: "300"
+    VIEW_SERVER.KEEP_POOL_HISTORY: "TRUE"
+    VIEW_SERVER: $(COLLECTOR)
+    VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL: "60"
+    VIEW_SERVER_PORT: 0
+    VIEW_SERVER_ARGS: -f -p $(VIEW_SERVER_PORT) -local-name VIEW_SERVER
+    VIEW_SERVER.CONDOR_VIEW_HOST: ""
+    DAEMON_LIST: ">= VIEW_SERVER"
+    VIEW_SERVER_ENVIRONMENT: _CONDOR_COLLECTOR_LOG=$(LOG)/ViewServerLog
+    COLLECTOR: 0
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - Collector
+  name: ViewServerSource
+  params:
+    CONDOR_VIEW_CLASSAD_TYPES: Machine,Scheduler,Submitter
+    COLLECTOR.CONDOR_VIEW_HOST: 0
 groups: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Group 
   features: []
@@ -1160,6 +1202,18 @@ params:
   must_change: false
   name: COLLECTOR
   needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The collector should send updates to the view server on this machine
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.CONDOR_VIEW_HOST
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -1303,6 +1357,18 @@ params:
   level: 0
   must_change: true
   name: CONDOR_HOST
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The classad types that will be forwarded to the CONDOR_VIEW_HOST
+  kind: String
+  level: 0
+  must_change: false
+  name: CONDOR_VIEW_CLASSAD_TYPES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
@@ -2672,6 +2738,30 @@ params:
   must_change: true
   name: NUM_SLOTS_TYPE_1
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: localhost
+  depends: []
+
+  description: The machine running the database server
+  kind: String
+  level: 0
+  must_change: false
+  name: ODS_DB_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "27017"
+  depends: []
+
+  description: The port where the database server is running on the ODS_DB_HOST
+  kind: Integer
+  level: 0
+  must_change: false
+  name: ODS_DB_PORT
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4246,6 +4336,126 @@ params:
   must_change: true
   name: VALID_SPOOL_FILES
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(COLLECTOR)
+  depends:
+  - COLLECTOR
+  description: The location of the view server binary
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The view server should send updates to another view server on this machine.  This should be empty if the view server isn't to send updates to another view server
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.CONDOR_VIEW_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "FALSE"
+  depends: []
+
+  description: Determines if the collector will write out statistical information about the pool to history files
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.KEEP_POOL_HISTORY
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LIB)/plugins/ODSCollectorPlugin-plugin.so
+  depends: []
+
+  description: A list of plugins that the view server will load
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.PLUGINS
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "60"
+  depends: []
+
+  description: The number of seconds between samples for history logging purposes
+  kind: Integer
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "300"
+  depends: []
+
+  description: The frequency in seconds that the veiw server runs stat collection
+  kind: Integer
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.UPDATE_INTERVAL
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends:
+  - VIEW_SERVER
+  description: Arguments to pass to the view seriver daemon
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ARGS
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Changes to the environment when the view server is started
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ENVIRONMENT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Changes to the environment when the view server is started
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ENVIRONMENT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The port on the CONDOR_VIEW_HOST where the view server is listening for updates
+  kind: Integer
+  level: 0
+  must_change: true
+  name: VIEW_SERVER_PORT
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4426,12 +4636,14 @@ subsystems:
   - AVIARY_LOCATOR_PRUNE_INTERVAL
   - AVIARY_PUBLISH_LOCATION
   - COLLECTOR
+  - COLLECTOR.CONDOR_VIEW_HOST
   - COLLECTOR.PLUGINS
   - COLLECTOR_ADDRESS_FILE
   - COLLECTOR_DEBUG
   - COLLECTOR_HOST
   - COLLECTOR_LOG
   - COLLECTOR_UPDATE_INTERVAL
+  - CONDOR_VIEW_CLASSAD_TYPES
   - ENABLE_RUNTIME_CONFIG
   - FLOCK_COLLECTOR_HOSTS
   - MAX_COLLECTOR_LOG
@@ -4769,3 +4981,18 @@ subsystems:
   - TRIGGERD_ADDRESS_FILE
   - TRIGGERD_DEFAULT_EVAL_PERIOD
   - TRIGGERD_QUERY_COLLECTOR
+- !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem
+  name: view_server
+  params:
+  - COLLECTOR
+  - ODS_DB_HOST
+  - ODS_DB_PORT
+  - VIEW_SERVER
+  - VIEW_SERVER.CONDOR_VIEW_HOST
+  - VIEW_SERVER.KEEP_POOL_HISTORY
+  - VIEW_SERVER.PLUGINS
+  - VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL
+  - VIEW_SERVER.UPDATE_INTERVAL
+  - VIEW_SERVER_ARGS
+  - VIEW_SERVER_ENVIRONMENT
+  - VIEW_SERVER_PORT
