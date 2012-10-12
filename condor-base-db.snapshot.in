@@ -5144,6 +5144,7 @@ subsystems:
   - MAX_HAD_LOG
   - TCP_FORWARDING_HOST
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem
+  annotation: The list of parameters affecting the job_etl_server subsystem
   name: job_etl_server
   params:
   - JOB_ETL_SERVER
