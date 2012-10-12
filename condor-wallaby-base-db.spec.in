@@ -85,8 +85,19 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.21.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.22.wpatch
 %{_localstatedir}/lib/wallaby/patches/db-1.23.wpatch
+%{_localstatedir}/lib/wallaby/patches/db-1.24.wpatch
 
 %changelog
+* Fri Oct 12 2012 rrati <rrati@redhat> - 1.24-1
+- New Features: ViewServer, ViewServerSource, PlumageStats, PlumageJobHistory
+                AviaryLocator, AviaryPublishingEnabled,
+                AviarySchedulerPublisher, QueryServerPublisher
+- New Parameters to support the new features
+- Annotations on features, groups, and subsystems
+- Bugs fixed: BZ864984, BZ839415, BZ831756, BZ831725, BZ831723, BZ831721
+              BZ831719, BZ831710, BZ831709, BZ803359
+- Patch files owned by wallaby user (BZ767272)
+
 * Thu Aug 30 2012 rrati <rrati@redhat> - 1.23-1
 - Fixed issue with the shadow and gridmanager not using the same SPOOL
   location as the HAScheduler
