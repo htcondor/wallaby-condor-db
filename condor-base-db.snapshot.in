@@ -637,18 +637,38 @@ features:
     ALLOW_READ: 0
     ALLOW_WRITE: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Enables plumage functionality
+  annotation: Provides historical job data to the plumage database
   conflicts: []
 
   depends: []
 
   included: 
   - ViewServer
-  name: Plumage
+  name: PlumageJobHistory
+  params:
+    PLUMAGE_DB_HOST: localhost
+    PLUMAGE_DB_PORT: "27017"
+    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  annotation: Provides statistics to the plumage database
+  conflicts: []
+
+  depends: 
+  - BaseScheduler
+  included: []
+
+  name: PlumageStats
   params: 
-    ODS_DB_HOST: localhost
-    ODS_DB_PORT: "27017"
-    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/ODSCollectorPlugin-plugin.so"
+    JOB_ETL_SERVER.HISTORY: $(HISTORY)
+    DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+    JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+    JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+    JOB_ETL_SERVER.PLUMAGE_DB_HOST: 0
+    JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+    DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+    JOB_ETL_SERVER_ARGS: -f
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables power management on the collector
   conflicts: []
@@ -2001,6 +2021,103 @@ params:
   must_change: false
   name: HISTORY_INTERVAL
   needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(SBIN)/plumage_job_etl_server
+  depends: []
+
+  description: The plumage job etl server binary
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(HISTORY)
+  depends: []
+
+  description: The location of the historical jobs file used by the plumage job etl server
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.HISTORY
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LOG)/.job_etl_server_address
+  depends: []
+
+  description: The file where the plumage job etl server will write its address information
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: D_ALWAYS
+  depends: []
+
+  description: The debugging output the plumage job etl server will produce in its log file
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LOG)/JobEtlLog
+  depends: []
+
+  description: The location of the plumage job etl server's log file
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+
+  depends: []
+
+  description: The machine running the database server that should be used by the plumage job etl server
+  kind: String
+  level: 0
+  must_change: true
+  name: JOB_ETL_SERVER.PLUMAGE_DB_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "27017"
+  depends: []
+
+  description: The port where the database server is running on the PLUMAGE_DB_HOST that should be used by the plumage job etl server
+  kind: Integer
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.PLUMAGE_DB_PORT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends:
+  - JOB_ETL_SERVER
+  description: Arguments to pass to the plumage job etl server
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER_ARGS
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
   conflicts: []
@@ -2961,7 +3078,7 @@ params:
   kind: String
   level: 0
   must_change: false
-  name: ODS_DB_HOST
+  name: PLUMAGE_DB_HOST
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
@@ -2970,11 +3087,11 @@ params:
   default_val: "27017"
   depends: []
 
-  description: The port where the database server is running on the ODS_DB_HOST
+  description: The port where the database server is running on the PLUMAGE_DB_HOST
   kind: Integer
   level: 0
   must_change: false
-  name: ODS_DB_PORT
+  name: PLUMAGE_DB_PORT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
@@ -5026,6 +5143,19 @@ subsystems:
   - HAD_USE_REPLICATION
   - MAX_HAD_LOG
   - TCP_FORWARDING_HOST
+- !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem
+  name: job_etl_server
+  params:
+  - JOB_ETL_SERVER
+  - JOB_ETL_SERVER.HISTORY
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+  - JOB_ETL_SERVER.PLUMAGE_DB_HOST
+  - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+  - JOB_ETL_SERVER_ARGS
+  - PLUMAGE_DB_HOST
+  - PLUMAGE_DB_PORT
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   annotation: The list of parameters affecting the job_router subsystem
   name: job_router
@@ -5356,8 +5486,8 @@ subsystems:
   name: view_server
   params: 
   - COLLECTOR
-  - ODS_DB_HOST
-  - ODS_DB_PORT
+  - PLUMAGE_DB_HOST
+  - PLUMAGE_DB_PORT
   - VIEW_SERVER
   - VIEW_SERVER.CONDOR_VIEW_HOST
   - VIEW_SERVER.KEEP_POOL_HISTORY
