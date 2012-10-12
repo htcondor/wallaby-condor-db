@@ -1,5 +1,28 @@
 --- !ruby/object:Mrg::Grid::SerializedConfigs::Store 
 features: 
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - Collector
+  - AviaryPublishingEnabled
+  name: AviaryLocator
+  params:
+    COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+    AVIARY_LOCATOR_MISSED_UPDATES: "2"
+    AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+ !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included: []
+
+  name: AviaryPublishingEnabled
+  params:
+    AVIARY_PUBLISH_LOCATION: "TRUE"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -11,6 +34,17 @@ features:
   params: 
     SCHEDD.PLUGINS: ">= $(LIB)/plugins/AviaryScheddPlugin-plugin.so"
     SCHEDD.HTTP_PORT: "9090"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - AviaryScheduler
+  - AviaryPublishingEnabled
+  name: AviarySchedulerPublisher
+  params:
+    AVIARY_PUBLISH_INTERVAL: "10"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -636,6 +670,17 @@ features:
     QUERY_SERVER.QUERY_SERVER_LOG: $(LOG)/QueryServerLog
     DAEMON_LIST: ">= QUERY_SERVER"
     QUERY_SERVER.HISTORY: $(QUERY_SERVER.SPOOL)/history
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - QueryServer
+  - AviaryPublishingEnabled
+  name: QueryServerPublisher
+  params:
+    AVIARY_PUBLISH_INTERVAL: "10"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
