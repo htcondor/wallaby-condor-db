@@ -600,7 +600,7 @@ features:
   name: PowerManagementSubnetManager
   params: 
     ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
-    UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
+    UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
     ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
     ROOSTER_MAX_UNHIBERNATE: "0"
     ROOSTER_SUBNET_MASK: 0
@@ -4144,7 +4144,7 @@ params:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
-  default_val: MachineLastMatchTime =!= UNDEFINED
+  default_val: CurrentTime - MachineLastMatchTime < 1200
   depends: []
 
   description: A boolean expression that specifies when an offline machine should be woken up
