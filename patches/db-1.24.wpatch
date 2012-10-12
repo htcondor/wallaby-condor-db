@@ -1,0 +1,3117 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.24"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    Collector: 
+      params: 
+        FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        COLLECTOR_UPDATE_INTERVAL: "900"
+        COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
+        DAEMON_LIST: ">= COLLECTOR"
+        COLLECTOR_NAME: Wallaby Configured Pool
+        COLLECTOR: $(SBIN)/condor_collector
+        MAX_COLLECTOR_LOG: "1000000"
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_DEBUG: ""
+    DedicatedResource: 
+      params: 
+        CONTINUE: "True"
+        SUSPEND: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) || ($(SUSPEND))
+        STARTD_ATTRS: ">= DEDICATEDSCHEDULER"
+        PREEMPT: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) && ($(PREEMPT))
+        WANT_SUSPEND: "False"
+        WANT_VACATE: "False"
+        START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
+        RANK_FACTOR: "1000000"
+        KILL: "False"
+        DEDICATEDSCHEDULER: 0
+        RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
+    Negotiator: 
+      params: 
+        NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
+        NEGOTIATOR_DEBUG: D_MATCH
+        NEGOTIATOR: $(SBIN)/condor_negotiator
+        DAEMON_LIST: ">= NEGOTIATOR"
+        NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
+        NEGOTIATOR_ADDRESS_FILE: $(LOG)/.negotiator_address
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST)
+        PREEMPTION_REQUIREMENTS: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
+        NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
+        MAX_NEGOTIATOR_MATCH_LOG: "1000000"
+        NEGOTIATOR_INTERVAL: "20"
+        MAX_NEGOTIATOR_LOG: "1000000"
+        PREEMPTION_RANK: (RemoteUserPrio * 1000000) - TARGET.ImageSize
+        FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+    PowerManagementSubnetManager: 
+      params: 
+        UNHIBERNATE: MachineLastMatchTime =!= UNDEFINED
+        ROOSTER_SUBNET_MASK: 0
+        ROOSTER_UNHIBERNATE: Offline && Unhibernate
+        ROOSTER_MAX_UNHIBERNATE: "0"
+        ROOSTER: $(LIBEXEC)/condor_rooster
+        DAEMON_LIST: ">= ROOSTER"
+        ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
+        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+        ROOSTER_INTERVAL: "300"
+    SSLEnabledAviaryScheduler: 
+      params: 
+        SCHEDD.AVIARY_SSL_CA_DIR: 0
+        SCHEDD.AVIARY_SSL_SERVER_KEY: 0
+        SCHEDD.AVIARY_SSL: "True"
+        SCHEDD.AVIARY_SSL_SERVER_CERT: 0
+        SCHEDD.AVIARY_SSL_CA_FILE: 0
+    BaseJobServer: 
+      params: 
+        JOB_SERVER: $(SBIN)/condor_job_server
+        MAX_JOB_SERVER_LOG: "1000000"
+        JOB_SERVER.JOB_SERVER_DEBUG: ""
+        QMF_PUBLISH_SUBMISSIONS: "false"
+    SSLEnabledQueryServer: 
+      params: 
+        QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 0
+        QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 0
+        QUERY_SERVER.AVIARY_SSL: "True"
+        QUERY_SERVER.AVIARY_SSL_CA_FILE: 0
+        QUERY_SERVER.AVIARY_SSL_CA_DIR: 0
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: v1.23
+    ExecuteNode: 
+      params: 
+        CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        STARTER: $(SBIN)/condor_starter
+        STARTER_LIST: STARTER
+        CONSOLE_DEVICES: mouse, console
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        DAEMON_LIST: ">= STARTD"
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        MAX_STARTD_LOG: "1000000"
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        MAXJOBRETIREMENTTIME: "0"
+        STARTD_LOG: $(LOG)/StartLog
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        STARTD_DEBUG: ""
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        STARTD: $(SBIN)/condor_startd
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+    HACentralManager: 
+      params: 
+        CONDOR_HOST: 0
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
+        TRANSFERER_LOG: $(LOG)/TransfererLog
+        HAD_LOG: $(LOG)/HADLog
+        HAD_LIST: 0
+        MASTER_NEGOTIATOR_CONTROLLER: HAD
+        MAX_HAD_LOG: "640000"
+        DAEMON_LIST: ">= HAD REPLICATION"
+        MASTER_HAD_BACKOFF_CONSTANT: "360"
+        HAD_UPDATE_INTERVAL: "300"
+        HAD_PORT: "51450"
+        HAD_CONNECTION_TIMEOUT: "2"
+        REPLICATION_INTERVAL: "300"
+        MAX_TRANSFERER_LIFETIME: "300"
+        HAD_USE_PRIMARY: "true"
+        ALLOW_NEGOTIATOR_SCHEDD: $(FLOCK_NEGOTIATOR_HOSTS), $(COLLECTOR_HOST)
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(COLLECTOR_HOST)
+        HAD: $(SBIN)/condor_had
+        REPLICATION_PORT: "41450"
+        REPLICATION_ARGS: -p $(REPLICATION_PORT)
+        REPLICATION_LIST: 0
+        HAD_ARGS: -p $(HAD_PORT)
+        STATE_FILE: $(SPOOL)/Accountantnew.log
+        REPLICATION_LOG: $(LOG)/ReplicationLog
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        MAX_REPLICATION_LOG: "640000"
+        REPLICATION: $(SBIN)/condor_replication
+        HAD_USE_REPLICATION: "true"
+    SharedPort: 
+      depends: []
+
+      params: 
+        USE_SHARED_PORT: "True"
+        DAEMON_LIST: ">= SHARED_PORT"
+        SHARED_PORT: $(LIBEXEC)/condor_shared_port
+        SHARED_PORT_DEBUG: ""
+        DAEMON_SOCKET_DIR: $(RUN)
+    BaseScheduler: 
+      params: 
+        STARTER_LOCAL: $(SBIN)/condor_starter
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        MAX_SCHEDD_LOG: "1000000"
+        SHADOW: $(SBIN)/condor_shadow
+        SHADOW_LIST: SHADOW
+        SHADOW_DEBUG: ""
+        QUEUE_SUPER_USERS: root, condor
+        SCHEDD_DEBUG: D_PID
+        START_LOCAL_UNIVERSE: "True"
+        SCHEDD: $(SBIN)/condor_schedd
+        SHADOW_LOG: $(LOG)/ShadowLog
+        START_SCHEDULER_UNIVERSE: "True"
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(FLOCK_NEGOTIATOR_HOSTS)
+        MAX_SHADOW_LOG: "1000000"
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        SCHEDD_LOG: $(LOG)/SchedLog
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+    TriggerService: 
+      params: 
+        TRIGGERD_LOG: $(LOG)/TriggerLog
+        MAX_TRIGGERD_LOG: "1000000"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: 0
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        ENABLE_ABSENT_NODES_DETECTION: "True"
+        DC_DAEMON_LIST: ">= TRIGGERD"
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    COLLECTOR_DEBUG: 
+      description: The debugging output the Collector will produce in its log
+    JOB_ROUTER_DEFAULTS: 
+      description: Provides default values for all routes in the Job Router's routing table
+    SCHEDD_LOG: 
+      description: The location of the Scheduler's log file
+    TRIGGERD.QMF_UPDATE_INTERVAL: 
+      description: How often the TriggerService will update the AMQP broker
+    QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: 
+      description: The file where the Query Server will write its address information
+    TRANSFERER_LOG: 
+      description: The file that contains the log of the Replication daemon's transfers
+    MAX_NEGOTIATOR_LOG: 
+      description: The maximum size of the Negotiator log file
+    NEGOTIATOR_ADDRESS_FILE: 
+      description: The file where the Negotiator will write its address information
+    AVIARY_PUBLISH_LOCATION: 
+      description: Controls Aviary locator publishing
+      default: "False"
+    NEGOTIATOR_INTERVAL: 
+      description: How often the Negotiator starts a negotiation cycle
+    STARTD_ATTRS: 
+      description: Have the startd advertise arbitrary attributes in its ClassAd
+    JOB_SERVER.SPOOL: 
+      description: The location of the job queue file used by the Job Server
+    MAX_KBDD_LOG: 
+      description: The maximum size of the KBDD log
+    COLLECTOR: 
+      description: The location of the Collector binary
+    SCHEDD.AVIARY_SSL_SERVER_KEY: 
+      description: Path to Aviary SSL server private key used by the Scheduler
+    TRIGGERD_ADDRESS_FILE: 
+      description: The file where the Triggerd will store its address information
+    HA_LOCK_URL: 
+      description: The URL that the Master daemon uses to synchronize the High Availability service
+    COLLECTOR.PLUGINS: 
+      description: A list of plugins that the Collector will load
+    MAX_TRIGGERD_LOG: 
+      description: The maximum size of the Triggerd log file
+    NEGOTIATOR.PLUGINS: 
+      description: A list of plugins that the Negotiator will load
+    STARTD_JOB_HOOK_KEYWORD: 
+      description: The default hook keyword used by the Startd
+    VM_NETWORKING_BRIDGE_INTERFACE: 
+      description: The networking interface VM Universe jobs will use for bridge networking
+    AMAZON_GAHP_LOG: 
+      description: Location of the Amazon Gahp log files
+    TRIGGERD_QUERY_COLLECTOR: 
+      description: The query collector the TriggerService will query for trigger information.  If unset, all collectors in the pool will be used
+    LIBVIRT_XML_SCRIPT: 
+      description: A script that produces XML output used to start a libvirt VM
+    MAX_COLLECTOR_LOG: 
+      description: The maximum size of the Collector log
+    NEED_SET_EC2E_ROUTES: 
+      description: Determines if the Job Router's routing table needs to be prompted for
+    SHADOW_DEBUG: 
+      description: The debugging output the Shadow will produce in its log
+    QUERY_SERVER.SCHEDD_NAME: 
+      description: The name of the Scehduler that the Aviary Query Server is working with
+    MASTER_NEGOTIATOR_CONTROLLER: 
+      description: Which controlling daemon will control the Negotiator
+    VM_GAHP_LOG: 
+      description: The location of the VM Gahp log
+    QUERY_SERVER.HTTP_PORT: 
+      description: The port the QueryServer listens on
+    JOB_HOOKS_IP: 
+      description: The IP Address the job hooks should use to contact the translation daemon
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      description: The fetch work hook the Startd will use when grabbing low-latency work
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      description: The default authentication methods used by the Scheduler
+    JOB_SERVER_LOG: 
+      description: The location of the Job Server log file
+    MAX_STARTD_LOG: 
+      description: The maximum size of the Startd log
+    JOB_SERVER.HISTORY: 
+      description: The location of the historical jobs file used by the Job Server
+    SCHEDD_ADDRESS_FILE: 
+      description: The file where the Scheduler will write its address information
+    SCHEDD_HOST: 
+      description: The hostname(s) of the machine(s) running the Scheduler
+    SCHEDD.PLUGINS: 
+      description: The plugins to load for the Scheduler
+    STARTD.PLUGINS: 
+      description: The plugins to load for the ExecuteNode
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      description: The reply fetch hook the Startd will use when processing low-latency jobs
+    JOB_SERVER_ADDRESS_FILE: 
+      description: The file where the Job Server will store its address information
+    TRIGGER_DATA_JOBLIST: 
+      description: The cron modules to run to provide data for the TriggerService
+    DAEMON_SOCKET_DIR: 
+      description: Specifies the directory where Unix versions of condor daemons will create named sockets so that incoming connections can be forwarded to them by the Shared Port.  Write access to this directory grants permission to receive connections through the Shared Port
+    JOB_SERVER.JOB_SERVER_DEBUG: 
+      description: The level of debugging output the Job Server will produce in its log file
+    RANK_FACTOR: 
+      description: Multiplier used to create a high RANK value
+    STARTD_LOG: 
+      description: The file that will contain the Startd's log
+    VM_GAHP_SERVER: 
+      description: The location of the VM Gahp binary
+    OFFLINE_LOG: 
+      description: The full path and file name of a file that stores machine ClassAds for every hibernating machine
+    HAD_USE_REPLICATION: 
+      description: Controls the replication feature of the HAD daemon
+      default: "False"
+    MASTER.USE_PROCD: 
+      description: Determines if the Master process will use the condor_procd for managing process families
+      default: "True"
+    JOB_SERVER.SCHEDD_NAME: 
+      description: The name of the Scehduler that the Job Server is working with
+    QUERY_SERVER: 
+      description: The location of the Aviary Query Server binary
+    TRIGGER_DATA_GETDATA_RECONFIG: 
+      description: Determines if the ExecuteNode should send a SIGHUP when the condor_startd daemon is reconfigured
+    TRIGGERD: 
+      description: The location of the Triggerd binary
+    STARTD_JOB_EXPRS: 
+      description: Attributes of the running job that the Startd will advertise
+    TRIGGERD.QMF_STOREFILE: 
+      description: The path and filename for the persistent id information for a Trigger Service running a QMF agent
+    AVIARY_LOCATOR_PRUNE_INTERVAL: 
+      description: The interval in seconds that the Aviary locator scans the known endpoints and marks them unresponsive or missing
+    QUERY_SERVER.QUERY_SERVER_LOG: 
+      description: The location of the Aviary Query Server log file
+    MAX_JOB_SERVER_LOG: 
+      description: The maximum size of the Job Server log file
+    QUERY_SERVER.AVIARY_SSL: 
+      description: Enable HTTPS mutual authentication for Aviary in the Query Server
+      default: "False"
+    JOB_ROUTER_DEBUG: 
+      description: The debugging output the Job Router will produce in its log file
+    UNHIBERNATE: 
+      default: MachineLastMatchTime =!= UNDEFINED
+    SCHEDD.QMF_STOREFILE: 
+      description: The path and filename for the persistent id information for a Scheduler running a QMF agent
+    MASTER_ADDRESS_FILE: 
+      description: The file where the Master will store its address information
+    MAX_QUERY_SERVER_LOG: 
+      description: The maximum size of the Query Server daemon log
+    COLLECTOR_ADDRESS_FILE: 
+      description: The file where the Collector will store its address information
+    TRIGGER_DATA_GETDATA_EXECUTABLE: 
+      description: The executable to run to retrieve data for the TriggerService
+    MAXJOBRETIREMENTTIME: 
+      description: The maximum time to wait for a job to finish before kicking it off the machine due to preemption, priority, or Startd graceful shutdown
+    MAX_STARTER_LOG: 
+      description: The maximum size of the Starter log
+    CONDOR_HOST: 
+      description: The list of Central Managers in the pool
+    KBDD_ADDRESS_FILE: 
+      description: The file where the KBDD will place its address information
+    VM_MEMORY: 
+      description: The amount of memory that can be used by VM universe jobs
+    STARTER_DEBUG: 
+      description: The debugging output the Starter will produce in its log
+    TRIGGERD_LOG: 
+      description: The location of the Triggerd log file
+    ALLOW_NEGOTIATOR: 
+      description: The machines with Negotiator access
+    STARTER_UPDATE_INTERVAL: 
+      description: How often the Starter will envoke the update job info hook after the first automated invokation
+    UNUSED_CLAIM_TIMEOUT: 
+      description: How long a Dedicated Scheduler should hold onto claims if it has no jobs to run on them
+    COLLECTOR_LOG: 
+      description: The location of the Collector's log file
+    ALLOW_NEGOTIATOR_SCHEDD: 
+      description: The Schedulers with Negotiator access
+    USE_SHARED_PORT: 
+      description: Specifies whether a condor process should rely on the Shared Port for receiving incoming connections
+      default: "False"
+    JOB_SERVER.JOB_SERVER_LOG: 
+      description: The location of the Job Server log file
+    SCHEDD.AVIARY_SSL_SERVER_CERT: 
+      description: Path to Aviary SSL server certificate used by the Scheduler
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      description: The update hook used by the Job Router for EC2 Enhanced
+    HAD: 
+      description: The location of the HAD daemon
+    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 
+      description: Path to Aviary SSL server private key used by the Query Server
+    VM_NETWORKING_DEFAULT_TYPE: 
+      description: Default VM networking type
+    EC2E_HOOK_JOB_EXIT: 
+      description: The exit hook used by the Job Router for EC2 Enhanced
+    QUERY_SERVER.HISTORY: 
+      description: The location of the historical jobs file used by the Query Server
+    VM_NETWORKING: 
+      description: Determines if VM universe will allow networking
+    KBDD_LOG: 
+      description: The location of the KBDD log file
+    HAD_UPDATE_INTERVAL: 
+      description: How often the HAD daemon will update the Collector
+    JOB_SERVER.JOB_SERVER_ADDRESS_FILE: 
+      description: The file where the Job Server will store its address information
+    SCHEDD: 
+      description: The location of the Scheduler binary
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      description: The update job info hook the Starter will use with processing low-latency jobs
+    EC2E_HOOK_TRANSLATE_JOB: 
+      description: The translation hook used by the Job Router for EC2 Enhanced
+    STARTD_CRON_AUTOPUBLISH: 
+      description: Determines if the ExecuteNode should automatically publish a new update to the Collector after the cron modules produce output
+    SCHEDD.AVIARY_SSL_CA_DIR: 
+      description: Path to Aviary SSL CA directory used by the Scheduler
+    SEC_DEFAULT_ENCRYPTION: 
+      description: The level of encryption in Condor
+    QUERY_SERVER.SPOOL: 
+      description: The location of the job queue file used by the Query Server
+    KBDD_DEBUG: 
+      description: The debugging output the KBDD will produce in its log file
+    SCHEDD_DEBUG: 
+      description: The debugging output the Scheduler will produce in its log
+    STARTER_LOCAL: 
+      description: The local universe Starter
+    MAX_HAD_LOG: 
+      description: The maximum size of the HAD log
+    EC2E_ATTRS_TO_COPY: 
+      description: The parameters that should be copied from the routed job to the source job for EC2 Enhanced
+    JOB_ROUTER_LOG: 
+      description: The location of the Job Router log file
+    SHADOW_SIZE_ESTIMATE: 
+      description: Estimated virtual memory size of each Shadow process
+    MAX_JOB_HOOKS_LOG: 
+      description: The maximum size of the Job Hooks log files
+    AMAZON_GAHP: 
+      description: The location of the Amazon Gahp binary
+    SHARED_PORT: 
+      description: The Shared Port binary
+    TRIGGERD_DEFAULT_EVAL_PERIOD: 
+      description: The default interval for evaluating triggers by the TriggerService
+    HA_POLL_PERIOD: 
+      description: How often the Master will the High Availability locks to see if any are stale or have been released
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      description: The default authentication methods used by the Job Router
+    MAX_CAROD_LOG: 
+      description: The maximum size of the Low-Latency daemon log
+    HAD_LIST: 
+      description: The list of hostnames and ports fo rmachines running the HAD daemon
+    SEC_DEFAULT_INTEGRITY: 
+      description: The level of integrity checking in Condor
+    NEGOTIATOR_MATCH_LOG: 
+      description: The location of the Negotiator's match log file
+    QUERY_SERVER.QUERY_SERVER_DEBUG: 
+      description: The debugging output the Aviary Query Server will produce in its log file
+    SHADOW.SPOOL: 
+      description: Where the shadow will look for condor_schedd files
+    RESTART_PROCD_ON_ERROR: 
+      default: "False"
+    EC2_GAHP: 
+      description: The location of the EC2 Gahp binary
+    MAX_SHADOW_LOG: 
+      description: The maximum size of the Shadow's log file
+    ROOSTER: 
+      description: The location of the Rooster binary
+    VM_TYPE: 
+      description: The kind of virtual machine program that will be used for VM universe jobs
+    SCHEDD.AVIARY_SSL: 
+      description: Enable HTTPS mutual authentication for Aviary in the Scheduler
+      default: "False"
+    AVIARY_PUBLISH_INTERVAL: 
+      description: The interval in seconds that the Aviary endpoints send their heartbeats
+    MASTER_HA_LIST: 
+      description: The list of daemons that will be run in High Availabilty mode
+    HAD_PORT: 
+      description: The port on which the HAD daemon will listen
+    NEGOTIATOR_LOG: 
+      description: The location of the Negotiator's log file
+    MAX_NEGOTIATOR_MATCH_LOG: 
+      description: The maximum size of the Negotiator's match log file
+    COLLECTOR_HOST: 
+      description: Allows changing of the port the Collector listens on
+    STARTD_ADDRESS_FILE: 
+      description: The file where the Startd will place its address information
+    MASTER_HAD_BACKOFF_CONSTANT: 
+      description: How long to wait before restarting the HAD daemon
+    NEGOTIATOR_DEBUG: 
+      description: The debugging output the Negotiator will produce in its log file
+    SHARED_PORT_DEBUG: 
+      description: The debugging output that the Shared Port will produce in its log
+    MAX_REPLICATION_LOG: 
+      description: The maximum size of the Replication log
+    JOB_SERVER_DEBUG: 
+      description: The debugging output the Job Server will produce in its log file
+    NEGOTIATOR: 
+      description: The location of the Negotiator binary file
+    HAD_CONNECTION_TIMEOUT: 
+      description: How long the HAD daemon waits before giving up on establishing a TCP connection
+    REPLICATION_PORT: 
+      description: The port on which the Replication daemon will listen
+    STARTER: 
+      description: The Starter binary
+    JOB_ROUTER: 
+      description: The location of the Job Router binary
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      description: The prepare job hook the Starter will use when processing low-latency jobs
+    UPDATE_INTERVAL: 
+      description: The number of seconds specifying how often the condor_startd should send a ClassAd update to the condor_collector
+    STARTD: 
+      description: The Startd binary
+    COLLECTOR_ARGS: 
+      description: Arguments to pass to the Collector daemon
+    SCHEDD.AVIARY_SSL_CA_FILE: 
+      description: Path to Aviary SSL CA file used by the Scheduler
+    SHADOW: 
+      description: The location of the Shadow binary
+    QUERY_SERVER.AVIARY_SSL_CA_FILE: 
+      description: Path to Aviary SSL CA file used by the Query Server
+    JOB_SERVER: 
+      description: The location of the Job Server binary
+    STARTER_LIST: 
+      description: A list of Starters the machine supports
+    HAD_LOG: 
+      description: The file containing the HAD's log
+    MAX_JOB_ROUTER_LOG: 
+      description: The maximum size of the Job Router log file
+    REPLICATION: 
+      description: The location of the Replication daemon
+    STARTD_DEBUG: 
+      description: The debugging output that the Startd will produce in its log
+    QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 
+      description: Path to Aviary SSL server certificate used by the Query Server
+    EC2_GAHP_LOG: 
+      description: Location of the EC2 Gahp log files
+    REPLICATION_ARGS: 
+      description: The port on which the Replication daemon will listen
+    XEN_BOOTLOADER: 
+      description: The bootloader for Xen domainU
+    JOB_HOOKS_LOG: 
+      description: The location of the Job Hooks log files
+    HISTORY_INTERVAL: 
+      description: Determines how often the Job Server will read the historical jobs file
+    EC2E_HOOK_JOB_CLEANUP: 
+      description: The cleanup hook used by the Job Router for EC2 Enhanced
+    JOB_ROUTER_POLLING_PERIOD: 
+      description: How often the Job Router will look for new jobs to route
+    SCHEDD.HISTORY: 
+      description: The location of the historical jobs file for use by the Scheduler
+    MAX_VM_GAHP_LOG: 
+      description: The maximum size of the VM Ghap log file
+    QUERY_SERVER.AVIARY_SSL_CA_DIR: 
+      description: Path to Aviary SSL CA directory used by the Query Server
+    FLOCK_COLLECTOR_HOSTS: 
+      description: A list of Collectors for pools that the Scheduler attempt to use to run jobs
+    KBDD: 
+      description: The KBDD binary
+    QMF_PUBLISH_SUBMISSIONS: 
+      description: Determines if the Scheduler should publish job submissions over QMF
+    DC_DAEMON_LIST: 
+      description: The daemons that use the Condor daemoncore library
+    FLOCK_NEGOTIATOR_HOSTS: 
+      description: A list of Collectors for pools that the Scheduler attempt to use to run jobs
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      description: Amazon EC2 has a hard limit of 20 concurrently running instances.  This parameter limits the number of EC2 resources
+    REPLICATION_LIST: 
+      description: A list of hostnames and ports for machines running the Replication daemon
+    HAD_ARGS: 
+      description: The arguments passed to the HAD daemon
+    QUERY_SERVER_ARGS: 
+      description: Args to append to the Aviary Query Server on daemon startup
+    SHARED_PORT_ARGS: 
+      description: Arguments to pass to the Shared Port daemon
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      description: The number of seconds specifying the lifetime of the persistent machine ClassAd representing a hibernating machine
+    SEC_DEFAULT_NEGOTIATION: 
+      description: The level of secure sessions in Condor
+    SCHEDD.HTTP_PORT: 
+      description: Port the Aviary Schedd plugin listens on
+    JOB_ROUTER_HOOK_KEYWORD: 
+      description: The default hook prefix for the Job Router
+    REPLICATION_INTERVAL: 
+      description: How often the Replication daemon initiates replicating the $(STATE_FILE)
+    SCHEDD_DAEMON_AD_FILE: 
+      description: The file were the Scheduler will write its ClassAd
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      description: Amazon EC2 has a hard limit of 20 concurrently running instances.  This parameter limits the number of amazon resources
+    HA_LOCK_HOLD_TIME: 
+      description: The length of time the Master daemon will the lock for each High Available daemon
+    REPLICATION_LOG: 
+      description: The file that holds the Replication daemon's log
+    MAX_SCHEDD_LOG: 
+      description: The maximum size of the Scheduler's log
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      description: The default authentication methods used by the Master
+    SCHEDD_NAME: 
+      description: The name the Scheduler uses to identify itself
+    QMF_IGNORE_UPDATE_STARTD_AD: 
+      description: Determines whether to publish slot information from the Collector
+    JOB_ROUTER_ADDRESS_FILE: 
+      description: The file where the Job Router will store its address information
+    CAROD_LOG: 
+      description: The location of the Low-Latency daemon log file
+    NUM_SLOTS: 
+      description: The number of slots the machine will report to the Collector
+    HAD_USE_PRIMARY: 
+      description: Determines if the first entry in HAD_LIST is a primary Central Manager
+    SHADOW_LOG: 
+      description: The location of the Shadow's log file
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      description: The job exit hook the Starter will use when processing low-latency jobs
+    SEC_DEFAULT_AUTHENTICATION: 
+      description: The level of authentication in Condor
+  subsystems: 
+    collector: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - AVIARY_LOCATOR_MISSED_UPDATES
+      - AVIARY_LOCATOR_PRUNE_INTERVAL
+      - AVIARY_PUBLISH_LOCATION
+      - COLLECTOR
+      - COLLECTOR.PLUGINS
+      - COLLECTOR_ADDRESS_FILE
+      - COLLECTOR_DEBUG
+      - COLLECTOR_HOST
+      - COLLECTOR_LOG
+      - COLLECTOR_UPDATE_INTERVAL
+      - ENABLE_RUNTIME_CONFIG
+      - FLOCK_COLLECTOR_HOSTS
+      - MAX_COLLECTOR_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_IGNORE_UPDATE_STARTD_AD
+    query_server: 
+      params: 
+      - AVIARY_PUBLISH_INTERVAL
+      - AVIARY_PUBLISH_LOCATION
+      - ENABLE_RUNTIME_CONFIG
+      - MAX_QUERY_SERVER_LOG
+      - QUERY_SERVER
+      - QUERY_SERVER.AVIARY_SSL
+      - QUERY_SERVER.AVIARY_SSL_CA_DIR
+      - QUERY_SERVER.AVIARY_SSL_CA_FILE
+      - QUERY_SERVER.AVIARY_SSL_SERVER_CERT
+      - QUERY_SERVER.AVIARY_SSL_SERVER_KEY
+      - QUERY_SERVER.HISTORY
+      - QUERY_SERVER.HISTORY_INTERVAL
+      - QUERY_SERVER.HTTP_PORT
+      - QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE
+      - QUERY_SERVER.QUERY_SERVER_DEBUG
+      - QUERY_SERVER.QUERY_SERVER_LOG
+      - QUERY_SERVER.SCHEDD_NAME
+      - QUERY_SERVER.SPOOL
+      - QUERY_SERVER_ARGS
+      - WSFCPP_HOME
+    startd: 
+      params: 
+      - ALLOW_READ
+      - ALLOW_WRITE
+      - BENCHMARKTIMER
+      - CONSOLE_DEVICES
+      - CONTINUE
+      - ENABLE_RUNTIME_CONFIG
+      - KILL
+      - LIBVIRT_XML_SCRIPT
+      - MAXJOBRETIREMENTTIME
+      - MAX_STARTD_LOG
+      - MAX_STARTER_LOG
+      - MAX_VM_GAHP_LOG
+      - PERIODIC_CHECKPOINT
+      - PREEMPT
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - RUNBENCHMARKS
+      - START
+      - STARTD
+      - STARTD_ADDRESS_FILE
+      - STARTD_ATTRS
+      - STARTD_CRON_AUTOPUBLISH
+      - STARTD_CRON_NAME
+      - STARTD_DEBUG
+      - STARTD_JOB_EXPRS
+      - STARTD_LOG
+      - STARTER
+      - STARTER_DEBUG
+      - STARTER_LIST
+      - STARTER_LOG
+      - SUSPEND
+      - TRIGGER_DATA_GETDATA_EXECUTABLE
+      - TRIGGER_DATA_GETDATA_PERIOD
+      - TRIGGER_DATA_GETDATA_PREFIX
+      - TRIGGER_DATA_GETDATA_RECONFIG
+      - TRIGGER_DATA_JOBLIST
+      - UPDATE_INTERVAL
+      - VM_GAHP_LOG
+      - VM_GAHP_SERVER
+      - VM_MEMORY
+      - VM_NETWORKING
+      - VM_NETWORKING_BRIDGE_INTERFACE
+      - VM_NETWORKING_DEFAULT_TYPE
+      - VM_NETWORKING_TYPE
+      - VM_TYPE
+      - WANT_SUSPEND
+      - WANT_VACATE
+    negotiator: 
+      params: 
+      - ALLOW_NEGOTIATOR
+      - ENABLE_RUNTIME_CONFIG
+      - FLOCK_NEGOTIATOR_HOSTS
+      - MAX_NEGOTIATOR_LOG
+      - MAX_NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR
+      - NEGOTIATOR.ENABLE_RUNTIME_CONFIG
+      - NEGOTIATOR.PLUGINS
+      - NEGOTIATOR_ADDRESS_FILE
+      - NEGOTIATOR_DEBUG
+      - NEGOTIATOR_INTERVAL
+      - NEGOTIATOR_LOG
+      - NEGOTIATOR_MATCH_LOG
+      - NEGOTIATOR_PRE_JOB_RANK
+      - PREEMPTION_RANK
+      - PREEMPTION_REQUIREMENTS
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+    schedd: 
+      params: 
+      - ALLOW_NEGOTIATOR_SCHEDD
+      - ALLOW_WRITE
+      - AVIARY_PUBLISH_INTERVAL
+      - AVIARY_PUBLISH_LOCATION
+      - ENABLE_RUNTIME_CONFIG
+      - GRIDMANAGER.SPOOL
+      - HISTORY
+      - MAX_SCHEDD_LOG
+      - MAX_SHADOW_LOG
+      - MAX_STARTER_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_PUBLISH_SUBMISSIONS
+      - QUEUE_ALL_USERS_TRUSTED
+      - QUEUE_SUPER_USERS
+      - SCHEDD
+      - SCHEDD.AVIARY_SSL
+      - SCHEDD.AVIARY_SSL_CA_DIR
+      - SCHEDD.AVIARY_SSL_CA_FILE
+      - SCHEDD.AVIARY_SSL_SERVER_CERT
+      - SCHEDD.AVIARY_SSL_SERVER_KEY
+      - SCHEDD.HTTP_PORT
+      - SCHEDD.PLUGINS
+      - SCHEDD.SPOOL
+      - SCHEDD_ADDRESS_FILE
+      - SCHEDD_DAEMON_AD_FILE
+      - SCHEDD_DEBUG
+      - SCHEDD_LOG
+      - SHADOW
+      - SHADOW.SPOOL
+      - SHADOW_DEBUG
+      - SHADOW_LIST
+      - SHADOW_LOCK
+      - SHADOW_LOG
+      - SHADOW_SIZE_ESTIMATE
+      - STARTER_DEBUG
+      - STARTER_LOCAL
+      - STARTER_LOG
+      - START_LOCAL_UNIVERSE
+      - START_SCHEDULER_UNIVERSE
+    master: 
+      params: 
+      - ALLOW_ADMINISTRATOR
+      - COLLECTOR_NAME
+      - CONDOR_DEVELOPERS
+      - CONDOR_DEVELOPERS_COLLECTOR
+      - CONDOR_HOST
+      - DAEMON_LIST
+      - DC_DAEMON_LIST
+      - ENABLE_RUNTIME_CONFIG
+      - MASTER
+      - MASTER.PLUGINS
+      - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+      - MASTER.USE_PROCD
+      - MASTER_ADDRESS_FILE
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - SEC_DEFAULT_AUTHENTICATION
+      - SEC_DEFAULT_AUTHENTICATION_METHODS
+      - SEC_DEFAULT_CRYPTO_METHODS
+      - SEC_DEFAULT_ENCRYPTION
+      - SEC_DEFAULT_INTEGRITY
+      - SEC_DEFAULT_NEGOTIATION
+      - WALLABY_FORCE_CONFIG_PULL
+      - WALLABY_FORCE_RESTART
+    transferer: 
+      params: 
+      - ENABLE_RUNTIME_CONFIG
+      - MAX_TRANSFERER_LIFETIME
+      - TRANSFERER_LOG
+    job_router: 
+      params: 
+      - EC2E_ATTRS_TO_COPY
+      - EC2E_HOOK_JOB_CLEANUP
+      - EC2E_HOOK_JOB_EXIT
+      - EC2E_HOOK_TRANSLATE_JOB
+      - EC2E_HOOK_UPDATE_JOB_INFO
+      - ENABLE_RUNTIME_CONFIG
+      - JOB_ROUTER
+      - JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+      - JOB_ROUTER_ADDRESS_FILE
+      - JOB_ROUTER_DEBUG
+      - JOB_ROUTER_DEFAULTS
+      - JOB_ROUTER_ENTRIES
+      - JOB_ROUTER_HOOK_KEYWORD
+      - JOB_ROUTER_LOG
+      - JOB_ROUTER_POLLING_PERIOD
+      - MAX_HISTORY_ROTATIONS
+      - MAX_JOB_ROUTER_LOG
+    had: 
+      params: 
+      - ENABLE_RUNTIME_CONFIG
+      - HAD
+      - HAD_ARGS
+      - HAD_CONNECTION_TIMEOUT
+      - HAD_LIST
+      - HAD_LOG
+      - HAD_PORT
+      - HAD_UPDATE_INTERVAL
+      - HAD_USE_PRIMARY
+      - HAD_USE_REPLICATION
+      - MAX_HAD_LOG
+    shared_port: 
+      params: 
+      - DAEMON_SOCKET_DIR
+      - ENABLE_RUNTIME_CONFIG
+      - SHARED_PORT
+      - SHARED_PORT_DEBUG
+      - USE_SHARED_PORT
+    job_server: 
+      params: 
+      - ENABLE_RUNTIME_CONFIG
+      - HISTORY_INTERVAL
+      - JOB_SERVER
+      - JOB_SERVER.HISTORY
+      - JOB_SERVER.JOB_SERVER_ADDRESS_FILE
+      - JOB_SERVER.JOB_SERVER_DEBUG
+      - JOB_SERVER.JOB_SERVER_LOG
+      - JOB_SERVER.SCHEDD_NAME
+      - JOB_SERVER.SPOOL
+      - JOB_SERVER_ADDRESS_FILE
+      - JOB_SERVER_DEBUG
+      - JOB_SERVER_LOG
+      - MAX_JOB_SERVER_LOG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - QMF_PUBLISH_SUBMISSIONS
+    replication: 
+      params: 
+      - ENABLE_RUNTIME_CONFIG
+      - HAD_USE_REPLICATION
+      - MAX_REPLICATION_LOG
+      - REPLICATION
+      - REPLICATION_ARGS
+      - REPLICATION_INTERVAL
+      - REPLICATION_LIST
+      - REPLICATION_LOG
+      - REPLICATION_PORT
+    triggerd: 
+      params: 
+      - DATA
+      - ENABLE_ABSENT_NODES_DETECTION
+      - ENABLE_RUNTIME_CONFIG
+      - QMF_BROKER_AUTH_MECH
+      - QMF_BROKER_HOST
+      - QMF_BROKER_PASSWORD_FILE
+      - QMF_BROKER_PORT
+      - QMF_BROKER_USERNAME
+      - QMF_DELETE_ON_SHUTDOWN
+      - TRIGGERD.QMF_STOREFILE
+      - TRIGGERD.QMF_UPDATE_INTERVAL
+      - TRIGGERD_ADDRESS_FILE
+      - TRIGGERD_DEFAULT_EVAL_PERIOD
+      - TRIGGERD_QUERY_COLLECTOR
+    rooster: 
+      params: 
+      - ENABLE_RUNTIME_CONFIG
+      - ROOSTER
+      - ROOSTER_INTERVAL
+      - ROOSTER_MAX_UNHIBERNATE
+      - ROOSTER_UNHIBERNATE
+      - ROOSTER_UNHIBERNATE_RANK
+      - ROOSTER_WAKEUP_CMD
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    BaseJobExecuter: 
+      setAnnotation: A non-functional base for executing jobs.  This needs further configuration and is not meant to be used by itself
+    Collector: 
+      setAnnotation: Enables collector functionality
+      modifyParams: 
+      - REPLACE
+      - FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
+        COLLECTOR_ADDRESS_FILE: $(LOG)/.collector_address
+        COLLECTOR_UPDATE_INTERVAL: "900"
+        DAEMON_LIST: ">= COLLECTOR"
+        MAX_COLLECTOR_LOG: "1000000"
+        COLLECTOR: 0
+        COLLECTOR_NAME: Wallaby Configured Pool
+        COLLECTOR_LOG: $(LOG)/CollectorLog
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        COLLECTOR_DEBUG: ""
+      - {}
+
+    CommonUIDDomain: 
+      setAnnotation: Sets the UID domain
+    DedicatedResource: 
+      setAnnotation: Configures an execute node as a dedicated resource
+      modifyParams: 
+      - REPLACE
+      - CONTINUE: "TRUE"
+        PREEMPT: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) && ($(PREEMPT))
+        SUSPEND: (SCHEDULER =!= $(DEDICATEDSCHEDULER)) || ($(SUSPEND))
+        STARTD_ATTRS: ">= DEDICATEDSCHEDULER"
+        WANT_SUSPEND: "FALSE"
+        WANT_VACATE: "FALSE"
+        START: (SCHEDULER =?= $(DEDICATEDSCHEDULER)) || ($(START))
+        KILL: "FALSE"
+        RANK_FACTOR: "1000000"
+        DEDICATEDSCHEDULER: 0
+        RANK: SCHEDULER =?= $(DEDICATEDSCHEDULER) * $(RANK_FACTOR)
+      - {}
+
+    ExecuteNodeDedicatedPreemption: 
+      setAnnotation: Enables preemption for an execute node that is a dedicated resource
+    JobServer: 
+      setAnnotation: Enables a job server
+    Negotiator: 
+      setAnnotation: Enables negotiator functionality
+      modifyParams: 
+      - REPLACE
+      - NEGOTIATOR_DEBUG: D_MATCH
+        NEGOTIATOR_PRE_JOB_RANK: RemoteOwner =?= UNDEFINED
+        DAEMON_LIST: ">= NEGOTIATOR"
+        NEGOTIATOR: $(SBIN)/condor_negotiator
+        NEGOTIATOR_LOG: $(LOG)/NegotiatorLog
+        NEGOTIATOR_ADDRESS_FILE: $(LOG)/.negotiator_address
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST), $(IP_ADDRESS)
+        NEGOTIATOR_MATCH_LOG: $(LOG)/MatchLog
+        PREEMPTION_REQUIREMENTS: ( $(StateTimer) > (1 * $(HOUR)) && RemoteUserPrio > SubmittorPrio * 1.2 ) || (MY.NiceUser == True)
+        MAX_NEGOTIATOR_MATCH_LOG: "1000000"
+        MAX_NEGOTIATOR_LOG: "1000000"
+        PREEMPTION_RANK: (RemoteUserPrio * 1000000) - TARGET.ImageSize
+        NEGOTIATOR_INTERVAL: "20"
+        FLOCK_NEGOTIATOR_HOSTS: $(FLOCK_TO)
+      - {}
+
+    ConsoleMaster: 
+      setAnnotation: Enables QMF publishing of master data
+    HAScheduler: 
+      setAnnotation: Enables high availability for a scheduler
+    Master: 
+      setAnnotation: Enables master functionality
+    PowerManagementSubnetManager: 
+      setAnnotation: Enables power management wake up for a subnet
+      modifyParams: 
+      - REPLACE
+      - UNHIBERNATE: CurrentTime - MachineLastMatchTime < 1200
+        ROOSTER_SUBNET_MASK: 0
+        ROOSTER_UNHIBERNATE: Offline && Unhibernate
+        ROOSTER: $(LIBEXEC)/condor_rooster
+        ROOSTER_MAX_UNHIBERNATE: "0"
+        DAEMON_LIST: ">= ROOSTER"
+        ROOSTER_WAKEUP_CMD: "\"$(BIN)/condor_power -d -i -s $(ROOSTER_SUBNET_MASK)\""
+        ROOSTER_UNHIBERNATE_RANK: Mips*Cpus
+        ROOSTER_INTERVAL: "300"
+      - {}
+
+    QMF: 
+      setAnnotation: QMF related parameters
+    AviaryLocator: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+        - AviaryPublishingEnabled
+      - {}
+
+      setAnnotation: Collector additions to provide the aviary locator
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - COLLECTOR.PLUGINS: ">= $(LIB)/plugins/AviaryLocatorPlugin-plugin.so"
+        AVIARY_LOCATOR_PRUNE_INTERVAL: "20"
+        AVIARY_LOCATOR_MISSED_UPDATES: "2"
+      - {}
+
+    ConsoleNegotiator: 
+      setAnnotation: Enables QMF publishing and dynamic configuration for the negotiator
+    SSLEnabledAviaryScheduler: 
+      setAnnotation: Enables SSL security for the aviary scheduler
+      modifyParams: 
+      - REPLACE
+      - SCHEDD.AVIARY_SSL_CA_DIR: 0
+        SCHEDD.AVIARY_SSL_SERVER_KEY: 0
+        SCHEDD.AVIARY_SSL_SERVER_CERT: 0
+        SCHEDD.AVIARY_SSL: "TRUE"
+        SCHEDD.AVIARY_SSL_CA_FILE: 0
+      - {}
+
+    Axis2Home: 
+      setAnnotation: The axis2 configuration file
+    BaseHAScheduler: 
+      setAnnotation: A non-functional base for an highly available scheduler.  This needs further configuration and is not meant to be used by itself
+    BaseJobServer: 
+      setAnnotation: A non-functional base for the job server.  This needs furher configuration and is not meant to be used by itself
+      modifyParams: 
+      - REPLACE
+      - JOB_SERVER: $(SBIN)/condor_job_server
+        MAX_JOB_SERVER_LOG: "1000000"
+        JOB_SERVER.JOB_SERVER_DEBUG: ""
+        QMF_PUBLISH_SUBMISSIONS: "FALSE"
+      - {}
+
+    CentralManager: 
+      setAnnotation: A set of features that comprise a central manager
+    ConsoleCollector: 
+      setAnnotation: Enables QMF publishing of collector data
+    DedicatedScheduler: 
+      setAnnotation: Configures a scheduler as a dedicated scheduler
+    KeyboardMonitor: 
+      setAnnotation: Enables keyboard monitoring
+    PlumageJobHistory: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ViewServer
+      - {}
+
+      setAnnotation: Provides historical job data to the plumage database
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - PLUMAGE_DB_HOST: localhost
+        VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
+        PLUMAGE_DB_PORT: "27017"
+      - {}
+
+    QueryServerPublisher: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - QueryServer
+        - AviaryPublishingEnabled
+      - {}
+
+      setAnnotation: Enables publishing aviary locator data for the query server
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_INTERVAL: "10"
+      - {}
+
+    SchedulerDedicatedPreemption: 
+      setAnnotation: Enables preemption for a dedicated scheduler
+    SchedulerInDL: 
+      setAnnotation: Adds the scheduler to the list of daemons to run.  This is not intended to be used alone, but as a part of other features.
+    ConsoleExecuteNode: 
+      setAnnotation: Enables QMF publishing of startd data
+    ConsoleScheduler: 
+      setAnnotation: Enables QMF publishing of scheduler data
+    ExecuteNodeTriggerData: 
+      setAnnotation: Enables publishing execute node data used by the trigger service
+    JobHooks: 
+      setAnnotation: Configures the job hooks used by the LowLatency feature to communicate with the carod daemon
+    SSLEnabledQueryServer: 
+      setAnnotation: Enables SSL security for the query server
+      modifyParams: 
+      - REPLACE
+      - QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 0
+        QUERY_SERVER.AVIARY_SSL: "TRUE"
+        QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 0
+        QUERY_SERVER.AVIARY_SSL_CA_FILE: 0
+        QUERY_SERVER.AVIARY_SSL_CA_DIR: 0
+      - {}
+
+    AviaryPublishingEnabled: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setAnnotation: Enables publishing aviary locator information
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_LOCATION: "TRUE"
+      - {}
+
+    AviarySchedulerPublisher: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - AviaryScheduler
+        - AviaryPublishingEnabled
+      - {}
+
+      setAnnotation: Enables publishing aviary locator data for the aviary scheduler
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - AVIARY_PUBLISH_INTERVAL: "10"
+      - {}
+
+    BaseDBVersion: 
+      setAnnotation: The version of the database
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.24
+      - {}
+
+    DynamicSlots: 
+      setAnnotation: Enables dynamic slots for an execute node
+    ExecuteNode: 
+      setAnnotation: Enables running jobs
+      modifyParams: 
+      - REPLACE
+      - CONTINUE: ( $(CPUIdle) && ($(ActivityTimer) > 10) && (KeyboardIdle > $(ContinueIdleTime)) )
+        STARTD_JOB_EXPRS: ImageSize, ExecutableSize, JobUniverse, NiceUser
+        RUNBENCHMARKS: (LastBenchmark == 0 ) || ($(BenchmarkTimer) >= (4 * $(HOUR)))
+        STARTER_LIST: STARTER
+        STARTER: $(SBIN)/condor_starter
+        SUSPEND: ( $(KeyboardBusy) || ( (CpuBusyTime > 2 * $(MINUTE)) && $(ActivationTimer) > 90 ) )
+        PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+        STARTD_ATTRS: ">= \"$(COLLECTOR_HOST)\", SmallJob, KeyboardNotBusy, IsVanilla, ActivationTimer, MINUTE, StartIdleTime, CPUIdle, KeyboardBusy, ContinueIdleTime, MaxSuspendTime, MaxVacateTime, HOUR, LastCkpt"
+        CONSOLE_DEVICES: mouse, console
+        WANT_SUSPEND: ( $(SmallJob) || $(KeyboardNotBusy) || $(IsVanilla) ) && ( $(SUSPEND) )
+        DAEMON_LIST: ">= STARTD"
+        MAX_STARTD_LOG: "1000000"
+        BENCHMARKTIMER: (CurrentTime - LastBenchmark)
+        MAXJOBRETIREMENTTIME: "0"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST), $(IP_ADDRESS)
+        WANT_VACATE: ( $(ActivationTimer) > 10 * $(MINUTE) || $(IsVanilla) )
+        PERIODIC_CHECKPOINT: $(LastCkpt) > (3 * $(HOUR) + $RANDOM_INTEGER(-30,30,1) * $(MINUTE) )
+        STARTD_LOG: $(LOG)/StartLog
+        STARTD_DEBUG: ""
+        STARTD_ADDRESS_FILE: $(LOG)/.startd_address
+        START: ( (KeyboardIdle > $(StartIdleTime)) && ( $(CPUIdle) || (State != "Unclaimed" && State != "Owner")) )
+        STARTD: $(SBIN)/condor_startd
+        KILL: $(ActivityTimer) > $(MaxVacateTime)
+      - {}
+
+    NodeAccess: 
+      setAnnotation: Configures read/write access to the node
+    BaseQueryServer: 
+      setAnnotation: A non-functional base for the query server.  This needs furher configuration and is not meant to be used by itself
+    HACentralManager: 
+      setAnnotation: Enables high availability for the central manager
+      modifyParams: 
+      - REPLACE
+      - CONDOR_HOST: 0
+        ALLOW_ADMINISTRATOR: $(ALLOW_ADMINISTRATOR), $(COLLECTOR_HOST)
+        TRANSFERER_LOG: $(LOG)/TransfererLog
+        HAD_LOG: $(LOG)/HADLog
+        HAD_LIST: 0
+        MASTER_NEGOTIATOR_CONTROLLER: HAD
+        MAX_HAD_LOG: "640000"
+        MASTER_HAD_BACKOFF_CONSTANT: "360"
+        DAEMON_LIST: ">= HAD, REPLICATION"
+        HAD_CONNECTION_TIMEOUT: "2"
+        HAD_UPDATE_INTERVAL: "300"
+        HAD_PORT: "51450"
+        MAX_TRANSFERER_LIFETIME: "300"
+        ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(COLLECTOR_HOST), $(IP_ADDRESS)
+        ALLOW_NEGOTIATOR_SCHEDD: $(IP_ADDRESS), $(COLLECTOR_HOST)
+        HAD_USE_PRIMARY: "TRUE"
+        REPLICATION_INTERVAL: "300"
+        HAD: $(SBIN)/condor_had
+        REPLICATION_PORT: "41450"
+        REPLICATION_LIST: 0
+        REPLICATION_ARGS: -p $(REPLICATION_PORT)
+        STATE_FILE: $(SPOOL)/Accountantnew.log
+        HAD_ARGS: -p $(HAD_PORT)
+        COLLECTOR_HOST: $(CONDOR_HOST)
+        REPLICATION_LOG: $(LOG)/ReplicationLog
+        MAX_REPLICATION_LOG: "640000"
+        HAD_USE_REPLICATION: "TRUE"
+        REPLICATION: $(SBIN)/condor_replication
+      - {}
+
+    PowerManagementCollector: 
+      setAnnotation: Enables power management on the collector
+    SharedFileSystem: 
+      setAnnotation: Sets the filesystem domain
+    SharedPort: 
+      setAnnotation: Enables shared port
+      modifyDepends: 
+      - REPLACE
+      - - Master
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - USE_SHARED_PORT: "TRUE"
+        DAEMON_LIST: ">= SHARED_PORT"
+        SHARED_PORT: $(LIBEXEC)/condor_shared_port
+        SHARED_PORT_DEBUG: ""
+        DAEMON_SOCKET_DIR: $(RUN)
+      - {}
+
+    VMUniverse: 
+      setAnnotation: Enables the vm universe on an execute node
+    ViewServerSource: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - Collector
+      - {}
+
+      setAnnotation: A collector that will provide data to a view server
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - COLLECTOR.CONDOR_VIEW_HOST: 0
+        CONDOR_VIEW_CLASSAD_TYPES: Machine,Scheduler,Submitter
+      - {}
+
+    BaseScheduler: 
+      setAnnotation: A non-functional base for the scheduler.  This needs further configuration and is not meant to be used by itself
+      modifyParams: 
+      - REPLACE
+      - STARTER_LOCAL: $(SBIN)/condor_starter
+        SHADOW: $(SBIN)/condor_shadow
+        SCHEDD_ADDRESS_FILE: $(LOG)/.schedd_address
+        MAX_SCHEDD_LOG: "1000000"
+        SHADOW_LIST: SHADOW
+        SHADOW_DEBUG: ""
+        QUEUE_SUPER_USERS: root, condor
+        SCHEDD_DEBUG: D_PID
+        START_LOCAL_UNIVERSE: "TRUE"
+        SCHEDD: $(SBIN)/condor_schedd
+        ALLOW_NEGOTIATOR_SCHEDD: $(ALLOW_NEGOTIATOR_SCHEDD), $(CONDOR_HOST), $(IP_ADDRESS)
+        SHADOW_LOG: $(LOG)/ShadowLog
+        START_SCHEDULER_UNIVERSE: "TRUE"
+        MAX_SHADOW_LOG: "1000000"
+        SHADOW_SIZE_ESTIMATE: "1800"
+        SCHEDD_DAEMON_AD_FILE: $(LOG)/.schedd_classad
+        SCHEDD_LOG: $(LOG)/SchedLog
+        SHADOW_LOCK: $(LOCK)/ShadowLock
+      - {}
+
+    ConcurrencyLimits: 
+      setAnnotation: Enables concurrency limits in the negotiator
+    EC2Enhanced: 
+      setAnnotation: Enables routing ec2 enhanced jobs on a job router
+    PowerManagementNode: 
+      setAnnotation: Enables power management for an execute node
+    Scheduler: 
+      setAnnotation: Enables job scheduling
+    JobRouter: 
+      setAnnotation: Enables a job router
+    AviaryScheduler: 
+      setAnnotation: Additions to the scheduler to provide aviary scheduler functionality
+    EC2: 
+      setAnnotation: Enables running ec2 jobs on an execute node
+    PlumageStats: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setAnnotation: Provides statistics to the plumage database
+      modifyDepends: 
+      - REPLACE
+      - - BaseScheduler
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+        JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+        JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+        DAEMON_LIST: ">= JOB_ETL_SERVER"
+        JOB_ETL_SERVER.HISTORY: $(HISTORY)
+        JOB_ETL_SERVER.PLUMAGE_DB_HOST: 0
+        JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+        JOB_ETL_SERVER_ARGS: -f
+        JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+        DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+      - {}
+
+    QueryServer: 
+      setAnnotation: Enables query server functionality
+    SharedJobQueueLocation: 
+      setAnnotation: The location on a shared filesystem of the job queue used by the schedd.
+    ViewServer: 
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setAnnotation: Enables view server functionality
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      modifyParams: 
+      - REPLACE
+      - VIEW_SERVER.KEEP_POOL_HISTORY: "TRUE"
+        DAEMON_LIST: ">= VIEW_SERVER"
+        VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL: "60"
+        COLLECTOR: 0
+        VIEW_SERVER_ARGS: -f -p $(VIEW_SERVER_PORT) -local-name VIEW_SERVER
+        VIEW_SERVER.UPDATE_INTERVAL: "300"
+        VIEW_SERVER: $(COLLECTOR)
+        VIEW_SERVER_PORT: 0
+        VIEW_SERVER_ENVIRONMENT: _CONDOR_COLLECTOR_LOG=$(LOG)/ViewServerLog
+        VIEW_SERVER.CONDOR_VIEW_HOST: ""
+      - {}
+
+    JobQueueLocation: 
+      setAnnotation: The location of the job queue used by the scheduler
+    LowLatency: 
+      setAnnotation: Enables low-latency scheduling for an execute node
+    TriggerService: 
+      setAnnotation: Enables event triggers over QMF
+      modifyParams: 
+      - REPLACE
+      - TRIGGERD_LOG: $(LOG)/TriggerLog
+        MAX_TRIGGERD_LOG: "1000000"
+        DAEMON_LIST: ">= TRIGGERD"
+        TRIGGERD_ADDRESS_FILE: $(LOG)/.triggerd_address
+        DATA: 0
+        TRIGGERD.QMF_STOREFILE: $(DATA)/.triggerd_storefile
+        TRIGGERD_DEFAULT_EVAL_PERIOD: "10"
+        TRIGGERD: $(SBIN)/condor_triggerd
+        ENABLE_ABSENT_NODES_DETECTION: "TRUE"
+        DC_DAEMON_LIST: ">= TRIGGERD"
+      - {}
+
+  groups: 
+    +++SKEL: 
+      setAnnotation: The skeleton group
+    +++DEFAULT: 
+      setAnnotation: The default group
+  nodes: {}
+
+  params: 
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2: 
+      setDescription: amazon ec2 has a hard limit of 20 concurrently running instances.  This parameter limits the number of ec2 resources
+      setAnnotation: ""
+    MAX_VM_GAHP_LOG: 
+      setDescription: The maximum size of the vm ghap log file
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_PERIOD: 
+      setAnnotation: ""
+    ROOSTER_INTERVAL: 
+      setAnnotation: ""
+    DEDICATED_SCHEDULER_USE_FIFO: 
+      setAnnotation: ""
+    VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL: 
+      setKind: Integer
+      setDescription: The number of seconds between samples for history logging purposes
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "60"
+      setMustChange: false
+    KBDD: 
+      setDescription: The kbdd binary
+      setAnnotation: ""
+    BaseDBVersion: 
+      setAnnotation: ""
+    SEC_DEFAULT_ENCRYPTION: 
+      setDescription: The level of encryption
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_LOG: 
+      setDescription: The location of the job server log file
+      setAnnotation: ""
+    CAROD_BROKER_QUEUE: 
+      setAnnotation: ""
+    STARTER_LOCAL: 
+      setDescription: The local universe starter
+      setAnnotation: ""
+    NEGOTIATOR_MATCH_LOG: 
+      setDescription: The location of the negotiator's match log file
+      setAnnotation: ""
+    VM_NETWORKING: 
+      setDescription: Determines if vm universe will allow networking
+      setAnnotation: ""
+    HIBERNATE_CHECK_INTERVAL: 
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE: 
+      setDescription: The file where the query server will write its address information
+      setAnnotation: ""
+    QUERY_SERVER.HISTORY_INTERVAL: 
+      setAnnotation: ""
+    SUBMIT_SEND_RESCHEDULE: 
+      setKind: Boolean
+      setDescription: Controls whether the condor_submit command will send a reschedule notification to the scheduler upon successful submission
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "TRUE"
+      setMustChange: false
+    KBDD_LOG: 
+      setDescription: The location of the kbdd log file
+      setAnnotation: ""
+    CONSOLE_DEVICES: 
+      setAnnotation: ""
+    DAEMON_SOCKET_DIR: 
+      setDescription: Specifies the directory where Unix versions of condor daemons will create named sockets so that incoming connections can be forwarded to them by the shared port.  Write access to this directory grants permission to receive connections through the shared port
+      setAnnotation: ""
+    JOB_ETL_SERVER.HISTORY: 
+      setKind: String
+      setDescription: The location of the historical jobs file used by the plumage job etl server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(HISTORY)
+      setMustChange: false
+    CAROD_LOG: 
+      setDescription: The location of the low-latency daemon log file
+      setAnnotation: ""
+    ALLOW_WRITE: 
+      setAnnotation: ""
+    HAD_LOG: 
+      setDescription: The file containing the had's log
+      setAnnotation: ""
+    AVIARY_PUBLISH_INTERVAL: 
+      setDescription: The interval in seconds that the aviary endpoints send their heartbeats
+      setAnnotation: ""
+    KBDD_DEBUG: 
+      setDescription: The debugging output the kbdd will produce in its log file
+      setAnnotation: ""
+    BENCHMARKTIMER: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_CA_DIR: 
+      setDescription: Path to aviary SSL CA directory used by the query server
+      setAnnotation: ""
+    STARTD: 
+      setDescription: The startd binary
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_CA_DIR: 
+      setDescription: Path to aviary SSL CA directory used by the scheduler
+      setAnnotation: ""
+    HAD_UPDATE_INTERVAL: 
+      setDescription: How often the had daemon will update the collector
+      setAnnotation: ""
+    EC2E_HOOK_UPDATE_JOB_INFO: 
+      setDescription: The update hook used by the job router for ec2 enhanced
+      setAnnotation: ""
+    JOB_SERVER.SPOOL: 
+      setDescription: The location of the job queue file used by the job server
+      setAnnotation: ""
+    QMF_IGNORE_UPDATE_STARTD_AD: 
+      setDescription: Determines whether to publish slot information from the collector
+      setAnnotation: ""
+    FLOCK_NEGOTIATOR_HOSTS: 
+      setDescription: A list of negotiator for pools that the scheduler attempt to use to run jobs
+      setAnnotation: ""
+    PLUMAGE_DB_PORT: 
+      setKind: Integer
+      setDescription: The port where the database server is running on the PLUMAGE_DB_HOST
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "27017"
+      setMustChange: false
+    SCHEDD.HTTP_PORT: 
+      setDescription: Port the aviary schedd plugin listens on
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_DEBUG: 
+      setDescription: The level of debugging output the job server will produce in its log file
+      setAnnotation: ""
+    QUEUE_SUPER_USERS: 
+      setAnnotation: ""
+    KBDD_ADDRESS_FILE: 
+      setDescription: The file where the kbdd will place its address information
+      setAnnotation: ""
+    JOB_SERVER_ADDRESS_FILE: 
+      setDescription: The file where the job server will store its address information
+      setAnnotation: ""
+    CAROD_IP: 
+      setAnnotation: ""
+    NEED_SET_EC2E_ROUTES: 
+      setDescription: Determines if the job router's routing table needs to be provided
+      setAnnotation: ""
+    SEC_DEFAULT_AUTHENTICATION: 
+      setDescription: The level of authentication
+      setAnnotation: ""
+    SCHEDD_DAEMON_AD_FILE: 
+      setDescription: The file were the scheduler will write its ClassAd
+      setAnnotation: ""
+    ROOSTER_WAKEUP_CMD: 
+      setAnnotation: ""
+    UNUSED_CLAIM_TIMEOUT: 
+      setDescription: How long a dedicated scheduler should hold onto claims if it has no jobs to run on them
+      setAnnotation: ""
+    SCHEDD_ADDRESS_FILE: 
+      setDescription: The file where the scheduler will write its address information
+      setAnnotation: ""
+    WSFCPP_HOME: 
+      setAnnotation: ""
+    SCHEDD_PREEMPTION_REQUIREMENTS: 
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_DEBUG: 
+      setDescription: The debugging output the aviary query server will produce in its log file
+      setAnnotation: ""
+    HAD_USE_REPLICATION: 
+      setDescription: Controls the replication feature of the had daemon
+      setAnnotation: ""
+      setDefault: "FALSE"
+    TRIGGER_DATA_JOBLIST: 
+      setDescription: The cron modules to run to provide data for the triggerd
+      setAnnotation: ""
+    SHADOW_LIST: 
+      setAnnotation: ""
+    HA_LOCK_HOLD_TIME: 
+      setDescription: The length of time the master daemon will the lock for each high available daemon
+      setAnnotation: ""
+    STARTD_DEBUG: 
+      setDescription: The debugging output that the startd will produce in its log
+      setAnnotation: ""
+    NEGOTIATOR_LOG: 
+      setDescription: The location of the negotiator's log file
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_JOB_EXIT: 
+      setDescription: The job exit hook the starter will use when processing low-latency jobs
+      setAnnotation: ""
+    SHADOW.SPOOL: 
+      setDescription: Where the shadow will look for scheduler files
+      setAnnotation: ""
+    SHADOW_LOG: 
+      setDescription: The location of the shadow's log file
+      setAnnotation: ""
+    JOB_ROUTER_HOOK_KEYWORD: 
+      setDescription: The default hook prefix for the job router
+      setAnnotation: ""
+    JOB_SERVER: 
+      setDescription: The location of the job server binary
+      setAnnotation: ""
+    SCHEDD.QMF_STOREFILE: 
+      setDescription: The path and filename for the persistent id information for a scheduler running a QMF agent
+      setAnnotation: ""
+    CAROD: 
+      setAnnotation: ""
+    SCHEDD.HISTORY: 
+      setDescription: The location of the historical jobs file for use by the scheduler
+      setAnnotation: ""
+    STARTER: 
+      setDescription: The starter binary
+      setAnnotation: ""
+    EC2E_HOOK_TRANSLATE_JOB: 
+      setDescription: The translation hook used by the job router for ec2 enhanced
+      setAnnotation: ""
+    JOB_ROUTER_ENTRIES: 
+      setAnnotation: ""
+    CAROD_QUEUED_CONNECTIONS: 
+      setAnnotation: ""
+    REPLICATION_LIST: 
+      setDescription: A list of hostnames and ports for machines running the replication daemon
+      setAnnotation: ""
+    NUM_SLOTS_TYPE_1: 
+      setAnnotation: ""
+    WANT_SUSPEND: 
+      setAnnotation: ""
+    EC2E_ATTRS_TO_COPY: 
+      setDescription: The parameters that should be copied from the routed job to the source job for ec2 enhanced
+      setAnnotation: ""
+    CONDOR_VIEW_CLASSAD_TYPES: 
+      setKind: String
+      setDescription: The classad types that will be forwarded to the CONDOR_VIEW_HOST
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    HAD: 
+      setDescription: The location of the had daemon
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_SERVER_CERT: 
+      setDescription: Path to aviary SSL server certificate used by the scheduler
+      setAnnotation: ""
+    START_LOCAL_UNIVERSE: 
+      setAnnotation: ""
+    CONTINUE: 
+      setAnnotation: ""
+    MAX_COLLECTOR_LOG: 
+      setDescription: The maximum size of the collector log
+      setAnnotation: ""
+    PERIODIC_CHECKPOINT: 
+      setAnnotation: ""
+    QMF_BROKER_PASSWORD_FILE: 
+      setAnnotation: ""
+    JOB_ETL_SERVER_ARGS: 
+      setKind: String
+      setDescription: Arguments to pass to the plumage job etl server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - - JOB_ETL_SERVER
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_AMAZON: 
+      setDescription: amazon ec2 has a hard limit of 20 concurrently running instances.  This parameter limits the number of amazon resources
+      setAnnotation: ""
+    NEGOTIATOR: 
+      setDescription: The location of the negotiator binary file
+      setAnnotation: ""
+    RANK: 
+      setAnnotation: ""
+    SCHEDD_DEBUG: 
+      setDescription: The debugging output the scheduler will produce in its log
+      setAnnotation: ""
+    HAD_USE_PRIMARY: 
+      setDescription: Determines if the first entry in HAD_LIST is a primary central manager
+      setAnnotation: ""
+    SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setAnnotation: ""
+    MAX_STARTD_LOG: 
+      setDescription: The maximum size of the startd log
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL_SERVER_KEY: 
+      setDescription: Path to aviary SSL server private key used by the scheduler
+      setAnnotation: ""
+    FETCHWORKDELAY: 
+      setAnnotation: ""
+    COLLECTOR.CONDOR_VIEW_HOST: 
+      setKind: String
+      setDescription: The collector should send updates to the view server on this machine
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: true
+    EC2_GAHP_LOG: 
+      setDescription: Location of the ec2 gahp log files
+      setAnnotation: ""
+    JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: 
+      setKind: String
+      setDescription: The file where the plumage job etl server will write its address information
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(LOG)/.job_etl_server_address
+      setMustChange: false
+    MAX_HAD_LOG: 
+      setDescription: The maximum size of the had log
+      setAnnotation: ""
+    CONDOR_HOST: 
+      setDescription: The list of central managers in the pool
+      setAnnotation: ""
+    LIBVIRT_XML_SCRIPT: 
+      setDescription: A script that produces xml output used to start a libvirt VM
+      setAnnotation: ""
+    DATA: 
+      setAnnotation: ""
+    VIEW_SERVER_ENVIRONMENT: 
+      setKind: String
+      setDescription: Changes to the environment when the view server is started
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    NEGOTIATOR_PRE_JOB_RANK: 
+      setAnnotation: ""
+    QMF_BROKER_HOST: 
+      setAnnotation: ""
+    QMF_BROKER_USERNAME: 
+      setAnnotation: ""
+    SEC_DEFAULT_CRYPTO_METHODS: 
+      setAnnotation: ""
+    HAD_PORT: 
+      setDescription: The port on which the had daemon will listen
+      setAnnotation: ""
+    AMAZON_GAHP: 
+      setDescription: The location of the amazon gahp binary
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_RECONFIG: 
+      setDescription: Determines if the startd should send a SIGHUP when the daemon is reconfigured
+      setAnnotation: ""
+    JOB_SERVER.HISTORY: 
+      setDescription: The location of the historical jobs file used by the job server
+      setAnnotation: ""
+    REPLICATION_PORT: 
+      setDescription: The port on which the replication daemon will listen
+      setAnnotation: ""
+    QUERY_SERVER: 
+      setDescription: The location of the aviary query server binary
+      setAnnotation: ""
+    COLLECTOR_ARGS: 
+      setDescription: Arguments to pass to the collector daemon
+      setAnnotation: ""
+    MAX_SHADOW_LOG: 
+      setDescription: The maximum size of the shadow's log file
+      setAnnotation: ""
+    STARTD_CRON_NAME: 
+      setAnnotation: ""
+    SHADOW_DEBUG: 
+      setDescription: The debugging output the shadow will produce in its log
+      setAnnotation: ""
+    MAX_TRIGGERD_LOG: 
+      setDescription: The maximum size of the triggerd log file
+      setAnnotation: ""
+    WALLABY_FORCE_RESTART: 
+      setAnnotation: ""
+    STARTD_ATTRS: 
+      setDescription: Have the startd advertise arbitrary attributes in its class ad
+      setAnnotation: ""
+    PREEMPT: 
+      setAnnotation: ""
+    STARTER_UPDATE_INTERVAL: 
+      setDescription: How often the starter will invoke the update job info hook after the first automated invocation
+      setAnnotation: ""
+    OFFLINE_LOG: 
+      setDescription: The full path and file name of a file that stores machine class ads for every hibernating machine
+      setAnnotation: ""
+    VM_GAHP_LOG: 
+      setDescription: The location of the vm gahp log
+      setAnnotation: ""
+    NEGOTIATOR_ADDRESS_FILE: 
+      setDescription: The file where the negotiator will write its address information
+      setAnnotation: ""
+    TRIGGERD.QMF_UPDATE_INTERVAL: 
+      setDescription: How often the triggerd will update the AMQP broker
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_SERVER_CERT: 
+      setDescription: Path to aviary SSL server certificate used by the query server
+      setAnnotation: ""
+    VIEW_SERVER.PLUGINS: 
+      setKind: String
+      setDescription: A list of plugins that the view server will load
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(LIB)/plugins/ODSCollectorPlugin-plugin.so
+      setMustChange: false
+    STARTD_ADDRESS_FILE: 
+      setDescription: The file where the startd will place its address information
+      setAnnotation: ""
+    WALLABY_FORCE_CONFIG_PULL: 
+      setAnnotation: ""
+    MAX_JOB_HOOKS_LOG: 
+      setDescription: The maximum size of the job hooks log files
+      setAnnotation: ""
+    VM_NETWORKING_TYPE: 
+      setAnnotation: ""
+    START_SCHEDULER_UNIVERSE: 
+      setAnnotation: ""
+    STATE_FILE: 
+      setAnnotation: ""
+    QUERY_SERVER.HTTP_PORT: 
+      setDescription: The port the query server listens on
+      setAnnotation: ""
+    QMF_PUBLISH_SUBMISSIONS: 
+      setDescription: Determines if the scheduler should publish job submissions over QMF
+      setAnnotation: ""
+    SUSPEND: 
+      setAnnotation: ""
+    CAROD_LEASE_CHECK_INTERVAL: 
+      setAnnotation: ""
+    MAX_STARTER_LOG: 
+      setDescription: The maximum size of the starter log
+      setAnnotation: ""
+    MASTER_ADDRESS_FILE: 
+      setDescription: The file where the master will store its address information
+      setAnnotation: ""
+    LOW_LATENCY_HOOK_REPLY_FETCH: 
+      setDescription: The reply fetch hook the startd will use when processing low-latency jobs
+      setAnnotation: ""
+    AVIARY_LOCATOR_MISSED_UPDATES: 
+      setAnnotation: ""
+    ROOSTER_SUBNET_MASK: 
+      setAnnotation: ""
+    AVIARY_PUBLISH_LOCATION: 
+      setDescription: Controls aviary locator publishing
+      setAnnotation: ""
+      setDefault: "FALSE"
+    MAX_NEGOTIATOR_LOG: 
+      setDescription: The maximum size of the negotiator log file
+      setAnnotation: ""
+    TRANSFERER_LOG: 
+      setDescription: The file that contains the log of the replication daemon's transfers
+      setAnnotation: ""
+    ALL_DEBUG: 
+      setAnnotation: ""
+    ShouldHibernate: 
+      setAnnotation: ""
+    JOB_HOOKS_PORT: 
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_PREPARE_JOB: 
+      setDescription: The prepare job hook the starter will use when processing low-latency jobs
+      setAnnotation: ""
+    JOB_SERVER_DEBUG: 
+      setDescription: The debugging output the job server will produce in its log file
+      setAnnotation: ""
+    ROOSTER_UNHIBERNATE: 
+      setAnnotation: ""
+    STARTD_CRON_AUTOPUBLISH: 
+      setDescription: Determines if the startd should automatically publish a new update to the collector after the cron modules produce output
+      setAnnotation: ""
+    TRIGGERD: 
+      setDescription: The location of the triggerd binary
+      setAnnotation: ""
+    CAROD_BROKER_PORT: 
+      setAnnotation: ""
+    ROOSTER: 
+      setDescription: The location of the rooster binary
+      setAnnotation: ""
+    KILL: 
+      setAnnotation: ""
+    JOB_HOOKS_IP: 
+      setDescription: The ip address the job hooks should use to contact the translation daemon
+      setAnnotation: ""
+    MASTER.PLUGINS: 
+      setAnnotation: ""
+    SCHEDD_LOG: 
+      setDescription: The location of the scheduler's log file
+      setAnnotation: ""
+    HAD_CONNECTION_TIMEOUT: 
+      setDescription: How long the had daemon waits before giving up on establishing a TCP connection
+      setAnnotation: ""
+    ROOSTER_UNHIBERNATE_RANK: 
+      setAnnotation: ""
+    JOB_ETL_SERVER: 
+      setKind: String
+      setDescription: The plumage job etl server binary
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(SBIN)/plumage_job_etl_server
+      setMustChange: false
+    SCHEDD_HOST: 
+      setDescription: The hostname(s) of the machine(s) running the scheduler
+      setAnnotation: ""
+    CONDOR_DEVELOPERS: 
+      setAnnotation: ""
+    COLLECTOR: 
+      setDescription: The location of the collector binary
+      setAnnotation: ""
+    JOB_SERVER.JOB_SERVER_ADDRESS_FILE: 
+      setDescription: The file where the job server will store its address information
+      setAnnotation: ""
+    HISTORY: 
+      setAnnotation: ""
+    MAX_QUERY_SERVER_LOG: 
+      setDescription: The maximum size of the query server daemon log
+      setAnnotation: ""
+    FLOCK_COLLECTOR_HOSTS: 
+      setDescription: A list of collectors for pools that the scheduler attempt to use to run jobs
+      setAnnotation: ""
+    STARTER_LIST: 
+      setDescription: A list of starters the machine supports
+      setAnnotation: ""
+    MASTER_HA_LIST: 
+      setDescription: The list of daemons that will be run in high availabilty mode
+      setAnnotation: ""
+    SHADOW_LOCK: 
+      setAnnotation: ""
+    STARTD_JOB_EXPRS: 
+      setDescription: Attributes of the running job that the startd will advertise
+      setAnnotation: ""
+    ALLOW_ADMINISTRATOR: 
+      setAnnotation: ""
+    DAEMON_LIST: 
+      setAnnotation: ""
+    MAX_KBDD_LOG: 
+      setDescription: The maximum size of the kbdd log
+      setAnnotation: ""
+    HAD_ARGS: 
+      setDescription: The arguments passed to the had daemon
+      setAnnotation: ""
+    QUERY_SERVER_ARGS: 
+      setDescription: Args to append to the aviary query server on daemon startup
+      setAnnotation: ""
+    CONCURRENCY_LIMIT_DEFAULT: 
+      setAnnotation: ""
+    START: 
+      setAnnotation: ""
+    COLLECTOR.PLUGINS: 
+      setDescription: A list of plugins that the collector will load
+      setAnnotation: ""
+    NEGOTIATOR_INTERVAL: 
+      setDescription: How often the negotiator starts a negotiation cycle
+      setAnnotation: ""
+    VALID_SPOOL_FILES: 
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_EXECUTABLE: 
+      setDescription: The executable to run to retrieve data for the triggerd
+      setAnnotation: ""
+    JOB_ROUTER_ADDRESS_FILE: 
+      setDescription: The file where the job router will store its address information
+      setAnnotation: ""
+    UPDATE_INTERVAL: 
+      setDescription: The number of seconds specifying how often the startd should send a class ad update to the collector
+      setAnnotation: ""
+    MAX_NEGOTIATOR_MATCH_LOG: 
+      setDescription: The maximum size of the negotiator's match log file
+      setAnnotation: ""
+    TCP_FORWARDING_HOST: 
+      setKind: String
+      setDescription: The host or ip address that should be used as the public address of a daemon
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    MAX_SCHEDD_LOG: 
+      setDescription: The maximum size of the scheduler's log
+      setAnnotation: ""
+    STARTER_LOG: 
+      setAnnotation: ""
+    COLLECTOR_NAME: 
+      setAnnotation: ""
+    QUERY_SERVER.HISTORY: 
+      setDescription: The location of the historical jobs file used by the query server
+      setAnnotation: ""
+    STARTD.PLUGINS: 
+      setDescription: The plugins to load for the startd
+      setAnnotation: ""
+    EC2_GAHP: 
+      setDescription: The location of the ec2 gahp binary
+      setAnnotation: ""
+    TRIGGERD_QUERY_COLLECTOR: 
+      setDescription: The query collector the triggerd will query for trigger information.  If unset, all collectors in the pool will be used
+      setAnnotation: ""
+    HA_LOCK_URL: 
+      setDescription: The URL that the master daemon uses to synchronize high availability services
+      setAnnotation: ""
+    NUM_SLOTS: 
+      setDescription: The number of slots the machine will report to the collector
+      setAnnotation: ""
+    MAX_REPLICATION_LOG: 
+      setDescription: The maximum size of the replication log
+      setAnnotation: ""
+    JOB_SERVER.SCHEDD_NAME: 
+      setDescription: The name of the scheduler that the job server is working with.  This name must end with an "@" for a high availability scheduler
+      setAnnotation: ""
+    PREEMPTION_REQUIREMENTS: 
+      setAnnotation: ""
+    ENABLE_RUNTIME_CONFIG: 
+      setAnnotation: ""
+    GRIDMANAGER_JOB_PROBE_INTERVAL: 
+      setAnnotation: ""
+    VM_GAHP_SERVER: 
+      setDescription: The location of the vm gahp binary
+      setAnnotation: ""
+    MAX_HISTORY_ROTATIONS: 
+      setAnnotation: ""
+    AMAZON_GAHP_LOG: 
+      setDescription: Location of the amazon gahp log files
+      setAnnotation: ""
+    QMF_BROKER_AUTH_MECH: 
+      setAnnotation: ""
+    SCHEDD.SPOOL: 
+      setAnnotation: ""
+    JOB_ROUTER_POLLING_PERIOD: 
+      setDescription: How often the job router will look for new jobs to route
+      setAnnotation: ""
+    MASTER: 
+      setAnnotation: ""
+    QUERY_SERVER.SPOOL: 
+      setDescription: The location of the job queue file used by the query server
+      setAnnotation: ""
+    UNHIBERNATE: 
+      setAnnotation: ""
+      setDefault: CurrentTime - MachineLastMatchTime < 1200
+    VIEW_SERVER.CONDOR_VIEW_HOST: 
+      setKind: String
+      setDescription: The view server should send updates to another view server on this machine.  This should be empty if the view server isn't to send updates to another view server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    RUNBENCHMARKS: 
+      setAnnotation: ""
+    EC2E_HOOK_JOB_CLEANUP: 
+      setDescription: The cleanup hook used by the job router for ec2 enhanced
+      setAnnotation: ""
+    JOB_SERVER_LOG: 
+      setDescription: The location of the job server log file
+      setAnnotation: ""
+    HISTORY_INTERVAL: 
+      setDescription: Determines how often the job server will read the historical jobs file
+      setAnnotation: ""
+    SHARED_PORT_DEBUG: 
+      setDescription: The debugging output that the shared port will produce in its log
+      setAnnotation: ""
+    COLLECTOR_ADDRESS_FILE: 
+      setDescription: The file where the collector will store its address information
+      setAnnotation: ""
+    VIEW_SERVER.UPDATE_INTERVAL: 
+      setKind: Integer
+      setDescription: The frequency in seconds that the view server runs stat collection
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "300"
+      setMustChange: false
+    QMF_BROKER_PORT: 
+      setAnnotation: ""
+    SPOOL: 
+      setAnnotation: ""
+    JOB_ROUTER_DEBUG: 
+      setDescription: The debugging output the job router will produce in its log file
+      setAnnotation: ""
+    SEC_DEFAULT_INTEGRITY: 
+      setDescription: The level of integrity checking
+      setAnnotation: ""
+    GRIDMANAGER.SPOOL: 
+      setAnnotation: ""
+    VM_NETWORKING_BRIDGE_INTERFACE: 
+      setDescription: The networking interface vm universe jobs will use for bridge networking
+      setAnnotation: ""
+    JOB_ETL_SERVER.PLUMAGE_DB_PORT: 
+      setKind: Integer
+      setDescription: The port where the database server is running on the PLUMAGE_DB_HOST that should be used by the plumage job etl server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "27017"
+      setMustChange: false
+    ALLOW_NEGOTIATOR: 
+      setDescription: The machines with negotiator access
+      setAnnotation: ""
+    USE_SHARED_PORT: 
+      setDescription: Specifies whether a daemon should rely on the shared port daemon for receiving incoming connections
+      setAnnotation: ""
+      setDefault: "FALSE"
+    MASTER_NEGOTIATOR_CONTROLLER: 
+      setDescription: Which controlling daemon will control the negotiator
+      setAnnotation: ""
+    NEGOTIATOR.ENABLE_RUNTIME_CONFIG: 
+      setAnnotation: ""
+    HAD_LIST: 
+      setDescription: The list of hostnames and ports of machines running the had daemon
+      setAnnotation: ""
+    ENABLE_ABSENT_NODES_DETECTION: 
+      setAnnotation: ""
+    VIEW_SERVER: 
+      setKind: String
+      setDescription: The location of the view server binary
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - - COLLECTOR
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(COLLECTOR)
+      setMustChange: false
+    MAXJOBRETIREMENTTIME: 
+      setDescription: The maximum time to wait for a job to finish before kicking it off the machine due to preemption, priority, or startd graceful shutdown
+      setAnnotation: ""
+    EC2E_HOOK_JOB_EXIT: 
+      setDescription: The exit hook used by the job router for ec2 enhanced
+      setAnnotation: ""
+    CAROD_LEASE_TIME: 
+      setAnnotation: ""
+    SCHEDD.AVIARY_SSL: 
+      setDescription: Enable HTTPS mutual authentication for aviary in the scheduler
+      setAnnotation: ""
+      setDefault: "FALSE"
+    REPLICATION: 
+      setDescription: The location of the replication daemon
+      setAnnotation: ""
+    SLOT_TYPE_1_PARTITIONABLE: 
+      setAnnotation: ""
+    TRIGGERD_DEFAULT_EVAL_PERIOD: 
+      setDescription: The default interval for evaluating triggers by the triggerd
+      setAnnotation: ""
+    TimeToWait: 
+      setAnnotation: ""
+    JOB_ROUTER_DEFAULTS: 
+      setDescription: Provides default values for all routes in the job router's routing table
+      setAnnotation: ""
+    CONDOR_DEVELOPERS_COLLECTOR: 
+      setAnnotation: ""
+    NEGOTIATOR_DEBUG: 
+      setDescription: The debugging output the negotiator will produce in its log file
+      setAnnotation: ""
+    SCHEDD.PLUGINS: 
+      setDescription: The plugins to load for the scheduler
+      setAnnotation: ""
+    ALLOW_READ: 
+      setAnnotation: ""
+    MASTER_HAD_BACKOFF_CONSTANT: 
+      setDescription: How long to wait before restarting the had daemon
+      setAnnotation: ""
+    ALLOW_ADVERTISE_MASTER: 
+      setKind: String
+      setDescription: Machines allowed to advertise a condor_master to a condor_collector
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    TRIGGERD_ADDRESS_FILE: 
+      setDescription: The file where the triggerd will store its address information
+      setAnnotation: ""
+    CAROD_BROKER_IP: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL: 
+      setDescription: Enable HTTPS mutual authentication for aviary in the query server
+      setAnnotation: ""
+      setDefault: "FALSE"
+    PLUMAGE_DB_HOST: 
+      setKind: String
+      setDescription: The machine running the database server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: localhost
+      setMustChange: false
+    REPLICATION_INTERVAL: 
+      setDescription: How often the replication daemon initiates replicating the $(STATE_FILE)
+      setAnnotation: ""
+    VIEW_SERVER_PORT: 
+      setKind: Integer
+      setDescription: The port on the CONDOR_VIEW_HOST where the view server is listening for updates
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: true
+    ALLOW_NEGOTIATOR_SCHEDD: 
+      setDescription: The Schedulers with negotiator access
+      setAnnotation: ""
+    LOW_LATENCY_JOB_HOOK_UPDATE_JOB_INFO: 
+      setDescription: The update job info hook the starter will use with processing low-latency jobs
+      setAnnotation: ""
+    MAX_CAROD_LOG: 
+      setDescription: The maximum size of the low-latency daemon log
+      setAnnotation: ""
+    JOB_HOOKS_LOG: 
+      setDescription: The location of the job hooks log files
+      setAnnotation: ""
+    STARTD_JOB_HOOK_KEYWORD: 
+      setDescription: The default hook keyword used by the startd
+      setAnnotation: ""
+    NEGOTIATOR.PLUGINS: 
+      setDescription: A list of plugins that the negotiator will load
+      setAnnotation: ""
+    HIBERNATE: 
+      setAnnotation: ""
+    MASTER.USE_PROCD: 
+      setDescription: Determines if the master process will use the condor_procd for managing process families
+      setAnnotation: ""
+      setDefault: "TRUE"
+    ROOSTER_MAX_UNHIBERNATE: 
+      setAnnotation: ""
+    JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: 
+      setKind: String
+      setDescription: The location of the plumage job etl server's log file
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: $(LOG)/JobEtlLog
+      setMustChange: false
+    TRIGGERD_LOG: 
+      setDescription: The location of the triggerd log file
+      setAnnotation: ""
+    QUERY_SERVER.QUERY_SERVER_LOG: 
+      setDescription: The location of the aviary query server log file
+      setAnnotation: ""
+    MAX_JOB_SERVER_LOG: 
+      setDescription: The maximum size of the job server log file
+      setAnnotation: ""
+    CAROD_PORT: 
+      setAnnotation: ""
+    SLOT_TYPE_1: 
+      setAnnotation: ""
+    FILESYSTEM_DOMAIN: 
+      setAnnotation: ""
+    QMF_DELETE_ON_SHUTDOWN: 
+      setAnnotation: ""
+    COLLECTOR_HOST: 
+      setDescription: Allows changing of the port the collector listens on
+      setAnnotation: ""
+    OFFLINE_EXPIRE_ADS_AFTER: 
+      setDescription: The number of seconds specifying the lifetime of the persistent machine class ad representing a hibernating machine
+      setAnnotation: ""
+    SCHEDD.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDescription: The default authentication methods used by the scheduler
+      setAnnotation: ""
+    SEC_DEFAULT_NEGOTIATION: 
+      setDescription: The level of secure sessions
+      setAnnotation: ""
+    SHADOW_SIZE_ESTIMATE: 
+      setDescription: Estimated virtual memory size of each shadow process
+      setAnnotation: ""
+    STARTD_LOG: 
+      setDescription: The file that will contain the startd's log
+      setAnnotation: ""
+    WANT_VACATE: 
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_CA_FILE: 
+      setDescription: Path to aviary SSL CA file used by the query server
+      setAnnotation: ""
+    UID_DOMAIN: 
+      setAnnotation: ""
+    COLLECTOR_DEBUG: 
+      setDescription: The debugging output the collector will produce in its log
+      setAnnotation: ""
+    JOB_ETL_SERVER.PLUMAGE_DB_HOST: 
+      setKind: String
+      setDescription: The machine running the database server that should be used by the plumage job etl server
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: true
+    DC_DAEMON_LIST: 
+      setDescription: The daemons that use the condor daemoncore library
+      setAnnotation: ""
+    SCHEDD_NAME: 
+      setDescription: The name the scheduler uses to identify itself.  This name must end with an "@" for a high availability scheduler
+      setAnnotation: ""
+    STARTER_DEBUG: 
+      setDescription: The debugging output the starter will produce in its log
+      setAnnotation: ""
+    VM_TYPE: 
+      setDescription: The kind of virtual machine program that will be used for vm universe jobs
+      setAnnotation: ""
+    QUEUE_ALL_USERS_TRUSTED: 
+      setAnnotation: ""
+    JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: 
+      setKind: String
+      setDescription: The debugging output the plumage job etl server will produce in its log file
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: 
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: D_ALWAYS
+      setMustChange: false
+    VIEW_SERVER.KEEP_POOL_HISTORY: 
+      setKind: Boolean
+      setDescription: Determines if the collector will write out statistical information about the pool to history files
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: "FALSE"
+      setMustChange: false
+    VM_MEMORY: 
+      setDescription: The amount of memory that can be used by vm universe jobs
+      setAnnotation: ""
+    RANK_FACTOR: 
+      setDescription: Multiplier used to create a high rank value
+      setAnnotation: ""
+    PREEMPTION_RANK: 
+      setAnnotation: ""
+    MAX_JOB_ROUTER_LOG: 
+      setDescription: The maximum size of the job router log file
+      setAnnotation: ""
+    AVIARY_LOCATOR_PRUNE_INTERVAL: 
+      setDescription: The interval in seconds that the aviary locator scans the known endpoints and marks them unresponsive or missing
+      setAnnotation: ""
+    COLLECTOR_LOG: 
+      setDescription: The location of the collector's log file
+      setAnnotation: ""
+    COLLECTOR_UPDATE_INTERVAL: 
+      setAnnotation: ""
+    JOB_ROUTER_LOG: 
+      setDescription: The location of the job router log file
+      setAnnotation: ""
+    MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDescription: The default authentication methods used by the master
+      setAnnotation: ""
+    VIEW_SERVER_ARGS: 
+      setKind: String
+      setDescription: Arguments to pass to the view seriver daemon
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: true
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - - VIEW_SERVER
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    JOB_ROUTER: 
+      setDescription: The location of the job router binary
+      setAnnotation: ""
+    REPLICATION_LOG: 
+      setDescription: The file that holds the replication daemon's log
+      setAnnotation: ""
+    SHARED_PORT_ARGS: 
+      setDescription: Arguments to pass to the shared port daemon
+      setAnnotation: ""
+    LOW_LATENCY_HOOK_FETCH_WORK: 
+      setDescription: The fetch work hook the startd will use when grabbing low-latency work
+      setAnnotation: ""
+    RESTART_PROCD_ON_ERROR: 
+      setAnnotation: ""
+      setDefault: "FALSE"
+    SCHEDD.AVIARY_SSL_CA_FILE: 
+      setDescription: Path to aviary SSL CA file used by the scheduler
+      setAnnotation: ""
+    SHADOW: 
+      setDescription: The location of the shadow binary
+      setAnnotation: ""
+    SHARED_PORT: 
+      setDescription: The shared port binary
+      setAnnotation: ""
+    TRIGGER_DATA_GETDATA_PREFIX: 
+      setAnnotation: ""
+    VM_NETWORKING_DEFAULT_TYPE: 
+      setDescription: Default vm networking type
+      setAnnotation: ""
+    QUERY_SERVER.AVIARY_SSL_SERVER_KEY: 
+      setDescription: Path to aviary SSL server private key used by the query server
+      setAnnotation: ""
+    SCHEDD: 
+      setDescription: The location of the scheduler binary
+      setAnnotation: ""
+    DEDICATEDSCHEDULER: 
+      setAnnotation: ""
+    JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS: 
+      setDescription: The default authentication methods used by the job router
+      setAnnotation: ""
+    ALLOW_ADVERTISE_STARTD: 
+      setKind: String
+      setDescription: Machines allowed to advertise a condor_startd to a condor_collector
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setRequiresRestart: false
+      setAnnotation: ""
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setVisibilityLevel: 0
+      setDefault: ""
+      setMustChange: false
+    SCHEDD_PREEMPTION_RANK: 
+      setAnnotation: ""
+    TRIGGERD.QMF_STOREFILE: 
+      setDescription: The path and filename for the persistent id information for a triggerd running a QMF agent
+      setAnnotation: ""
+    XEN_BOOTLOADER: 
+      setDescription: The bootloader for xen domainU
+      setAnnotation: ""
+    MAX_TRANSFERER_LIFETIME: 
+      setAnnotation: ""
+    QUERY_SERVER.SCHEDD_NAME: 
+      setDescription: The name of the scheduler that the aviary query server is working with.  This name must end with an "@" for a high availability scheduler
+      setAnnotation: ""
+    HA_POLL_PERIOD: 
+      setDescription: How often the master will poll the high availability locks to see if any are stale or have been released
+      setAnnotation: ""
+    REPLICATION_ARGS: 
+      setDescription: The port on which the replication daemon will listen
+      setAnnotation: ""
+  subsystems: 
+    collector: 
+      setAnnotation: The list of parameters affecting the collector subsystem
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_ADVERTISE_MASTER
+        - ALLOW_ADVERTISE_STARTD
+        - ALLOW_READ
+        - ALLOW_WRITE
+        - AVIARY_LOCATOR_MISSED_UPDATES
+        - AVIARY_LOCATOR_PRUNE_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - COLLECTOR
+        - COLLECTOR.CONDOR_VIEW_HOST
+        - COLLECTOR.PLUGINS
+        - COLLECTOR_ADDRESS_FILE
+        - COLLECTOR_DEBUG
+        - COLLECTOR_HOST
+        - COLLECTOR_LOG
+        - COLLECTOR_UPDATE_INTERVAL
+        - CONDOR_VIEW_CLASSAD_TYPES
+        - ENABLE_RUNTIME_CONFIG
+        - FLOCK_COLLECTOR_HOSTS
+        - MAX_COLLECTOR_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_IGNORE_UPDATE_STARTD_AD
+        - TCP_FORWARDING_HOST
+      - {}
+
+    query_server: 
+      setAnnotation: The list of parameters affecting the query_server subsystem
+      modifyParams: 
+      - REPLACE
+      - - AVIARY_PUBLISH_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - ENABLE_RUNTIME_CONFIG
+        - MAX_QUERY_SERVER_LOG
+        - QUERY_SERVER
+        - QUERY_SERVER.AVIARY_SSL
+        - QUERY_SERVER.AVIARY_SSL_CA_DIR
+        - QUERY_SERVER.AVIARY_SSL_CA_FILE
+        - QUERY_SERVER.AVIARY_SSL_SERVER_CERT
+        - QUERY_SERVER.AVIARY_SSL_SERVER_KEY
+        - QUERY_SERVER.HISTORY
+        - QUERY_SERVER.HISTORY_INTERVAL
+        - QUERY_SERVER.HTTP_PORT
+        - QUERY_SERVER.QUERY_SERVER_ADDRESS_FILE
+        - QUERY_SERVER.QUERY_SERVER_DEBUG
+        - QUERY_SERVER.QUERY_SERVER_LOG
+        - QUERY_SERVER.SCHEDD_NAME
+        - QUERY_SERVER.SPOOL
+        - QUERY_SERVER_ARGS
+        - TCP_FORWARDING_HOST
+        - WSFCPP_HOME
+      - {}
+
+    startd: 
+      setAnnotation: The list of parameters affecting the startd subsystem
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR
+        - ALLOW_READ
+        - ALLOW_WRITE
+        - BENCHMARKTIMER
+        - CONSOLE_DEVICES
+        - CONTINUE
+        - ENABLE_RUNTIME_CONFIG
+        - KILL
+        - LIBVIRT_XML_SCRIPT
+        - MAXJOBRETIREMENTTIME
+        - MAX_STARTD_LOG
+        - MAX_STARTER_LOG
+        - MAX_VM_GAHP_LOG
+        - PERIODIC_CHECKPOINT
+        - PREEMPT
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - RUNBENCHMARKS
+        - START
+        - STARTD
+        - STARTD_ADDRESS_FILE
+        - STARTD_ATTRS
+        - STARTD_CRON_AUTOPUBLISH
+        - STARTD_CRON_NAME
+        - STARTD_DEBUG
+        - STARTD_JOB_EXPRS
+        - STARTD_LOG
+        - STARTER
+        - STARTER_DEBUG
+        - STARTER_LIST
+        - STARTER_LOG
+        - SUSPEND
+        - TCP_FORWARDING_HOST
+        - TRIGGER_DATA_GETDATA_EXECUTABLE
+        - TRIGGER_DATA_GETDATA_PERIOD
+        - TRIGGER_DATA_GETDATA_PREFIX
+        - TRIGGER_DATA_GETDATA_RECONFIG
+        - TRIGGER_DATA_JOBLIST
+        - UPDATE_INTERVAL
+        - VM_GAHP_LOG
+        - VM_GAHP_SERVER
+        - VM_MEMORY
+        - VM_NETWORKING
+        - VM_NETWORKING_BRIDGE_INTERFACE
+        - VM_NETWORKING_DEFAULT_TYPE
+        - VM_NETWORKING_TYPE
+        - VM_TYPE
+        - WANT_SUSPEND
+        - WANT_VACATE
+      - {}
+
+    negotiator: 
+      setAnnotation: The list of parameters affecting the negotiator subsystem
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR
+        - ENABLE_RUNTIME_CONFIG
+        - FLOCK_NEGOTIATOR_HOSTS
+        - MAX_NEGOTIATOR_LOG
+        - MAX_NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR
+        - NEGOTIATOR.ENABLE_RUNTIME_CONFIG
+        - NEGOTIATOR.PLUGINS
+        - NEGOTIATOR_ADDRESS_FILE
+        - NEGOTIATOR_DEBUG
+        - NEGOTIATOR_INTERVAL
+        - NEGOTIATOR_LOG
+        - NEGOTIATOR_MATCH_LOG
+        - NEGOTIATOR_PRE_JOB_RANK
+        - PREEMPTION_RANK
+        - PREEMPTION_REQUIREMENTS
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - TCP_FORWARDING_HOST
+      - {}
+
+    schedd: 
+      setAnnotation: The list of parameters affecting the schedd subsystem
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_NEGOTIATOR_SCHEDD
+        - ALLOW_WRITE
+        - AVIARY_PUBLISH_INTERVAL
+        - AVIARY_PUBLISH_LOCATION
+        - ENABLE_RUNTIME_CONFIG
+        - GRIDMANAGER.SPOOL
+        - HISTORY
+        - MAX_SCHEDD_LOG
+        - MAX_SHADOW_LOG
+        - MAX_STARTER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+        - QUEUE_ALL_USERS_TRUSTED
+        - QUEUE_SUPER_USERS
+        - SCHEDD
+        - SCHEDD.AVIARY_SSL
+        - SCHEDD.AVIARY_SSL_CA_DIR
+        - SCHEDD.AVIARY_SSL_CA_FILE
+        - SCHEDD.AVIARY_SSL_SERVER_CERT
+        - SCHEDD.AVIARY_SSL_SERVER_KEY
+        - SCHEDD.HTTP_PORT
+        - SCHEDD.PLUGINS
+        - SCHEDD.SPOOL
+        - SCHEDD_ADDRESS_FILE
+        - SCHEDD_DAEMON_AD_FILE
+        - SCHEDD_DEBUG
+        - SCHEDD_LOG
+        - SHADOW
+        - SHADOW.SPOOL
+        - SHADOW_DEBUG
+        - SHADOW_LIST
+        - SHADOW_LOCK
+        - SHADOW_LOG
+        - SHADOW_SIZE_ESTIMATE
+        - STARTER_DEBUG
+        - STARTER_LOCAL
+        - STARTER_LOG
+        - START_LOCAL_UNIVERSE
+        - START_SCHEDULER_UNIVERSE
+        - TCP_FORWARDING_HOST
+      - {}
+
+    job_etl_server: 
+      setAnnotation: The list of parameters affecting the job_etl_server subsystem
+      modifyParams: 
+      - REPLACE
+      - - JOB_ETL_SERVER
+        - JOB_ETL_SERVER.HISTORY
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+        - JOB_ETL_SERVER.PLUMAGE_DB_HOST
+        - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+        - JOB_ETL_SERVER_ARGS
+        - PLUMAGE_DB_HOST
+        - PLUMAGE_DB_PORT
+      - {}
+
+    master: 
+      setAnnotation: The list of parameters affecting the master subsystem
+      modifyParams: 
+      - REPLACE
+      - - ALLOW_ADMINISTRATOR
+        - COLLECTOR_NAME
+        - CONDOR_DEVELOPERS
+        - CONDOR_DEVELOPERS_COLLECTOR
+        - CONDOR_HOST
+        - DAEMON_LIST
+        - DC_DAEMON_LIST
+        - ENABLE_RUNTIME_CONFIG
+        - MASTER
+        - MASTER.PLUGINS
+        - MASTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - MASTER.USE_PROCD
+        - MASTER_ADDRESS_FILE
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - SEC_DEFAULT_AUTHENTICATION
+        - SEC_DEFAULT_AUTHENTICATION_METHODS
+        - SEC_DEFAULT_CRYPTO_METHODS
+        - SEC_DEFAULT_ENCRYPTION
+        - SEC_DEFAULT_INTEGRITY
+        - SEC_DEFAULT_NEGOTIATION
+        - TCP_FORWARDING_HOST
+        - WALLABY_FORCE_CONFIG_PULL
+        - WALLABY_FORCE_RESTART
+      - {}
+
+    transferer: 
+      setAnnotation: The list of parameters affecting the transferer subsystem
+      modifyParams: 
+      - REPLACE
+      - - ENABLE_RUNTIME_CONFIG
+        - MAX_TRANSFERER_LIFETIME
+        - TCP_FORWARDING_HOST
+        - TRANSFERER_LOG
+      - {}
+
+    job_router: 
+      setAnnotation: The list of parameters affecting the job_router subsystem
+      modifyParams: 
+      - REPLACE
+      - - EC2E_ATTRS_TO_COPY
+        - EC2E_HOOK_JOB_CLEANUP
+        - EC2E_HOOK_JOB_EXIT
+        - EC2E_HOOK_TRANSLATE_JOB
+        - EC2E_HOOK_UPDATE_JOB_INFO
+        - ENABLE_RUNTIME_CONFIG
+        - JOB_ROUTER
+        - JOB_ROUTER.SEC_DEFAULT_AUTHENTICATION_METHODS
+        - JOB_ROUTER_ADDRESS_FILE
+        - JOB_ROUTER_DEBUG
+        - JOB_ROUTER_DEFAULTS
+        - JOB_ROUTER_ENTRIES
+        - JOB_ROUTER_HOOK_KEYWORD
+        - JOB_ROUTER_LOG
+        - JOB_ROUTER_POLLING_PERIOD
+        - MAX_HISTORY_ROTATIONS
+        - MAX_JOB_ROUTER_LOG
+        - TCP_FORWARDING_HOST
+      - {}
+
+    kbdd: 
+      setAnnotation: The list of parameters affecting the kbdd subsystem
+    had: 
+      setAnnotation: The list of parameters affecting the had subsystem
+      modifyParams: 
+      - REPLACE
+      - - ENABLE_RUNTIME_CONFIG
+        - HAD
+        - HAD_ARGS
+        - HAD_CONNECTION_TIMEOUT
+        - HAD_LIST
+        - HAD_LOG
+        - HAD_PORT
+        - HAD_UPDATE_INTERVAL
+        - HAD_USE_PRIMARY
+        - HAD_USE_REPLICATION
+        - MAX_HAD_LOG
+        - TCP_FORWARDING_HOST
+      - {}
+
+    shared_port: 
+      setAnnotation: The list of parameters affecting the shared_port subsystem
+      modifyParams: 
+      - REPLACE
+      - - DAEMON_SOCKET_DIR
+        - ENABLE_RUNTIME_CONFIG
+        - SHARED_PORT
+        - SHARED_PORT_DEBUG
+        - TCP_FORWARDING_HOST
+        - USE_SHARED_PORT
+      - {}
+
+    view_server: 
+      setAnnotation: The list of parameters affecting the view_server subsystem
+      modifyParams: 
+      - REPLACE
+      - - COLLECTOR
+        - PLUMAGE_DB_HOST
+        - PLUMAGE_DB_PORT
+        - VIEW_SERVER
+        - VIEW_SERVER.CONDOR_VIEW_HOST
+        - VIEW_SERVER.KEEP_POOL_HISTORY
+        - VIEW_SERVER.PLUGINS
+        - VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL
+        - VIEW_SERVER.UPDATE_INTERVAL
+        - VIEW_SERVER_ARGS
+        - VIEW_SERVER_ENVIRONMENT
+        - VIEW_SERVER_PORT
+      - {}
+
+    job_server: 
+      setAnnotation: The list of parameters affecting the job_server subsystem
+      modifyParams: 
+      - REPLACE
+      - - ENABLE_RUNTIME_CONFIG
+        - HISTORY_INTERVAL
+        - JOB_SERVER
+        - JOB_SERVER.HISTORY
+        - JOB_SERVER.JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER.JOB_SERVER_DEBUG
+        - JOB_SERVER.JOB_SERVER_LOG
+        - JOB_SERVER.SCHEDD_NAME
+        - JOB_SERVER.SPOOL
+        - JOB_SERVER_ADDRESS_FILE
+        - JOB_SERVER_DEBUG
+        - JOB_SERVER_LOG
+        - MAX_JOB_SERVER_LOG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - QMF_PUBLISH_SUBMISSIONS
+        - TCP_FORWARDING_HOST
+      - {}
+
+    replication: 
+      setAnnotation: The list of parameters affecting the replication subsystem
+      modifyParams: 
+      - REPLACE
+      - - ENABLE_RUNTIME_CONFIG
+        - HAD_USE_REPLICATION
+        - MAX_REPLICATION_LOG
+        - REPLICATION
+        - REPLICATION_ARGS
+        - REPLICATION_INTERVAL
+        - REPLICATION_LIST
+        - REPLICATION_LOG
+        - REPLICATION_PORT
+        - TCP_FORWARDING_HOST
+      - {}
+
+    triggerd: 
+      setAnnotation: The list of parameters affecting the triggerd subsystem
+      modifyParams: 
+      - REPLACE
+      - - DATA
+        - ENABLE_ABSENT_NODES_DETECTION
+        - ENABLE_RUNTIME_CONFIG
+        - QMF_BROKER_AUTH_MECH
+        - QMF_BROKER_HOST
+        - QMF_BROKER_PASSWORD_FILE
+        - QMF_BROKER_PORT
+        - QMF_BROKER_USERNAME
+        - QMF_DELETE_ON_SHUTDOWN
+        - TCP_FORWARDING_HOST
+        - TRIGGERD.QMF_STOREFILE
+        - TRIGGERD.QMF_UPDATE_INTERVAL
+        - TRIGGERD_ADDRESS_FILE
+        - TRIGGERD_DEFAULT_EVAL_PERIOD
+        - TRIGGERD_QUERY_COLLECTOR
+      - {}
+
+    rooster: 
+      setAnnotation: The list of parameters affecting the rooster subsystem
+      modifyParams: 
+      - REPLACE
+      - - ENABLE_RUNTIME_CONFIG
+        - ROOSTER
+        - ROOSTER_INTERVAL
+        - ROOSTER_MAX_UNHIBERNATE
+        - ROOSTER_UNHIBERNATE
+        - ROOSTER_UNHIBERNATE_RANK
+        - ROOSTER_WAKEUP_CMD
+        - TCP_FORWARDING_HOST
+      - {}
+
+    ll_daemon: 
+      setAnnotation: The list of parameters affecting the low-latency subsystem
