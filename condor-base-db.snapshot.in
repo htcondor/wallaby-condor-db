@@ -168,7 +168,7 @@ features:
     MAX_COLLECTOR_LOG: "1000000"
     COLLECTOR_NAME: Wallaby Configured Pool
     FLOCK_COLLECTOR_HOSTS: $(FLOCK_TO)
-    COLLECTOR: $(SBIN)/condor_collector
+    COLLECTOR: 0
     DAEMON_LIST: ">= COLLECTOR"
     COLLECTOR_LOG: $(LOG)/CollectorLog
     COLLECTOR_DEBUG: ""
@@ -597,6 +597,37 @@ features:
   params: 
     ALLOW_READ: 0
     ALLOW_WRITE: 0
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - ViewServer
+  name: PlumageJobHistory
+  params:
+    PLUMAGE_DB_HOST: localhost
+    PLUMAGE_DB_PORT: "27017"
+    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+  conflicts: []
+
+  depends: 
+  - BaseScheduler
+  included: []
+
+  name: PlumageStats
+  params: 
+    JOB_ETL_SERVER.HISTORY: $(HISTORY)
+    DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+    JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+    JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+    JOB_ETL_SERVER.PLUMAGE_DB_HOST: 0
+    JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+    DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+    JOB_ETL_SERVER_ARGS: -f
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -816,6 +847,36 @@ features:
     MAX_VM_GAHP_LOG: "1000000"
     VM_GAHP_LOG: $(LOG)/VMGahpLog
     VM_GAHP_SERVER: $(SBIN)/condor_vm-gahp
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included: []
+
+  name: ViewServer
+  params:
+    VIEW_SERVER.UPDATE_INTERVAL: "300"
+    VIEW_SERVER.KEEP_POOL_HISTORY: "TRUE"
+    VIEW_SERVER: $(COLLECTOR)
+    VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL: "60"
+    VIEW_SERVER_PORT: 0
+    VIEW_SERVER_ARGS: -f -p $(VIEW_SERVER_PORT) -local-name VIEW_SERVER
+    VIEW_SERVER.CONDOR_VIEW_HOST: ""
+    DAEMON_LIST: ">= VIEW_SERVER"
+    VIEW_SERVER_ENVIRONMENT: _CONDOR_COLLECTOR_LOG=$(LOG)/ViewServerLog
+    COLLECTOR: 0
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  conflicts: []
+
+  depends: []
+
+  included:
+  - Collector
+  name: ViewServerSource
+  params:
+    CONDOR_VIEW_CLASSAD_TYPES: Machine,Scheduler,Submitter
+    COLLECTOR.CONDOR_VIEW_HOST: 0
 groups: 
 - !ruby/object:Mrg::Grid::SerializedConfigs::Group 
   features: []
@@ -1160,6 +1221,18 @@ params:
   must_change: false
   name: COLLECTOR
   needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The collector should send updates to the view server on this machine
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.CONDOR_VIEW_HOST
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -1303,6 +1376,18 @@ params:
   level: 0
   must_change: true
   name: CONDOR_HOST
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The classad types that will be forwarded to the CONDOR_VIEW_HOST
+  kind: String
+  level: 0
+  must_change: false
+  name: CONDOR_VIEW_CLASSAD_TYPES
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
@@ -1795,6 +1880,103 @@ params:
   level: 0
   must_change: false
   name: HISTORY_INTERVAL
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(SBIN)/plumage_job_etl_server
+  depends: []
+
+  description: The plumage job etl server binary
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(HISTORY)
+  depends: []
+
+  description: The location of the historical jobs file used by the plumage job etl server
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.HISTORY
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LOG)/.job_etl_server_address
+  depends: []
+
+  description: The file where the plumage job etl server will write its address information
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: D_ALWAYS
+  depends: []
+
+  description: The debugging output the plumage job etl server will produce in its log file
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LOG)/JobEtlLog
+  depends: []
+
+  description: The location of the plumage job etl server's log file
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+
+  depends: []
+
+  description: The machine running the database server that should be used by the plumage job etl server
+  kind: String
+  level: 0
+  must_change: true
+  name: JOB_ETL_SERVER.PLUMAGE_DB_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "27017"
+  depends: []
+
+  description: The port where the database server is running on the PLUMAGE_DB_HOST that should be used by the plumage job etl server
+  kind: Integer
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER.PLUMAGE_DB_PORT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends:
+  - JOB_ETL_SERVER
+  description: Arguments to pass to the plumage job etl server
+  kind: String
+  level: 0
+  must_change: false
+  name: JOB_ETL_SERVER_ARGS
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
@@ -2672,6 +2854,30 @@ params:
   must_change: true
   name: NUM_SLOTS_TYPE_1
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: localhost
+  depends: []
+
+  description: The machine running the database server
+  kind: String
+  level: 0
+  must_change: false
+  name: PLUMAGE_DB_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "27017"
+  depends: []
+
+  description: The port where the database server is running on the PLUMAGE_DB_HOST
+  kind: Integer
+  level: 0
+  must_change: false
+  name: PLUMAGE_DB_PORT
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4246,6 +4452,126 @@ params:
   must_change: true
   name: VALID_SPOOL_FILES
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(COLLECTOR)
+  depends:
+  - COLLECTOR
+  description: The location of the view server binary
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The view server should send updates to another view server on this machine.  This should be empty if the view server isn't to send updates to another view server
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.CONDOR_VIEW_HOST
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "FALSE"
+  depends: []
+
+  description: Determines if the collector will write out statistical information about the pool to history files
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.KEEP_POOL_HISTORY
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: $(LIB)/plugins/ODSCollectorPlugin-plugin.so
+  depends: []
+
+  description: A list of plugins that the view server will load
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.PLUGINS
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "60"
+  depends: []
+
+  description: The number of seconds between samples for history logging purposes
+  kind: Integer
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: "300"
+  depends: []
+
+  description: The frequency in seconds that the veiw server runs stat collection
+  kind: Integer
+  level: 0
+  must_change: false
+  name: VIEW_SERVER.UPDATE_INTERVAL
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends:
+  - VIEW_SERVER
+  description: Arguments to pass to the view seriver daemon
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ARGS
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Changes to the environment when the view server is started
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ENVIRONMENT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Changes to the environment when the view server is started
+  kind: String
+  level: 0
+  must_change: false
+  name: VIEW_SERVER_ENVIRONMENT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: The port on the CONDOR_VIEW_HOST where the view server is listening for updates
+  kind: Integer
+  level: 0
+  must_change: true
+  name: VIEW_SERVER_PORT
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   conflicts: []
 
@@ -4426,12 +4752,14 @@ subsystems:
   - AVIARY_LOCATOR_PRUNE_INTERVAL
   - AVIARY_PUBLISH_LOCATION
   - COLLECTOR
+  - COLLECTOR.CONDOR_VIEW_HOST
   - COLLECTOR.PLUGINS
   - COLLECTOR_ADDRESS_FILE
   - COLLECTOR_DEBUG
   - COLLECTOR_HOST
   - COLLECTOR_LOG
   - COLLECTOR_UPDATE_INTERVAL
+  - CONDOR_VIEW_CLASSAD_TYPES
   - ENABLE_RUNTIME_CONFIG
   - FLOCK_COLLECTOR_HOSTS
   - MAX_COLLECTOR_LOG
@@ -4458,6 +4786,19 @@ subsystems:
   - HAD_USE_REPLICATION
   - MAX_HAD_LOG
   - TCP_FORWARDING_HOST
+- !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem
+  name: job_etl_server
+  params:
+  - JOB_ETL_SERVER
+  - JOB_ETL_SERVER.HISTORY
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+  - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+  - JOB_ETL_SERVER.PLUMAGE_DB_HOST
+  - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+  - JOB_ETL_SERVER_ARGS
+  - PLUMAGE_DB_HOST
+  - PLUMAGE_DB_PORT
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: job_router
   params: 
@@ -4769,3 +5110,18 @@ subsystems:
   - TRIGGERD_ADDRESS_FILE
   - TRIGGERD_DEFAULT_EVAL_PERIOD
   - TRIGGERD_QUERY_COLLECTOR
+- !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem
+  name: view_server
+  params:
+  - COLLECTOR
+  - PLUMAGE_DB_HOST
+  - PLUMAGE_DB_PORT
+  - VIEW_SERVER
+  - VIEW_SERVER.CONDOR_VIEW_HOST
+  - VIEW_SERVER.KEEP_POOL_HISTORY
+  - VIEW_SERVER.PLUGINS
+  - VIEW_SERVER.POOL_HISTORY_SAMPLING_INTERVAL
+  - VIEW_SERVER.UPDATE_INTERVAL
+  - VIEW_SERVER_ARGS
+  - VIEW_SERVER_ENVIRONMENT
+  - VIEW_SERVER_PORT
