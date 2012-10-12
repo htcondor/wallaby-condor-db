@@ -326,6 +326,7 @@ features:
     STARTER: $(SBIN)/condor_starter
     STARTD: $(SBIN)/condor_startd
     PREEMPT: ( ((Activity == "Suspended") && ($(ActivityTimer) > $(MaxSuspendTime))) || (SUSPEND && (WANT_SUSPEND == False)) )
+    ALLOW_NEGOTIATOR: $(ALLOW_NEGOTIATOR), $(CONDOR_HOST), $(IP_ADDRESS)
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   conflicts: []
 
@@ -4579,6 +4580,7 @@ subsystems:
 - !ruby/object:Mrg::Grid::SerializedConfigs::Subsystem 
   name: startd
   params: 
+  - ALLOW_NEGOTIATOR
   - ALLOW_READ
   - ALLOW_WRITE
   - BENCHMARKTIMER
