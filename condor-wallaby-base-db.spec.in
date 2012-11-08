@@ -4,7 +4,7 @@
 %global building_for_el5 0
 %endif
 
-Summary: Base condor database for wallaby
+Summary: Base HTCondor database for wallaby
 Name: condor-wallaby-base-db
 Version: <%= pkg_version %>
 Release: <%= pkg_rel %>%{?dist}
@@ -25,7 +25,7 @@ BuildArch: noarch
 
 %description
 A default database to be loaded into wallaby that provides configuration
-options for a condor pool
+options for a HTCondor pool
 
 %prep
 %setup -q
