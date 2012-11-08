@@ -88,6 +88,9 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/wallaby/patches/db-1.24.wpatch
 
 %changelog
+* Thu Nov  8 2012 rrati <rrati@redhat> - 1.24-2
+- Updated for branding change to HTCondor
+
 * Fri Oct 12 2012 rrati <rrati@redhat> - 1.24-1
 - New Features: ViewServer, ViewServerSource, PlumageStats, PlumageJobHistory
                 AviaryLocator, AviaryPublishingEnabled,
