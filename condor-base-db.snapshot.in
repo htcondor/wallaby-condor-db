@@ -636,39 +636,40 @@ features:
   params: 
     ALLOW_READ: 0
     ALLOW_WRITE: 0
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
   annotation: Provides historical job data to the plumage database
+  conflicts: []
+
+  depends:
+  - BaseScheduler
+  included: []
+
+  name: PlumageJobHistory
+  params:
+    JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+    JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+    DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+    JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+    JOB_ETL_SERVER.PLUMAGE_DB_HOST: localhost
+    JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+    DAEMON_LIST: ">= JOB_ETL_SERVER"
+    JOB_ETL_SERVER.SPOOL: 0
+    JOB_ETL_SERVER_ARGS: -f
+    JOB_ETL_SERVER.HISTORY: $(JOB_ETL_SERVER.SPOOL)/history
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  annotation: Provides statistics based on ClassAds to the plumage database
   conflicts: []
 
   depends: []
 
-  included: 
+  included:
   - ViewServer
-  name: PlumageJobHistory
-  params:
-    PLUMAGE_DB_HOST: localhost
-    PLUMAGE_DB_PORT: "27017"
-    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
-- !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
-  annotation: Provides statistics to the plumage database
-  conflicts: []
-
-  depends: 
-  - BaseScheduler
-  included: []
-
   name: PlumageStats
-  params: 
-    JOB_ETL_SERVER.HISTORY: $(HISTORY)
-    DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
-    JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
-    JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
-    JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
-    JOB_ETL_SERVER.PLUMAGE_DB_HOST: 0
-    JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
-    DAEMON_LIST: ">= JOB_ETL_SERVER"
-    JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
-    JOB_ETL_SERVER_ARGS: -f
+  params:
+    PLUMAGE_DB_PORT: "27017"
+    PLUMAGE_DB_HOST: localhost
+    VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables power management on the collector
   conflicts: []
@@ -2107,6 +2108,20 @@ params:
   name: JOB_ETL_SERVER.PLUMAGE_DB_PORT
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Where the plumage job etl server will look for condor_schedd files
+  kind: String
+  level: 0
+  must_change: true
+  name: JOB_ETL_SERVER.SPOOL
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
   conflicts: []
 
   default_val: ""
@@ -4839,7 +4854,7 @@ params:
   annotation: ""
   conflicts: []
 
-  default_val: $(LIB)/plugins/ODSCollectorPlugin-plugin.so
+  default_val: $(LIB)/plugins/PlumageCollectorPlugin-plugin.so
   depends: []
 
   description: A list of plugins that the view server will load
@@ -5154,6 +5169,7 @@ subsystems:
   - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
   - JOB_ETL_SERVER.PLUMAGE_DB_HOST
   - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+  - JOB_ETL_SERVER.SPOOL
   - JOB_ETL_SERVER_ARGS
   - PLUMAGE_DB_HOST
   - PLUMAGE_DB_PORT
