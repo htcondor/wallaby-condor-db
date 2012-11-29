@@ -1,0 +1,154 @@
+--- !ruby/object:Mrg::Grid::PatchConfigs::Patch 
+db_version: "1.25"
+expected: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    PlumageJobHistory: 
+      depends: []
+
+      params: 
+        PLUMAGE_DB_HOST: localhost
+        PLUMAGE_DB_PORT: "27017"
+        VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
+      included_features: 
+      - ViewServer
+    PlumageStats: 
+      depends: 
+      - BaseScheduler
+      params: 
+        DAEMON_LIST: ">= JOB_ETL_SERVER"
+        JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+        JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+        JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+        DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+        JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+        JOB_ETL_SERVER.HISTORY: $(HISTORY)
+        JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+        JOB_ETL_SERVER_ARGS: -f
+        JOB_ETL_SERVER.PLUMAGE_DB_HOST: 0
+      included_features: []
+
+      annotation: Provides statistics to the plumage database
+    BaseDBVersion: 
+      params: 
+        BaseDBVersion: v1.24
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    VIEW_SERVER.PLUGINS: 
+      default: $(LIB)/plugins/ODSCollectorPlugin-plugin.so
+  subsystems: 
+    job_etl_server: 
+      params: 
+      - JOB_ETL_SERVER
+      - JOB_ETL_SERVER.HISTORY
+      - JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+      - JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+      - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+      - JOB_ETL_SERVER.PLUMAGE_DB_HOST
+      - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+      - JOB_ETL_SERVER_ARGS
+      - PLUMAGE_DB_HOST
+      - PLUMAGE_DB_PORT
+updates: !ruby/object:Mrg::Grid::SerializedConfigs::Store 
+  features: 
+    PlumageJobHistory: 
+      modifyParams: 
+      - REPLACE
+      - DAEMON_LIST: ">= JOB_ETL_SERVER"
+        JOB_ETL_SERVER.SPOOL: 0
+        JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE: $(LOG)/.job_etl_server_address
+        JOB_ETL_SERVER.PLUMAGE_DB_PORT: "27017"
+        JOB_ETL_SERVER.JOB_ETL_SERVER_LOG: $(LOG)/JobEtlLog
+        DC_DAEMON_LIST: ">= JOB_ETL_SERVER"
+        JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG: D_ALWAYS
+        JOB_ETL_SERVER.HISTORY: $(JOB_ETL_SERVER.SPOOL)/history
+        JOB_ETL_SERVER_ARGS: -f
+        JOB_ETL_SERVER: $(SBIN)/plumage_job_etl_server
+        JOB_ETL_SERVER.PLUMAGE_DB_HOST: localhost
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - - BaseScheduler
+      - {}
+
+      modifyIncludedFeatures: 
+      - REPLACE
+      - []
+
+      - {}
+
+    PlumageStats: 
+      modifyParams: 
+      - REPLACE
+      - PLUMAGE_DB_HOST: localhost
+        PLUMAGE_DB_PORT: "27017"
+        VIEW_SERVER.PLUGINS: ">= $(LIB)/plugins/PlumageCollectorPlugin-plugin.so"
+      - {}
+
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setAnnotation: Provides statistics based on ClassAds to the plumage database
+      modifyIncludedFeatures: 
+      - REPLACE
+      - - ViewServer
+      - {}
+
+    BaseDBVersion: 
+      modifyParams: 
+      - REPLACE
+      - BaseDBVersion: v1.25
+      - {}
+
+  groups: {}
+
+  nodes: {}
+
+  params: 
+    JOB_ETL_SERVER.SPOOL: 
+      setVisibilityLevel: 0
+      setKind: String
+      setMustChange: true
+      setRequiresRestart: false
+      setDescription: Where the plumage job etl server will look for condor_schedd files
+      modifyDepends: 
+      - REPLACE
+      - []
+
+      - {}
+
+      setDefault: ""
+      setAnnotation: ""
+      modifyConflicts: 
+      - REPLACE
+      - []
+
+      - {}
+
+    VIEW_SERVER.PLUGINS: 
+      setDefault: $(LIB)/plugins/PlumageCollectorPlugin-plugin.so
+    JOB_ETL_SERVER_ARGS: 
+      setAnnotation: ""
+  subsystems: 
+    job_etl_server: 
+      modifyParams: 
+      - REPLACE
+      - - JOB_ETL_SERVER
+        - JOB_ETL_SERVER.HISTORY
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_ADDRESS_FILE
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_DEBUG
+        - JOB_ETL_SERVER.JOB_ETL_SERVER_LOG
+        - JOB_ETL_SERVER.PLUMAGE_DB_HOST
+        - JOB_ETL_SERVER.PLUMAGE_DB_PORT
+        - JOB_ETL_SERVER.SPOOL
+        - JOB_ETL_SERVER_ARGS
+        - PLUMAGE_DB_HOST
+        - PLUMAGE_DB_PORT
+      - {}
+
