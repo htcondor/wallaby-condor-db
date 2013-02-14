@@ -1423,7 +1423,7 @@ params:
   level: 0
   must_change: false
   name: COLLECTOR_PERSISTENT_AD_LOG
-  needs_restart: false
+  needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
   conflicts: []
@@ -5129,6 +5129,7 @@ subsystems:
   - COLLECTOR_DEBUG
   - COLLECTOR_HOST
   - COLLECTOR_LOG
+  - COLLECTOR_PERSISTENT_AD_LOG
   - COLLECTOR_UPDATE_INTERVAL
   - CONDOR_VIEW_CLASSAD_TYPES
   - ENABLE_RUNTIME_CONFIG
