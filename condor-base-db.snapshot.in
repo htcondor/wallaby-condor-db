@@ -760,6 +760,21 @@ features:
   name: QueryServerPublisher
   params: 
     AVIARY_PUBLISH_INTERVAL: "10"
+- !ruby/object:Mrg::Grid::SerializedConfigs::Feature
+  annotation: Enables SSL security for the aviary locator
+  conflicts: []
+
+  depends: []
+
+  included:
+  - AviaryLocator
+  name: SSLEnabledAviaryLocator
+  params: 
+    COLLECTOR.AVIARY_SSL: "TRUE"
+    COLLECTOR.AVIARY_SSL_SERVER_KEY: 0
+    COLLECTOR.AVIARY_SSL_CA_DIR: 0
+    COLLECTOR.AVIARY_SSL_CA_FILE: 0
+    COLLECTOR.AVIARY_SSL_SERVER_CERT: 0
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
   annotation: Enables SSL security for the aviary scheduler
   conflicts: []
@@ -1306,6 +1321,71 @@ params:
   level: 0
   must_change: false
   name: COLLECTOR
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: "FALSE"
+  depends: []
+
+  description: Enable HTTPS mutual authentication for the aviary locator
+  kind: Boolean
+  level: 0
+  must_change: false
+  name: COLLECTOR.AVIARY_SSL
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Path to aviary SSL CA directory used by the locator
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.AVIARY_SSL_CA_DIR
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Path to aviary SSL CA file used by the locator
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.AVIARY_SSL_CA_FILE
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Path to aviary SSL server certificate used by the locator
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.AVIARY_SSL_SERVER_CERT
+  needs_restart: true
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: Path to aviary SSL server private key used by the locator
+  kind: String
+  level: 0
+  must_change: true
+  name: COLLECTOR.AVIARY_SSL_SERVER_KEY
   needs_restart: true
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
@@ -5123,6 +5203,11 @@ subsystems:
   - AVIARY_LOCATOR_PRUNE_INTERVAL
   - AVIARY_PUBLISH_LOCATION
   - COLLECTOR
+  - COLLECTOR.AVIARY_SSL
+  - COLLECTOR.AVIARY_SSL_CA_DIR
+  - COLLECTOR.AVIARY_SSL_CA_FILE
+  - COLLECTOR.AVIARY_SSL_SERVER_CERT
+  - COLLECTOR.AVIARY_SSL_SERVER_KEY
   - COLLECTOR.CONDOR_VIEW_HOST
   - COLLECTOR.PLUGINS
   - COLLECTOR_ADDRESS_FILE
