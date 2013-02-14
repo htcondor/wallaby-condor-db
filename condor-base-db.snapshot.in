@@ -680,7 +680,7 @@ features:
   - Collector
   name: PowerManagementCollector
   params: 
-    OFFLINE_LOG: $(SPOOL)/OfflineLog
+    COLLECTOR_PERSISTENT_AD_LOG: $(SPOOL)/OfflineLog
     OFFLINE_EXPIRE_ADS_AFTER: "28800"
     VALID_SPOOL_FILES: $(VALID_SPOOL_FILES), OfflineLog
 - !ruby/object:Mrg::Grid::SerializedConfigs::Feature 
@@ -1410,6 +1410,19 @@ params:
   level: 0
   must_change: false
   name: COLLECTOR_NAME
+  needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
+  annotation: ""
+  conflicts: []
+
+  default_val: $(SPOOL)/OfflineLog
+  depends: []
+
+  description: The full path and file name of a file that stores machine class ads for every hibernating machine
+  kind: String
+  level: 0
+  must_change: false
+  name: COLLECTOR_PERSISTENT_AD_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
@@ -3120,19 +3133,6 @@ params:
   level: 0
   must_change: false
   name: OFFLINE_EXPIRE_ADS_AFTER
-  needs_restart: false
-- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
-  annotation: ""
-  conflicts: []
-
-  default_val: $(SPOOL)/OfflineLog
-  depends: []
-
-  description: The full path and file name of a file that stores machine class ads for every hibernating machine
-  kind: String
-  level: 0
-  must_change: false
-  name: OFFLINE_LOG
   needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
