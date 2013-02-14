@@ -1814,6 +1814,19 @@ params:
   must_change: false
   name: GRIDMANAGER_MAX_SUBMITTED_JOBS_PER_RESOURCE_EC2
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: ""
+  depends: []
+
+  description: A comma-separated list of group names.  This list must not conflict with user names.  Each group must have a quota or it will be ignored
+  kind: String
+  level: 0
+  must_change: true
+  name: GROUP_NAMES
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
   conflicts: []
@@ -5284,6 +5297,7 @@ subsystems:
   - ALLOW_NEGOTIATOR
   - ENABLE_RUNTIME_CONFIG
   - FLOCK_NEGOTIATOR_HOSTS
+  - GROUP_NAMES
   - MAX_NEGOTIATOR_LOG
   - MAX_NEGOTIATOR_MATCH_LOG
   - NEGOTIATOR
