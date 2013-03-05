@@ -58,6 +58,11 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/condor-wallaby-base-db/condor-base-db.snapshot
 
 %changelog
+* Tue Mar 05 2013 rrati <rrati@redhat> - 1.26-1
+- New Parameters: CLAIM_WORKLIFE, GROUP_NAMES
+- New Features: SSLEnabledAviaryLocator
+- Replaced OFFLINE_LOG with COLLECTOR_PERSISTENT_AD_LOG
+
 * Thu Nov 29 2012 rrati <rrati@redhat> - 1.25-1
 - Swapped PlumageStats and PlumageJobHistory feature names
 - Updated PluageJobHistory to better handle HA scheduler setups
