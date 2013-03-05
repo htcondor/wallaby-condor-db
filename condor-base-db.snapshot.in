@@ -1309,6 +1309,19 @@ params:
   must_change: false
   name: CAROD_QUEUED_CONNECTIONS
   needs_restart: false
+- !ruby/object:Mrg::Grid::SerializedConfigs::Parameter
+  annotation: ""
+  conflicts: []
+
+  default_val: "-1"
+  depends: []
+
+  description: "The number of seconds after which a claim will stop accepting additional jobs.  Once this expires existing jobs will run to completion but no new jobs will be accepted and the claim will be closed.  -1 means infinite"
+  kind: Integer
+  level: 0
+  must_change: false
+  name: CLAIM_WORKLIFE
+  needs_restart: false
 - !ruby/object:Mrg::Grid::SerializedConfigs::Parameter 
   annotation: ""
   conflicts: []
@@ -5463,6 +5476,7 @@ subsystems:
   - ALLOW_WRITE
   - AVIARY_PUBLISH_INTERVAL
   - AVIARY_PUBLISH_LOCATION
+  - CLAIM_WORKLIFE
   - ENABLE_RUNTIME_CONFIG
   - GRIDMANAGER.SPOOL
   - HISTORY
@@ -5522,6 +5536,7 @@ subsystems:
   - ALLOW_READ
   - ALLOW_WRITE
   - BENCHMARKTIMER
+  - CLAIM_WORKLIFE
   - CONSOLE_DEVICES
   - CONTINUE
   - ENABLE_RUNTIME_CONFIG
